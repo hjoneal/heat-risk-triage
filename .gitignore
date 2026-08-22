@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+
+# Serve-time write log — appended by app.py at runtime, not a build artefact.
+output/decisions.jsonl
