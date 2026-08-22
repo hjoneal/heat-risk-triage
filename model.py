@@ -1,0 +1,376 @@
+"""Layer 2 — train, evaluate and score.
+
+Standardise, then logistic regression. Grouped on `event_id` because every asset
+in one event shares all four hazard features, so a random split would put the
+same weather on both sides of the fold and the reported AUC would be a fiction.
+
+Calibration is load-bearing: priority is `risk x customers_served`, which is only
+an expected number of customers if the probability means what it says. That rules
+out class weighting, resampling, and any post-hoc calibration layer.
+
+Writes: output/scored_*.json, output/metrics.json, output/metrics.md,
+output/calibration.png
+"""
+
+import argparse
+import json
+
+import matplotlib
+matplotlib.use("Agg")  # no display; the pipeline runs headless
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import brier_score_loss, roc_auc_score
+from sklearn.model_selection import GroupKFold
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+import config
+import extract
+import features
+
+
+def build_model(regularisation_c=config.LOGREG_C):
+    """Standardise then fit. No class weighting — it would break calibration."""
+    return Pipeline([
+        ("scale", StandardScaler()),
+        ("clf", LogisticRegression(
+            penalty=config.LOGREG_PENALTY,
+            C=regularisation_c,
+            max_iter=config.LOGREG_MAX_ITER,
+        )),
+    ])
+
+
+def out_of_fold_predictions(X, y, groups, regularisation_c=config.LOGREG_C):
+    """Pooled out-of-fold probabilities, one per training row."""
+    predictions = np.zeros(len(y))
+    splitter = GroupKFold(n_splits=config.CV_FOLDS)
+    for train_index, test_index in splitter.split(X, y, groups=groups):
+        model = build_model(regularisation_c)
+        model.fit(X[train_index], y[train_index])
+        predictions[test_index] = model.predict_proba(X[test_index])[:, 1]
+    assert (predictions > 0).all(), "a row was never held out"
+    return predictions
+
+
+def precision_recall_at_capacity(scores, labels, groups):
+    """Precision and recall at the crew's capacity, per event then averaged.
+
+    Pooling across events would let a single severe event's ranking stand in for
+    the average one, and the crew is despatched per event.
+    """
+    precisions = []
+    recalls = []
+    for event_id in pd.unique(groups):
+        mask = groups == event_id
+        event_scores = scores[mask]
+        event_labels = labels[mask]
+        top = np.argsort(-event_scores)[:config.CREW_CAPACITY]
+        hits = int(event_labels[top].sum())
+        total_failures = int(event_labels.sum())
+        precisions.append(hits / config.CREW_CAPACITY)
+        recalls.append(hits / total_failures if total_failures else np.nan)
+    return float(np.mean(precisions)), float(np.nanmean(recalls))
+
+
+def evaluate(scores, labels, groups):
+    precision, recall = precision_recall_at_capacity(scores, labels, groups)
+    return {
+        "auc": float(roc_auc_score(labels, scores)),
+        "precision_at_15": precision,
+        "recall_at_15": recall,
+    }
+
+
+def heuristic_scores(X):
+    """Rank by peak temperature times age. Nothing is fitted."""
+    peak = X[:, config.FEATURES.index("peak_temp_c")]
+    age = X[:, config.FEATURES.index("age_years")]
+    return peak * age
+
+
+def explain(model, x_row):
+    """Contributions to the log-odds: coefficient times standardised value.
+
+    Eight lines, exact, and the same arithmetic the model itself does. A linear
+    model does not need SHAP to say what it did.
+    """
+    z = model["scale"].transform(x_row.reshape(1, -1))[0]
+    b = model["clf"].coef_[0]
+    contributions = b * z
+    order = np.argsort(-np.abs(contributions))
+    return [(config.FEATURES[i], float(x_row[i]), float(contributions[i])) for i in order]
+
+
+def assert_contributions_sum(model, X, probabilities):
+    """Contributions must sum to logit(p) minus the intercept, exactly."""
+    intercept = float(model["clf"].intercept_[0])
+    for row_index in range(len(X)):
+        contributions = sum(c for _, _, c in explain(model, X[row_index]))
+        p = probabilities[row_index]
+        logit = float(np.log(p / (1 - p)))
+        assert abs(contributions - (logit - intercept)) < config.CONTRIBUTION_SUM_TOLERANCE, \
+            f"row {row_index}: contributions {contributions} != logit-intercept {logit - intercept}"
+
+
+def calibration_plot(labels, predictions, path):
+    """Reliability diagram: mean predicted against observed, ten equal bins."""
+    edges = np.linspace(0.0, 1.0, config.CALIBRATION_BINS + 1)
+    mean_predicted = []
+    observed = []
+    counts = []
+    for lower, upper in zip(edges[:-1], edges[1:]):
+        mask = (predictions >= lower) & (predictions < upper)
+        if not mask.any():
+            continue
+        mean_predicted.append(float(predictions[mask].mean()))
+        observed.append(float(labels[mask].mean()))
+        counts.append(int(mask.sum()))
+
+    figure, axes = plt.subplots(figsize=(5, 5))
+    axes.plot([0, 1], [0, 1], linestyle="--", color="grey", label="perfect calibration")
+    axes.plot(mean_predicted, observed, marker="o", color="black", label="out-of-fold")
+    axes.set_xlabel("mean predicted probability")
+    axes.set_ylabel("observed failure rate")
+    axes.set_title("Reliability, pooled out-of-fold predictions")
+    axes.legend()
+    figure.tight_layout()
+    figure.savefig(path, dpi=150)
+    plt.close(figure)
+
+    return [
+        {"mean_predicted": m, "observed": o, "count": c}
+        for m, o, c in zip(mean_predicted, observed, counts)
+    ]
+
+
+def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_label,
+                   hourly, extraction_model):
+    """Score every asset against one forecast scenario and rank by priority."""
+    pairs = features.scenario_pairs(assets, scenario_id)
+    X_frame = features.build_feature_matrix(assets, hazard_table, flags, pairs)
+    X = X_frame.to_numpy()
+    risk = model.predict_proba(X)[:, 1]
+
+    assert_contributions_sum(model, X, risk)
+
+    asset_rows = assets.set_index("asset_id")
+    flag_rows = flags.set_index("asset_id")
+    hazard = hazard_table.set_index("event_id").loc[scenario_id]
+
+    # Expected customers affected. customers_served ranks but never predicts, so
+    # it appears here and never in FEATURES.
+    priority = risk * asset_rows.loc[pairs["asset_id"], "customers_served"].to_numpy()
+
+    order = np.argsort(-priority)
+    scored_assets = []
+    for rank, row_index in enumerate(order, start=1):
+        asset_id = pairs["asset_id"].iloc[row_index]
+        asset = asset_rows.loc[asset_id]
+        flag_row = flag_rows.loc[asset_id]
+        contributions = [
+            {
+                "feature": name,
+                "label": config.FEATURE_LABELS[name],
+                "value": value,
+                "contribution": contribution,
+            }
+            for name, value, contribution in explain(model, X[row_index])
+        ]
+        scored_assets.append({
+            "asset_id": asset_id,
+            "name": asset["name"],
+            "district": asset["district"],
+            "rank": rank,
+            "risk": round(float(risk[row_index]), 6),
+            "customers_served": int(asset["customers_served"]),
+            "criticality": int(asset["criticality"]),
+            "cooling_type": asset["cooling_type"],
+            "priority": round(float(priority[row_index]), 2),
+            "extraction_status": flag_row["extraction_status"],
+            "contributions": contributions,
+            "evidence": flag_row["evidence"],
+        })
+
+    temps = hourly.loc[hourly["event_id"] == scenario_id].sort_values("hour_index")["temp_c"]
+
+    return {
+        "scenario_id": scenario_id,
+        "scenario_label": scenario_label,
+        "generated_at": config.RUN_TIMESTAMP,
+        "extraction_model": extraction_model,
+        "hazard": {
+            "peak_temp_c": round(float(hazard["peak_temp_c"]), 2),
+            "degree_hours_above_30": round(float(hazard["degree_hours_above_30"]), 1),
+            "max_overnight_min_c": round(float(hazard["max_overnight_min_c"]), 2),
+            "consecutive_warm_nights": int(hazard["consecutive_warm_nights"]),
+            "event_duration_days": int(hazard["event_duration_days"]),
+        },
+        "hourly_temps": [round(float(t), 2) for t in temps],
+        "intercept": round(float(model["clf"].intercept_[0]), 6),
+        "assets": scored_assets,
+    }
+
+
+def write_metrics_markdown(metrics, path):
+    lines = [
+        "# Model metrics",
+        "",
+        f"Extraction model: `{metrics['extraction_model']}` "
+        f"(provider `{metrics['extraction_provider']}`)",
+        f"Training rows: {metrics['n_rows']}, failures: {metrics['n_failures']} "
+        f"({metrics['base_rate']:.4f})",
+        f"Cross-validation: GroupKFold({config.CV_FOLDS}) grouped on event_id",
+        "",
+        "## Ablations",
+        "",
+        "All three variants go through the same grouped cross-validation loop.",
+        "",
+        "| Variant | Features | AUC | Precision@15 | Recall@15 |",
+        "|---|---|---|---|---|",
+    ]
+    for name, result in metrics["ablations"].items():
+        lines.append(
+            f"| {name} | {result['n_features']} | {result['auc']:.4f} | "
+            f"{result['precision_at_15']:.4f} | {result['recall_at_15']:.4f} |"
+        )
+
+    lines += [
+        "",
+        "## Calibration",
+        "",
+        f"| Brier score, full model | {metrics['brier']['model']:.5f} |",
+        "|---|---|",
+        f"| Brier score, base rate only | {metrics['brier']['base_rate']:.5f} |",
+        f"| Improvement | {metrics['brier']['improvement']:.5f} |",
+        "",
+        "## Regularisation sweep",
+        "",
+        "| C | Out-of-fold AUC |",
+        "|---|---|",
+    ]
+    for entry in metrics["c_sweep"]:
+        lines.append(f"| {entry['C']} | {entry['auc']:.4f} |")
+
+    lines += [
+        "",
+        "## Coefficients",
+        "",
+        "Fitted on all events, on standardised features. Sign is the direction of",
+        "the effect on the log-odds of failure.",
+        "",
+        "| Feature | Coefficient |",
+        "|---|---|",
+    ]
+    for name, value in metrics["coefficients"].items():
+        lines.append(f"| {config.FEATURE_LABELS[name]} | {value:+.4f} |")
+    lines.append(f"| _intercept_ | {metrics['intercept']:+.4f} |")
+
+    path.write_text("\n".join(lines) + "\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--provider", default=config.LLM_PROVIDER,
+                        choices=["anthropic", "gemini"],
+                        help="which provider's cached extractions to score with")
+    args = parser.parse_args()
+
+    extraction_model = extract.extraction_model_for(args.provider)
+
+    assets = features.load_assets()
+    events = features.load_events()
+    hourly = features.load_hourly()
+    outcomes = features.load_outcomes()
+    inspections = features.load_inspections()
+
+    extractions = extract.load_extractions(inspections, args.provider, extraction_model)
+    flags = features.asset_condition_flags(extractions)
+    hazard_table = features.build_hazard_table(events, hourly)
+
+    pairs, labels, groups = features.training_pairs(outcomes)
+    X_frame = features.build_feature_matrix(assets, hazard_table, flags, pairs)
+    X = X_frame.to_numpy()
+
+    predictions = out_of_fold_predictions(X, labels, groups)
+    full_result = evaluate(predictions, labels, groups)
+
+    # Build spec section 9: anything above this line is evidence of leakage, not
+    # of a good model. See DECISIONS.md D-006.
+    assert full_result["auc"] < config.LEAKAGE_AUC_THRESHOLD, (
+        f"out-of-fold AUC {full_result['auc']:.4f} is above "
+        f"{config.LEAKAGE_AUC_THRESHOLD}, which indicates leakage. Investigate before accepting."
+    )
+
+    no_notes_index = [config.FEATURES.index(name) for name in config.NO_NOTES_FEATURES]
+    no_notes_predictions = out_of_fold_predictions(X[:, no_notes_index], labels, groups)
+    heuristic = heuristic_scores(X)
+
+    ablations = {
+        "Heuristic baseline (peak temp x age)": {
+            "n_features": 2, **evaluate(heuristic, labels, groups)},
+        "Without notes": {
+            "n_features": len(config.NO_NOTES_FEATURES),
+            **evaluate(no_notes_predictions, labels, groups)},
+        "Full model": {"n_features": len(config.FEATURES), **full_result},
+    }
+
+    c_sweep = [
+        {"C": value, "auc": float(roc_auc_score(
+            labels, out_of_fold_predictions(X, labels, groups, value)))}
+        for value in config.C_SWEEP
+    ]
+
+    base_rate = float(labels.mean())
+    brier = {
+        "model": float(brier_score_loss(labels, predictions)),
+        "base_rate": float(brier_score_loss(labels, np.full(len(labels), base_rate))),
+    }
+    brier["improvement"] = brier["base_rate"] - brier["model"]
+
+    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    calibration_bins = calibration_plot(
+        labels, predictions, config.OUTPUT_DIR / "calibration.png")
+
+    # Refit on every event to score the forecasts.
+    final_model = build_model()
+    final_model.fit(X, labels)
+    coefficients = {
+        name: float(value)
+        for name, value in zip(config.FEATURES, final_model["clf"].coef_[0])
+    }
+
+    metrics = {
+        "extraction_provider": args.provider,
+        "extraction_model": extraction_model,
+        "n_rows": int(len(labels)),
+        "n_failures": int(labels.sum()),
+        "base_rate": base_rate,
+        "ablations": ablations,
+        "c_sweep": c_sweep,
+        "brier": brier,
+        "calibration_bins": calibration_bins,
+        "coefficients": coefficients,
+        "intercept": float(final_model["clf"].intercept_[0]),
+    }
+    (config.OUTPUT_DIR / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
+    write_metrics_markdown(metrics, config.OUTPUT_DIR / "metrics.md")
+
+    for scenario_id, scenario_label, _, _, _, _ in config.SCENARIOS:
+        scored = score_scenario(final_model, assets, hazard_table, flags,
+                                scenario_id, scenario_label, hourly, extraction_model)
+        path = config.OUTPUT_DIR / f"scored_{scenario_id}.json"
+        path.write_text(json.dumps(scored, indent=2) + "\n")
+        print(f"wrote {path.name}: top asset {scored['assets'][0]['asset_id']} "
+              f"risk {scored['assets'][0]['risk']:.4f}")
+
+    print(f"\nout-of-fold AUC (full model): {full_result['auc']:.4f}")
+    print(f"out-of-fold AUC (without notes): {ablations['Without notes']['auc']:.4f}")
+    print(f"out-of-fold AUC (heuristic): {ablations['Heuristic baseline (peak temp x age)']['auc']:.4f}")
+    print(f"Brier: {brier['model']:.5f} against base-rate {brier['base_rate']:.5f}")
+
+
+if __name__ == "__main__":
+    main()

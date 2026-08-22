@@ -1,0 +1,20 @@
+event_id,label,event_type,start_date,duration_days,peak_temp_c,amplitude_c,is_scenario
+EVT-01,mild 2021-08-16,mild,2021-08-16,3,30.11,6.47,False
+EVT-02,long-severe 2021-08-21,long-severe,2021-08-21,5,40.79,4.28,False
+EVT-03,long-moderate 2021-08-23,long-moderate,2021-08-23,6,36.85,4.14,False
+EVT-04,short-severe 2021-08-31,short-severe,2021-08-31,2,41.55,7.94,False
+EVT-05,long-moderate 2022-07-28,long-moderate,2022-07-28,5,36.65,3.94,False
+EVT-06,short-severe 2022-09-05,short-severe,2022-09-05,2,41.72,8.2,False
+EVT-07,long-severe 2022-09-22,long-severe,2022-09-22,5,39.39,3.97,False
+EVT-08,short-severe 2023-06-23,short-severe,2023-06-23,2,40.19,8.48,False
+EVT-09,long-moderate 2023-07-10,long-moderate,2023-07-10,5,36.11,3.56,False
+EVT-10,long-severe 2023-07-23,long-severe,2023-07-23,5,39.09,3.65,False
+EVT-11,mild 2024-06-20,mild,2024-06-20,3,31.05,6.74,False
+EVT-12,long-moderate 2024-06-28,long-moderate,2024-06-28,5,36.66,4.13,False
+EVT-13,short-severe 2024-07-27,short-severe,2024-07-27,2,41.52,8.29,False
+EVT-14,short-severe 2025-06-16,short-severe,2025-06-16,2,40.26,7.95,False
+EVT-15,long-moderate 2025-08-08,long-moderate,2025-08-08,5,35.71,4.47,False
+EVT-16,mild 2025-09-09,mild,2025-09-09,3,31.9,6.33,False
+coastal-short-severe,Coastal · 2-day severe,short-severe,2026-08-25,2,41.0,8.0,True
+inland-long-moderate,Inland · 5-day moderate,long-moderate,2026-08-25,5,36.0,4.0,True
+baseline-mild,Baseline · 3-day mild,mild,2026-08-25,3,30.5,6.5,True
