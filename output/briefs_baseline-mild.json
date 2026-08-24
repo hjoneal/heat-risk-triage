@@ -1,0 +1,1305 @@
+{
+  "SUB-SGW-331": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "recurring",
+      "fault",
+      "history",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 14.2196
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 13.5543
+      }
+    ],
+    "brief": "Crews should inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstructions before the heat event, as outlined in SOP-015. Additionally, apply ambient de-rating by reducing the permissible load by 1.5 percent for each degree of average ambient above 30 degrees, using the 24-hour preceding assessment described in MG-021. For this ONAN cooling type unit, apply any required de-rating in accordance with the procedures since the supplied documents do not cover asset-specific load calculations for Langmere Common beyond these general rules.",
+    "cited_doc_ids": [
+      "SOP-015",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-340": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 16.7362
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      }
+    ],
+    "brief": "Review the open defect register for Ivybridge Green (SUB-SGW-340) before the heat event in accordance with SOP-016. The supplied documents do not cover the specific conditions of this ONAN unit regarding the 17.71 degree overnight minimum or peak load value. Where work orders or de-ratings are applied, record them as specified in MG-021 and SOP-016.",
+    "cited_doc_ids": [
+      "MG-021",
+      "SOP-016",
+      "SOP-015"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-165": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.424
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 17.3035
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 15.5008
+      }
+    ],
+    "brief": "Prioritise vegetation clearance work over other remedial activity for Willow Common 230/34kV (SUB-SGW-165) ahead of the heat event, as restricted airflow removes the cooling margin the unit relies on [SOP-011]. Complete work in categories 1 to 3 before the event begins wherever crew capacity allows [SOP-016]. A unit of advanced age with a history of high loading has a reduced margin against mechanical failure and should be prioritised for pre-event attention [MG-023].",
+    "cited_doc_ids": [
+      "MG-023",
+      "SOP-011",
+      "SOP-016"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-341": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "recurring",
+      "fault",
+      "history",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.424
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 14.2196
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for Wexford Green 230/34kV (SUB-SGW-341), as an ageing unit with an oil issue that cannot be attended before the event [MG-023]. The supplied documents do not cover specific actions for oil issues beyond noting them as a rank factor and applying this de-rating [MG-023].",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-505": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "recurring",
+      "fault",
+      "history",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.9943
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      }
+    ],
+    "brief": "Prioritise Langmere Dale for pre-attention ahead of a heat event, as its advanced age and high loading history leave it with a reduced margin against mechanical failure (MG-023). If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-699": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 15.4375
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstruction before the forecast heat event, in accordance with SOP-015. Apply ambient and reduced-cooling de-rating as required by MG-021. If the situation is not covered by these procedures, say so plainly.",
+    "cited_doc_ids": [
+      "SOP-015",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-709": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 16.0292
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 16.0142
+      }
+    ],
+    "brief": "Crews should inspect Willow Vale 230/34kV (SUB-SGW-709) before the heat event, as the supplied documents do not cover asset-specific actions for an ONAN cooling type with a warm overnight minimum of 17.71 degrees. The provided procedures for sustained events require overnight minima above 24 degrees, and instructions for reduced forced cooling do not apply since ONAN relies on natural cooling. The supplied texts therefore do not provide specific loading or maintenance directives for this asset's configuration.",
+    "cited_doc_ids": [
+      "MG-021",
+      "REG-042",
+      "SOP-016"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-354": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "recurring",
+      "fault",
+      "history",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.424
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 13.5543
+      }
+    ],
+    "brief": "Prioritise Westmarch Park 230/34kV (SUB-SGW-354) for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure and should be prioritised ahead of younger units in otherwise similar condition (MG-023). Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-335": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.9943
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      }
+    ],
+    "brief": "Prioritise Fairmount Heights 230/34kV (SUB-SGW-335) for pre-event attention because its advanced age of 34 years and history of high loading leave it with a reduced margin against mechanical failure under thermal stress (MG-023). If this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Record every de-rating applied along with its reason, value, and period, and only restore the full rating when the underlying condition has been corrected and verified (MG-021).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-213": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.424
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 14.2196
+      }
+    ],
+    "brief": "As Quarrydale Grove is an ageing unit of 34 years with a history of high loading, prioritise it for pre-event attention ahead of a younger unit in otherwise similar condition, per MG-023. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, as outlined in MG-023. The supplied documents do not cover any specific ventilation inspection procedures for this ONAN unit.",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-724": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.424
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 14.9237
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      }
+    ],
+    "brief": "Prioritise Harrowgate Ridge for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure ([MG-023]). Review any outstanding work against its effect on the unit's ability to shed heat, prioritising active leaks, oil levels, and ventilation defects ([SOP-016]). If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+    "cited_doc_ids": [
+      "MG-023",
+      "SOP-016",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-518": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "recurring",
+      "fault",
+      "history",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 15.7187
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 15.4375
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstructions before the forecast heat event [SOP-015]. Maintain a minimum clearance of two metres between vegetation and the radiator face, and one metre between growth and the compound fence line [SOP-011]. Vegetation and obstruction clearance takes precedence over other remedial activity to restore the cooling margin [SOP-015, SOP-011].",
+    "cited_doc_ids": [
+      "SOP-015",
+      "SOP-011"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-732": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAF"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.9943
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 15.7187
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, as obstructed ventilation must be cleared before a forecast heat event in accordance with SOP-015. Additionally, maintain the minimum clearance of two metres between any growth and the radiator face and one metre between growth and the compound fence line as outlined in SOP-011. Since this unit has a known oil issue and advanced age with a history of high loading, apply the loading restriction in MG-021 if it cannot be attended before the event per MG-023.",
+    "cited_doc_ids": [
+      "MG-023",
+      "SOP-015",
+      "SOP-011"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-509": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "recurring",
+      "fault",
+      "history",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 18.3406
+      },
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.0476
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 16.7889
+      }
+    ],
+    "brief": "Inspect the unit and address outstanding defects in descending order of priority, focusing particularly on any oil level issues or active leaks which rank above oil condition defects before a heat event [SOP-016]. Ensure all vegetation and obstructions around radiator banks are cleared as clearance work takes precedence where a defect is outstanding [SOP-011]. For insulation ageing and end-of-life indicators, the supplied documents do not cover specific remedial actions for the cited oil issue beyond noting age and general indicators [MG-023].",
+    "cited_doc_ids": [
+      "SOP-016",
+      "SOP-011",
+      "MG-023"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-260": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 15.4375
+      },
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 15.2413
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because the asset cannot be attended before the event [MG-023]. The supplied documents do not cover any specific crew action for this asset beyond applying that restriction. Ensure every de-rating applied is recorded along with the reason, value, and period [MG-021].",
+    "cited_doc_ids": [
+      "MG-021",
+      "MG-023"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-781": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "recurring",
+      "fault",
+      "history",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 14.7232
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 14.2196
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 13.5543
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area, and clear any obstruction before the forecast heat event (SOP-015). For this ONAN unit, also verify whether any maintenance interval is overdue, as an asset with an unverified cooling system requires the detailed inspection to be brought forward in preference to accepting exposure (REG-042). Record every de-rating applied along with its reason, value, and period, and ensure the full rating is restored only after correcting and verifying the underlying condition (MG-021).",
+    "cited_doc_ids": [
+      "MG-021",
+      "SOP-015",
+      "REG-042"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-739": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 18.3941
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 16.1424
+      }
+    ],
+    "brief": "Complete the oil level remediation or active leak repair for Ivybridge Creek before the heat event begins, as work on oil level below minimum or an active leak ranks third in priority under SOP-016. Because the unit has an ONAN cooling type, the supplied documents do not cover forced cooling or ambient de-rating adjustments for this configuration beyond the general heat event triage and remedial priorities. Record the completed remedial work against the originating defect and close it out only when verified on site with the date and work order reference in accordance with SOP-016.",
+    "cited_doc_ids": [
+      "SOP-016",
+      "MG-021",
+      "SOP-011"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-803": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 15.4375
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area and clear any obstruction before the forecast heat event as outlined in SOP-015. Additionally, apply the ambient de-rating prescribed in MG-021 if the 24-hour average ambient exceeds 30 degrees, recording every de-rating applied, its reason, value, and period. Note that the supplied documents do not provide specific guidance for ONAN cooling type adjustments beyond ambient and sustained event rules.",
+    "cited_doc_ids": [
+      "SOP-015",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-131": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.733
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 15.2566
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 15.131
+      }
+    ],
+    "brief": "Inspect intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, as outlined in SOP-015. Clear obstructed ventilation before the forecast heat event in preference to deferring it, because clearance is low-cost, immediate, and restores the cooling margin (SOP-015, SOP-011). Ensure any outstanding ventilation or airflow defects are prioritized ahead of the event in accordance with SOP-016, and record the clearance work against the originating defect to close it out upon completion (SOP-011, SOP-016).",
+    "cited_doc_ids": [
+      "SOP-015",
+      "SOP-011",
+      "SOP-016"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-553": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 14.1507
+      },
+      {
+        "doc_id": "SOP-014",
+        "title": "Pre-event cooling system inspection",
+        "score": 10.976
+      }
+    ],
+    "brief": "Prior to the forecast heat event, crews should apply the loading restriction in MG-021 for the Oakhurst Bluff 230/34kV unit in preference to accepting the exposure, as the supplied documents do not cover pre-event cooling system inspection for ONAN cooling types without forced cooling fans. Record every de-rating applied, the reason, the value, and the period, restoring the full rating only when the underlying condition has been corrected and verified.",
+    "cited_doc_ids": [
+      "MG-021",
+      "MG-023",
+      "SOP-014"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-832": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "recurring",
+      "fault",
+      "history",
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.9943
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 18.3941
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 18.3406
+      }
+    ],
+    "brief": "Prioritise outstanding work orders against this unit's ability to shed heat in accordance with SOP-016, addressing any active oil leak or oil level below minimum before the forecast heat event. Where oil condition defects awaiting reconditioning cannot be completed prior to the event, apply a loading restriction as specified in SOP-016. Because the unit has an oil issue and is of advanced age, note from MG-023 that a unit of advanced age with a history of high loading has a reduced margin against mechanical failure under thermal cycling.",
+    "cited_doc_ids": [
+      "SOP-016",
+      "MG-023"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-567": {
+    "query_terms": [
+      "overnight",
+      "cooling",
+      "recovery",
+      "loading",
+      "capacity",
+      "de-rating",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 16.0292
+      },
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 16.0142
+      }
+    ],
+    "brief": "Inspect the asset and verify its cooling system before the forecast heat event, as outlined in REG-042. Apply any required ambient and cooling de-ratings according to MG-021. Review and address any outstanding work orders prioritised by their effect on heat shedding pursuant to SOP-016.",
+    "cited_doc_ids": [
+      "REG-042",
+      "MG-021",
+      "SOP-016"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-881": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "recurring",
+      "fault",
+      "history",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 18.9943
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "REG-042",
+        "title": "Maintenance interval compliance",
+        "score": 15.4375
+      }
+    ],
+    "brief": "As the Ashford Hill 138/13kV unit is an ageing asset with a high peak load and limited overnight cooling recovery, it should be prioritised for pre-event attention ahead of younger units. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure. The supply documents do not cover any specific crew actions beyond these measures.",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-095": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "recurring",
+      "fault",
+      "history",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ONAF"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 13.9665
+      },
+      {
+        "doc_id": "SOP-014",
+        "title": "Pre-event cooling system inspection",
+        "score": 11.5156
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 10.7528
+      }
+    ],
+    "brief": "Inspect the cooling system using the manual test facility before the forecast event begins, confirming that every fan starts and runs up to speed [SOP-014]. Because the unit's ONAF cooling has an oil issue and a warm overnight minimum, apply any required de-rating for reduced cooling and ambient conditions in accordance with MG-021 [MG-021, SOP-014]. Record the outcome of every stage test, the number of fans proved, and any defect found [SOP-014].",
+    "cited_doc_ids": [
+      "MG-021",
+      "SOP-014"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-581": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "overnight",
+      "cooling",
+      "recovery",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "SOP-016",
+        "title": "Outstanding work order review and defect close-out",
+        "score": 18.3941
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 16.7538
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 16.1424
+      }
+    ],
+    "brief": "Review open work orders against the Pinecrest Hill unit and re-prioritise outstanding tasks against their effect on heat shedding in accordance with SOP-016. Because the unit has ONAN cooling and an overnight minimum of 17.71, determine whether any category 1 to 3 defects exist and complete them before the event begins where crew capacity allows, noting that the supplied documents do not cover asset age or criticality weightings. If category 4 items cannot be completed, apply a loading restriction as required by SOP-016 and MG-021.",
+    "cited_doc_ids": [
+      "SOP-016",
+      "MG-021"
+    ],
+    "status": "ok"
+  }
+}

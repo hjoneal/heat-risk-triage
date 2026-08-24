@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}{{ asset.name }} — Heat risk triage{% endblock %}
+{% block content %}
+
+<p class="backlink"><a href="/scenario/{{ scenario_id }}">← {{ scenario.scenario_label }} queue</a></p>
+
+<header class="asset-header">
+  <h2>{{ asset.name }}</h2>
+  <p class="asset-meta">{{ asset.asset_id }} · {{ asset.district }} · {{ asset.cooling_type }}</p>
+  <dl class="asset-figures">
+    <div><dt>Risk</dt><dd>{{ "%.1f"|format(asset.risk * 100) }}%</dd></div>
+    <div><dt>Customers served</dt><dd>{{ "{:,}".format(asset.customers_served) }}</dd></div>
+    <div><dt>Expected impact</dt><dd>{{ "{:,.0f}".format(asset.priority) }}</dd></div>
+    <div><dt>Criticality</dt><dd>{{ asset.criticality }} of 5</dd></div>
+    <div><dt>Rank</dt><dd>{{ asset.rank }}</dd></div>
+  </dl>
+</header>
+
+<div class="columns">
+  <section class="contributions">
+    <h3>What drove this score</h3>
+    <p class="note">Each figure is the feature's contribution to the log-odds of failure:
+      the fitted coefficient multiplied by the standardised value. They sum to the
+      score, so nothing is hidden.</p>
+    <table class="contrib">
+      <thead><tr><th scope="col">Factor</th><th scope="col" class="num">Value</th><th scope="col" class="num">Contribution</th></tr></thead>
+      <tbody>
+      {% for c in asset.contributions %}
+        <tr class="{{ 'up' if c.contribution > 0 else 'down' }}">
+          <td>{{ c.label }}</td>
+          <td class="num">{{ "%.4g"|format(c.value) }}</td>
+          <td class="num">{{ "%+.3f"|format(c.contribution) }}</td>
+        </tr>
+      {% endfor %}
+        <tr class="intercept">
+          <td>Typical asset, typical event</td>
+          <td class="num">—</td>
+          <td class="num">{{ "%+.3f"|format(intercept) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="evidence">
+    <h3>Evidence from inspection notes</h3>
+    {% if asset.extraction_status == 'failed' %}
+      <p class="unavailable">Condition data unavailable. The inspection notes for this
+        asset could not be read reliably, so no condition flags were set. The score
+        above reflects hazard and register fields only.</p>
+    {% elif not asset.evidence %}
+      <p class="unavailable">No outstanding defects were recorded at the last inspections.</p>
+    {% else %}
+      {% for e in asset.evidence %}
+        <figure class="quote">
+          <blockquote>{{ e.text }}</blockquote>
+          <figcaption>{{ e.inspection_id }} · {{ e.date }} · flagged {{ e.flag.replace('_', ' ') }}</figcaption>
+        </figure>
+      {% endfor %}
+    {% endif %}
+  </section>
+</div>
+
+<section class="brief">
+  <h3>Action brief</h3>
+  {% if brief %}
+    <p>{{ brief.brief }}</p>
+    {% if cited %}
+      <p class="citations">Procedures:
+        {% for doc in cited %}
+          <a href="/procedure/{{ doc.doc_id }}">{{ doc.doc_id }} {{ doc.title }}</a>{% if not loop.last %} · {% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+    {% if brief.status != 'ok' %}
+      <p class="note">Brief status: {{ brief.status }}.</p>
+    {% endif %}
+  {% else %}
+    <p class="unavailable">No brief was generated for this asset; briefs cover the
+      top {{ asset.rank if asset.rank else '' }} ranked assets in each scenario.</p>
+  {% endif %}
+</section>
+
+<section class="decide">
+  <h3>Record decision</h3>
+  {% if decision %}
+    <p class="note">Recorded {{ decision.ts }}:
+      {{ 'Accepted' if decision.decision == 'accept' else 'Removed' }}{% if decision.reason %} — {{ decision.reason }}{% endif %}.</p>
+  {% endif %}
+  <form method="post" action="/scenario/{{ scenario_id }}/asset/{{ asset.asset_id }}/decision">
+    <fieldset>
+      <legend>Decision</legend>
+      <label><input type="radio" name="decision" value="accept" required> Accept for dispatch</label>
+      <label><input type="radio" name="decision" value="remove"> Remove from list</label>
+    </fieldset>
+    <label class="reason-field">Reason (optional)
+      <input type="text" name="reason" maxlength="200">
+    </label>
+    <button type="submit">Record decision</button>
+  </form>
+</section>
+{% endblock %}

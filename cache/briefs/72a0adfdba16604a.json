@@ -1,0 +1,9 @@
+{
+  "brief": "Clear the outstanding ventilation obstruction at Briarcliff Bend before the forecast heat event, as clearance work takes precedence over other remedial activity when a unit is identified for pre-event attention [SOP-011]. Since this ONAN transformer has an oil issue noted during inspection, apply the loading restrictions in MG-021 if the unit cannot be attended before the event [MG-023]. Record the clearance work against the originating defect and close it out upon completion [SOP-011].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

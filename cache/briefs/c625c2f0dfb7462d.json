@@ -1,0 +1,8 @@
+{
+  "brief": "Where the Camden Green 230/34kV transformer (SUB-SGW-567) cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed by MG-023. The supplied documents do not cover the specific oil issue noted in the asset facts, so no procedure is provided for that factor. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

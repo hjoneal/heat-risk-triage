@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Heat risk triage{% endblock %}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="masthead">
+  <h1>Heat risk triage</h1>
+  <nav class="scenarios" aria-label="Forecast scenario">
+    {% for s in scenarios %}
+      <a href="/scenario/{{ s.scenario_id }}"
+         class="scenario-link{% if s.scenario_id == scenario_id %} is-current{% endif %}"
+         {% if s.scenario_id == scenario_id %}aria-current="page"{% endif %}>{{ s.label }}</a>
+    {% endfor %}
+  </nav>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "brief": "Address the active oil leak on Willow Common 230/34kV (SUB-SGW-165) before the heat event begins, as work in category 3 is to be completed ahead of the event per SOP-016. Because this unit is aged 43 years with an oil issue, apply the loading restriction in MG-021 if the work cannot be completed prior to exposure, in accordance with MG-023. This 43-year-old unit also warrants prioritisation for pre-event attention ahead of younger units due to its age and cumulative thermal stress risks.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

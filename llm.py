@@ -4,14 +4,25 @@ Every call is cached to disk by content hash. Once the cache is populated the
 whole pipeline runs with no API key and no network, which is why the cache
 directories are committed.
 
-The provider is chosen at pipeline time only. `app.py` never imports this module.
+One provider: Gemini, which is the one that produced the committed cache. An
+Anthropic path existed earlier and was removed rather than left in place
+unexercised — see DECISIONS.md D-015.
+
+`app.py` never imports this module.
 """
 
 import hashlib
 import json
 import os
+import time
+
+import httpx
 
 import config
+
+# Transport failures worth re-sending: a stalled read, a refused connection, a
+# rate limit. Distinct from a model that answered badly, which extract.py owns.
+TRANSPORT_ERRORS = (httpx.TransportError, httpx.TimeoutException)
 
 
 def load_env_file():
@@ -55,43 +66,37 @@ def write_cache(cache_dir, key, record):
     path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
 
 
-def call_llm(system_prompt, user_prompt, model, provider, max_tokens):
-    """Send one prompt and return (text, input_tokens, output_tokens).
-
-    An explicit if/elif rather than a registry: there are two providers and a
-    reader can see both of them at once.
-    """
+def call_llm(system_prompt, user_prompt, model, max_tokens):
+    """Send one prompt and return (text, input_tokens, output_tokens)."""
     load_env_file()
-    if provider == "anthropic":
-        return _call_anthropic(system_prompt, user_prompt, model, max_tokens)
-    elif provider == "gemini":
-        return _call_gemini(system_prompt, user_prompt, model, max_tokens)
-    else:
-        raise ValueError(f"unknown provider {provider!r}; expected 'anthropic' or 'gemini'")
 
+    last_error = None
+    for attempt in range(config.LLM_TRANSPORT_RETRIES + 1):
+        try:
+            return _call_gemini(system_prompt, user_prompt, model, max_tokens)
+        except TRANSPORT_ERRORS as error:
+            last_error = error
+            if attempt < config.LLM_TRANSPORT_RETRIES:
+                time.sleep(config.LLM_TRANSPORT_BACKOFF_S * (2 ** attempt))
 
-def _call_anthropic(system_prompt, user_prompt, model, max_tokens):
-    # Imported inside the branch so that running the Anthropic path does not
-    # require the Gemini SDK to be installed, and the reverse.
-    import anthropic
-
-    client = anthropic.Anthropic()
-    response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        temperature=config.LLM_TEMPERATURE,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}],
-    )
-    text = "".join(block.text for block in response.content if block.type == "text")
-    return text, response.usage.input_tokens, response.usage.output_tokens
+    raise RuntimeError(
+        f"transport failed {config.LLM_TRANSPORT_RETRIES + 1} times in a row: "
+        f"{type(last_error).__name__}: {last_error}"
+    ) from last_error
 
 
 def _call_gemini(system_prompt, user_prompt, model, max_tokens):
     from google import genai
     from google.genai import types
 
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    client = genai.Client(
+        api_key=os.environ["GEMINI_API_KEY"],
+        http_options=types.HttpOptions(
+            timeout=config.LLM_REQUEST_TIMEOUT_S * 1000,
+            retry_options=types.HttpRetryOptions(
+                attempts=config.LLM_TRANSPORT_RETRIES + 1),
+        ),
+    )
     response = client.models.generate_content(
         model=model,
         contents=user_prompt,

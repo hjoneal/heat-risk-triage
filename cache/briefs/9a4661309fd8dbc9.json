@@ -1,0 +1,8 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for Willow Vale 230/34kV. The supplied documents do not cover the specific oil issue noted in the asset facts, so crew guidance for that condition cannot be provided from the text. Consult the responsible engineer for further instruction.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

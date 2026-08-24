@@ -1,0 +1,9 @@
+{
+  "brief": "Complete the oil level remediation or active leak repair for Ivybridge Creek before the heat event begins, as work on oil level below minimum or an active leak ranks third in priority under SOP-016. Because the unit has an ONAN cooling type, the supplied documents do not cover forced cooling or ambient de-rating adjustments for this configuration beyond the general heat event triage and remedial priorities. Record the completed remedial work against the originating defect and close it out only when verified on site with the date and work order reference in accordance with SOP-016.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-021",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

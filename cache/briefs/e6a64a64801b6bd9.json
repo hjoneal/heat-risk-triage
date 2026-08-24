@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Wexford Green 230/34kV (SUB-SGW-341) prior to the heat event, noting that oil treatment does not restore paper insulation [MG-023]. Where remedial work or sampling defects cannot be completed before the event, apply the loading restriction in MG-021 [MG-023, SOP-013]. Record every de-rating applied along with the reason, value, and period [MG-021].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021",
+    "SOP-013"
+  ],
+  "status": "ok"
+}

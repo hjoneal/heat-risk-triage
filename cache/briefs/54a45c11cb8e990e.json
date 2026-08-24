@@ -1,0 +1,8 @@
+{
+  "brief": "Crews should inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstructions before the heat event, as outlined in SOP-015. Additionally, apply ambient de-rating by reducing the permissible load by 1.5 percent for each degree of average ambient above 30 degrees, using the 24-hour preceding assessment described in MG-021. For this ONAN cooling type unit, apply any required de-rating in accordance with the procedures since the supplied documents do not cover asset-specific load calculations for Langmere Common beyond these general rules.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021"
+  ],
+  "status": "ok"
+}

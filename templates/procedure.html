@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{{ procedure.doc_id }} {{ procedure.title }}{% endblock %}
+{% block content %}
+<article class="procedure">
+  <p class="doc-meta">{{ procedure.doc_id }} · {{ procedure.category }} · applies to {{ procedure.applies_to }}</p>
+  <pre class="doc-body">{{ procedure.body }}</pre>
+</article>
+{% endblock %}

@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect and record the operating state of the Underhill Hollow transformer prior to the forecast heat event, applying the ambient and reduced-cooling de-ratings specified in MG-021. Run the forced cooling continuously through the overnight period as instructed in MG-025 to mitigate the risks associated with its prior heat-related faults and reported oil issue. Ensure all de-ratings are recorded in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

@@ -93,8 +93,10 @@ JSON only. No markdown fences, no commentary.
 {FEW_SHOT_EXAMPLES}"""
 
 
-def build_cache_key(note_text, provider, model):
-    return llm.cache_key(note_text + config.PROMPT_VERSION + provider + model)
+def build_cache_key(note_text, model):
+    """Model is part of the key so switching models re-extracts rather than
+    silently reusing another model's answers."""
+    return llm.cache_key(note_text + config.PROMPT_VERSION + model)
 
 
 def parse_and_validate(raw_text, note_text):
@@ -118,7 +120,7 @@ def parse_and_validate(raw_text, note_text):
     return extraction, was_fenced
 
 
-def extract_one(inspection, provider, model, offline):
+def extract_one(inspection, model, offline):
     """Extract one note, using the cache when it has the answer.
 
     On a parse or validation failure the identical prompt is sent once more. If
@@ -126,7 +128,7 @@ def extract_one(inspection, provider, model, offline):
     interface then says the condition data is unavailable rather than showing
     four clean falses as though the asset were sound.
     """
-    key = build_cache_key(inspection.note_text, provider, model)
+    key = build_cache_key(inspection.note_text, model)
     cached = llm.read_cache(config.EXTRACTION_CACHE_DIR, key)
     if cached is not None:
         return cached, True
@@ -134,7 +136,7 @@ def extract_one(inspection, provider, model, offline):
     if offline:
         raise RuntimeError(
             f"offline mode: no cached extraction for {inspection.inspection_id} "
-            f"(key {key}, provider {provider}, model {model}). "
+            f"(key {key}, model {model}). "
             "Run without --offline and with an API key to populate the cache."
         )
 
@@ -145,7 +147,7 @@ def extract_one(inspection, provider, model, offline):
 
     for attempt in range(config.LLM_MAX_RETRIES + 1):
         raw_text, used_in, used_out = llm.call_llm(
-            SYSTEM_PROMPT, inspection.note_text, model, provider, config.EXTRACTION_MAX_TOKENS)
+            SYSTEM_PROMPT, inspection.note_text, model, config.EXTRACTION_MAX_TOKENS)
         input_tokens += used_in
         output_tokens += used_out
         try:
@@ -156,7 +158,6 @@ def extract_one(inspection, provider, model, offline):
         fence_count += int(was_fenced)
         record = {
             "inspection_id": inspection.inspection_id,
-            "provider": provider,
             "model": model,
             "prompt_version": config.PROMPT_VERSION,
             "extraction_status": "ok",
@@ -175,7 +176,6 @@ def extract_one(inspection, provider, model, offline):
 
     record = {
         "inspection_id": inspection.inspection_id,
-        "provider": provider,
         "model": model,
         "prompt_version": config.PROMPT_VERSION,
         "extraction_status": "failed",
@@ -190,24 +190,23 @@ def extract_one(inspection, provider, model, offline):
     return record, False
 
 
-def load_extractions(inspections, provider=None, model=None):
+def load_extractions(inspections, model=None):
     """Read every extraction back out of the cache as a flat table.
 
     The cache is the store: there is no separate extractions file to drift out of
     step with it. Missing keys raise, because a silently absent extraction would
     become an asset with no recorded defects.
     """
-    provider = provider or config.LLM_PROVIDER
-    model = model or extraction_model_for(provider)
+    model = model or config.EXTRACTION_MODEL
 
     rows = []
     for inspection in inspections.itertuples():
-        key = build_cache_key(inspection.note_text, provider, model)
+        key = build_cache_key(inspection.note_text, model)
         record = llm.read_cache(config.EXTRACTION_CACHE_DIR, key)
         if record is None:
             raise RuntimeError(
                 f"no cached extraction for {inspection.inspection_id} "
-                f"(key {key}, provider {provider}, model {model}). Run extract.py first."
+                f"(key {key}, model {model}). Run extract.py first."
             )
         row = {
             "inspection_id": inspection.inspection_id,
@@ -223,15 +222,6 @@ def load_extractions(inspections, provider=None, model=None):
     table = pd.DataFrame(rows)
     assert len(table) == len(inspections), "lost a note between the inspections file and the cache"
     return table
-
-
-def extraction_model_for(provider):
-    if provider == "anthropic":
-        return config.EXTRACTION_MODEL
-    elif provider == "gemini":
-        return config.GEMINI_EXTRACTION_MODEL
-    else:
-        raise ValueError(f"unknown provider {provider!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -264,26 +254,25 @@ def keyword_baseline(note_text):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--provider", default=config.LLM_PROVIDER,
-                        choices=["anthropic", "gemini"],
-                        help="which API to call on a cache miss")
     parser.add_argument("--offline", action="store_true",
                         help="read the cache only; fail loudly on a miss rather than calling out")
     parser.add_argument("--limit", type=int, default=None,
                         help="extract only the first N notes, for a single live demonstration")
     args = parser.parse_args()
 
-    model = extraction_model_for(args.provider)
+    model = config.EXTRACTION_MODEL
     inspections = pd.read_csv(config.DATA_DIR / "inspections.csv")
     if args.limit is not None:
         inspections = inspections.head(args.limit)
 
     records = []
     cache_hits = 0
-    for inspection in inspections.itertuples():
-        record, from_cache = extract_one(inspection, args.provider, model, args.offline)
+    for position, inspection in enumerate(inspections.itertuples(), start=1):
+        record, from_cache = extract_one(inspection, model, args.offline)
         records.append(record)
         cache_hits += int(from_cache)
+        if position % config.LLM_PROGRESS_EVERY == 0:
+            print(f"  {position}/{len(inspections)} notes", flush=True)
 
     n_failed = sum(1 for r in records if r["extraction_status"] == "failed")
     n_retried = sum(1 for r in records if r["attempts"] > 1)
@@ -293,7 +282,6 @@ def main():
 
     lines = [
         "Extraction run",
-        f"provider: {args.provider}",
         f"model: {model}",
         f"prompt version: {config.PROMPT_VERSION}",
         f"notes processed: {len(records)}",

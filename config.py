@@ -38,10 +38,12 @@ TEMPLATES_DIR = REPO_ROOT / "templates"
 # Fleet
 # ---------------------------------------------------------------------------
 
-# The utility operates roughly 400 transformers in total; this prototype models
-# the 150-asset inland corridor and 150 is the number used everywhere in code.
-N_ASSETS = 150  # chosen
-ASSET_ID_PREFIX = "SUB-INL-"  # chosen
+# The whole SGW substation transformer fleet, derived from the client brief
+# rather than assumed: 8M residents / ~2.5 per household ~= 3.2M customer
+# accounts; / ~8,000 customers per substation ~= 400 distribution substations;
+# x ~2.2 transformers each ~= 900. See DECISIONS.md D-011.
+N_ASSETS = 900  # derived
+ASSET_ID_PREFIX = "SUB-SGW-"  # chosen
 
 DISTRICTS = ["Northfield", "Cedar Basin", "Ridgeline", "Junction West"]  # chosen
 
@@ -61,11 +63,15 @@ PEAK_LOAD_PCT_MIN = 0.55  # assumed: lightly loaded unit
 PEAK_LOAD_PCT_MAX = 0.95  # assumed: unit running close to nameplate
 
 # Customers behind an asset scale with its rating; the spread reflects urban
-# versus rural feeders of the same size.
-CUSTOMERS_PER_MVA = 430  # assumed
+# versus rural feeders of the same size. Substations run N-1 — each transformer
+# is sized to carry the full substation load alone — so customers per transformer
+# sit well below what rated capacity alone suggests. 92 per MVA against a mean
+# rating of 38.5 MVA gives a mean near 3,555, and 900 x 3,555 ~= 3.2M customers
+# fleet-wide, which matches the derivation above. See DECISIONS.md D-013.
+CUSTOMERS_PER_MVA = 92  # derived
 CUSTOMERS_NOISE_SD = 0.35  # assumed: lognormal sigma on the per-MVA figure
-CUSTOMERS_MIN = 800  # assumed
-CUSTOMERS_MAX = 45_000  # assumed
+CUSTOMERS_MIN = 400  # assumed
+CUSTOMERS_MAX = 18_000  # assumed
 
 CRITICALITY_MIN = 1  # chosen: 1 = routine, 5 = serves a designated critical load
 CRITICALITY_MAX = 5  # chosen
@@ -108,11 +114,14 @@ EVENT_SEASON_END_MONTH = 9  # chosen
 # ahead of the event, hence a fixed near-future date.
 FORECAST_DATE = "2026-08-25"  # chosen
 
+# One hourly temperature series applies to all 900 assets, so the scenario names
+# carry no geography: a single series covering both coastal and inland areas
+# would not be coherent. Hazard uniform across the fleet is a stated limitation.
 SCENARIOS = [
     # (scenario_id, label, event_type, days, peak_temp_c, amplitude_c)
-    ("coastal-short-severe", "Coastal · 2-day severe", "short-severe", 2, 41.0, 8.0),
-    ("inland-long-moderate", "Inland · 5-day moderate", "long-moderate", 5, 36.0, 4.0),
-    ("baseline-mild", "Baseline · 3-day mild", "mild", 3, 30.5, 6.5),
+    ("short-severe", "2-day severe spike", "short-severe", 2, 41.0, 8.0),
+    ("long-moderate", "5-day moderate", "long-moderate", 5, 36.0, 4.0),
+    ("baseline-mild", "3-day mild baseline", "mild", 3, 30.5, 6.5),
 ]  # chosen: one of each shape, so the ranking can be compared across them
 
 # ---------------------------------------------------------------------------
@@ -170,12 +179,16 @@ THETA_REFERENCE_DECREMENT_C = 1.0  # chosen
 SPEC_COEF_THERMAL_STRESS = 0.15  # build spec section 2.5
 SPEC_COEF_INTERACTION = 0.30  # build spec section 2.5
 
-# Gate 4 requires mild events to be near failure-free, which needs a steep
-# hazard response; build spec section 9 requires out-of-fold AUC below 0.90,
-# which needs a shallow one. They bracket a narrow band, and this is the value
-# inside it: at 3.0 the mild-event rate is 0.0133 and gate 4 fails, at 4.0 the
-# AUC reaches 0.9103 and the leakage line fails. See DECISIONS.md D-007, D-008.
-HAZARD_SCALE = 3.5  # measured
+# Re-derived at 900 assets and a 1% base rate; the previous value of 3.5 was
+# measured against a 5% rate and does not carry over. Gate 4 needs mild events
+# near failure-free, which wants a steep hazard response; gate 6 needs failures
+# to reach the better-maintained half of the fleet, which wants a shallow one.
+# Measured across the bracket 1.0 to 10.0, they leave a feasible band of
+# [2.30, 2.50] and this is its centre. Gate 4 fails at 2.25 (mild rate 0.00222)
+# and gate 6 fails at 2.55 (share 0.190). Both bounds turn on single-figure
+# failure counts, so the band is narrow by construction rather than by choice.
+# See DECISIONS.md D-014.
+HAZARD_SCALE = 2.4  # measured
 
 FAILURE_COEF_THERMAL_STRESS = SPEC_COEF_THERMAL_STRESS * HAZARD_SCALE
 FAILURE_COEF_CONDITION = 1.60  # assumed
@@ -183,7 +196,14 @@ FAILURE_COEF_INTERACTION = SPEC_COEF_INTERACTION * HAZARD_SCALE
 FAILURE_COEF_LOAD = 0.90  # assumed
 FAILURE_LOAD_REFERENCE = 0.70  # chosen: mid-fleet load, so the term is centred
 
-TARGET_FAILURE_RATE = 0.05  # chosen: ~120 failures across 2,400 rows
+# Per asset *per event*, which is not an annual rate. CIGRE TB 642 (2015) puts
+# the real annual major-failure rate below 1% — 0.8% for pre-1978 units — which
+# implies roughly 0.0008 per asset-event for a heat-attributable share across
+# four events a year. At that rate 14,400 rows would carry about a dozen
+# positives, too few to fit 13 features, so this is inflated about twelvefold to
+# roughly 144 positives. That scales predicted probabilities but preserves
+# ranking, and the system consumes a ranking. See DECISIONS.md D-012.
+TARGET_FAILURE_RATE = 0.01  # chosen
 # The failure intercept is solved for by bisection rather than hardcoded, so the
 # base rate stays at target if any upstream coefficient changes.
 INTERCEPT_SEARCH_MIN = -30.0  # chosen: wide enough to bracket any plausible value
@@ -217,10 +237,12 @@ INSPECTION_WINDOW_DAYS = 540  # assumed: roughly 18 months of inspection history
 # Hard gates on generated data
 # ---------------------------------------------------------------------------
 
-FAILURE_RATE_MIN = 0.04  # chosen: gate 1 lower bound
-FAILURE_RATE_MAX = 0.07  # chosen: gate 1 upper bound
+FAILURE_RATE_MIN = 0.008  # chosen: gate 1 lower bound
+FAILURE_RATE_MAX = 0.013  # chosen: gate 1 upper bound
 NONZERO_STRESS_SHARE_MIN = 0.80  # chosen: gate 3
-MILD_FAILURE_RATE_MAX = 0.01  # chosen: gate 4
+# Moved down with the base rate: held at 0.01 against an overall rate of 0.01
+# the gate would be vacuous.
+MILD_FAILURE_RATE_MAX = 0.002  # chosen: gate 4
 DEGREE_HOURS_PEAK_CORR_MAX = 0.85  # chosen: gate 5
 LOW_CONDITION_FAILURE_SHARE_MIN = 0.20  # chosen: gate 6
 
@@ -327,8 +349,16 @@ BM25_TOP_K = 3  # chosen: as many procedures as a supervisor will read
 # Preserves hyphenated identifiers such as sop-014, which \w+ would split.
 TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 
-# Set from the score distribution in output/bm25_scores.txt after the first run.
-BM25_FLOOR = 0.0  # measured: placeholder until retrieve.py has been run once
+# Set below the main cluster in output/bm25_scores.txt: across all 75 generated
+# queries the top score ranges 13.97 to 25.59, with no separated low tail. 12.0
+# sits below the observed minimum with a margin, so it fires only on a query
+# degenerate enough to fall outside anything this system currently produces.
+#
+# It does not fire on any of the 75. That is recorded rather than engineered
+# around: build_query concatenates a term list per positive contribution, giving
+# queries of 15 to 40 terms, and against 25 topically dense procedures such a
+# query always matches something. See DECISIONS.md D-018.
+BM25_FLOOR = 12.0  # measured
 
 BRIEF_TOP_N = 25  # chosen: the crew capacity of 15 plus a review margin
 # Above this ambient peak the query picks up de-rating guidance regardless of
@@ -365,14 +395,12 @@ NO_MATCH_BRIEF = (
 
 # Smallest model first, per the build spec; escalate only if the extraction
 # evaluation shows it is not good enough.
-LLM_PROVIDER = "anthropic"  # chosen: the committed cache is the Anthropic one
-# Model ids carry no date suffix; a suffixed id is rejected by the API.
-EXTRACTION_MODEL = "claude-haiku-4-5"  # chosen
-BRIEF_MODEL = "claude-haiku-4-5"  # chosen
-# The Gemini path is written from the current SDK documentation but has not been
-# executed; see DECISIONS.md D-009.
-GEMINI_EXTRACTION_MODEL = "gemini-2.5-flash"  # chosen
-GEMINI_BRIEF_MODEL = "gemini-2.5-flash"  # chosen
+# Flash-lite does not emit reasoning tokens, which for a four-flag classification
+# is latency and cost spent for nothing: measured against gemini-2.5-flash on the
+# same note, 0.8 s and 0 thinking tokens versus 3.2 s and 593. A pinned id rather
+# than gemini-flash-lite-latest, so the committed cache stays reproducible.
+EXTRACTION_MODEL = "gemini-3.5-flash-lite"  # measured
+BRIEF_MODEL = "gemini-3.5-flash-lite"  # measured
 
 # Bumping either version invalidates every cache key built with it, which is how
 # a prompt change is forced to re-run rather than silently reuse old output.
@@ -386,6 +414,17 @@ BRIEF_MAX_TOKENS = 1024  # chosen: three or four sentences plus citations
 # at a defect the model could not read is worse than recording that it failed.
 LLM_MAX_RETRIES = 1  # chosen
 CACHE_KEY_LENGTH = 16  # chosen: 64 bits of sha256 is ample for a few hundred keys
+# Neither SDK stalls visibly on a dead socket, and a 300-call batch that hangs
+# looks identical to one that is merely slow. Measured call latency is around a
+# second, so anything past this is a stall, not slowness.
+LLM_REQUEST_TIMEOUT_S = 60  # chosen
+LLM_PROGRESS_EVERY = 25  # chosen: how often a long extraction run reports progress
+# A stalled socket or a 429 is a transport problem, not a bad answer, and is
+# retried separately from LLM_MAX_RETRIES: that one exists for a model that
+# returned something unusable, and re-sending on a timeout would otherwise be
+# scored as the model failing. Both are counted and reported.
+LLM_TRANSPORT_RETRIES = 3  # chosen
+LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 
 # ---------------------------------------------------------------------------
 # Web application

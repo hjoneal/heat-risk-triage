@@ -1,0 +1,9 @@
+{
+  "brief": "Clear the obstructed ventilation louvres and airflow path immediately in preference to deferring it, as specified in SOP-015. Additionally, address the reported oil issue to prevent potential failure during the forecast heat event, and apply the loading restrictions outlined in MG-021 and the ageing unit prioritisation guidance in MG-023 if attention is deferred.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

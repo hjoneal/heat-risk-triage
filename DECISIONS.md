@@ -326,3 +326,291 @@ executed would be a worse failure than saying plainly that it is untested.
 
 **What would change it:** Running it, which needs a `GEMINI_API_KEY`, and then
 recording the per-flag comparison against `inspection_truth.csv`.
+
+---
+
+## D-011 — The fleet is 900 transformers, derived rather than assumed
+
+**Decision:** `N_ASSETS = 900`, `ASSET_ID_PREFIX = "SUB-SGW-"`. The prototype
+covers the whole SGW substation transformer fleet, not a region of it.
+
+**Alternatives:** Keep 150 as a regional pilot; use the ~400 figure that appeared
+in earlier descriptive text.
+
+**Why:** 150 was a tractability choice justified after the fact. The client brief
+states SGW serves over 8 million residents, which supports a derivation:
+
+```
+8,000,000 residents ÷ ~2.5 per household   ≈ 3.2M customer accounts
+3.2M customers ÷ ~8,000 per substation     ≈ 400 distribution substations
+400 substations × ~2.2 transformers each   ≈ 900 substation power transformers
+```
+
+A derived number can be defended and a chosen one cannot. It also removes a
+scale tier from the story: the prototype now covers the same fleet the business
+case covers, so no bridging argument is needed between them.
+
+Training rows go from 2,400 to 14,400 and extraction calls from 300 to 1,800.
+Crew capacity stays at 15 and the briefed depth at 25 — the crew did not grow
+because the fleet was described more accurately.
+
+**What would change it:** A real asset register, which would replace the whole
+derivation with a count.
+
+---
+
+## D-012 — Per-event failure rate of 0.01, inflated about twelvefold for trainability
+
+**Decision:** `TARGET_FAILURE_RATE = 0.01` per asset **per event**, with gate 1
+bounds of [0.008, 0.013] and gate 4 lowered to 0.002.
+
+**The real annual rate.** CIGRE Technical Brochure 642 (2015), Working Group
+A2.37, *Transformer Reliability Survey*: 964 major failures across 167,459
+transformer-years, 56 utilities, 21 countries. Substation transformer failure
+rates fall below 1% per year — 0.8% for pre-1978 units, 0.4% for post-1978 units
+up to 20 years old. A major failure is one requiring removal from service for
+over seven days with significant remedial work. This fleet skews old, so 0.8% is
+the applicable figure.
+
+**The implied per-event rate.** 900 assets × 0.8% annual × 40% heat-attributable
+÷ 4 events per year ≈ **0.08% per asset-event**.
+
+**Why the generator uses 0.01 and not 0.0008.** At the real rate, 14,400 rows
+would carry roughly a dozen positives — not enough to fit a 13-feature logistic
+regression. 1% gives about 144, which is workable. At 150 assets the same
+reasoning forced 5%, roughly sixty times reality; the larger fleet allows twelve
+times instead, which is the point of the change.
+
+**The citation is load-bearing and must not be overstated.** CIGRE supports the
+*annual* figure only. It does not support the per-event number, and presenting it
+as though it did would misuse the source. The README states plainly that the
+per-event rate is inflated about twelvefold for trainability, that this scales
+predicted probabilities but preserves ranking, and that the system consumes a
+ranking. Calibration is to the synthetic base rate; a production deployment would
+recalibrate against observed outcomes.
+
+**What would change it:** Real outcome history, which would remove the need to
+inflate anything.
+
+---
+
+## D-013 — Customers per transformer corrected downward
+
+**Decision:** `CUSTOMERS_PER_MVA` 430 → 92, `CUSTOMERS_MIN` 800 → 400,
+`CUSTOMERS_MAX` 45,000 → 18,000.
+
+**Why:** At 430 per MVA against a mean rating of 38.5 MVA, the mean was about
+16,500 customers per transformer, implying more customers behind the modelled
+fleet than the utility has. Substations run N-1: each transformer is sized to
+carry the full substation load alone, so customers per transformer sit well below
+what rated capacity alone suggests. 92 per MVA gives a mean near 3,555, and
+900 × 3,555 ≈ 3.2M, matching the derivation in D-011.
+
+**Effect on the model: none.** `customers_served` is not a feature, and
+`priority = risk × customers_served` is a ranking — scaling every count by a
+constant changes no ordering. The change affects display and any ROI figure.
+
+**What would change it:** A connectivity model, which would give a real count per
+asset instead of a rating-based estimate.
+
+---
+
+## D-014 — HAZARD_SCALE re-derived to 2.4 at the new fleet scale
+
+**Decision:** `HAZARD_SCALE = 2.4`, replacing 3.5.
+
+**Why it had to move:** 3.5 was measured against a 5% base rate. Both binding
+constraints shift with the base rate, so the value does not carry over.
+
+**Measured bracket, 1.0 to 10.0, all six gates evaluated on the generator:**
+
+| scale | mild rate (gate 4, < 0.002) | gate 6 share (≥ 0.20) | verdict |
+|---|---|---|---|
+| 1.0 | 0.00741 | 0.348 | gate 4 fails |
+| 2.0 | 0.00296 | 0.239 | gate 4 fails |
+| 2.25 | 0.00222 | 0.211 | gate 4 fails |
+| **2.30** | 0.00185 | 0.212 | both pass — lower edge |
+| **2.40** | 0.00185 | 0.209 | both pass — chosen, centre of band |
+| **2.50** | 0.00185 | 0.205 | both pass — upper edge |
+| 2.55 | 0.00185 | 0.190 | gate 6 fails |
+| 3.0 | 0.00185 | 0.169 | gate 6 fails |
+| 5.0 | 0.00000 | 0.085 | gate 6 fails |
+| 10.0 | 0.00000 | 0.035 | gate 6 fails |
+
+Gate 4 wants a steep hazard response so mild events stay near failure-free; gate
+6 wants a shallow one so failures still reach the better-maintained half of the
+fleet. The feasible band is [2.30, 2.50] and 2.4 is its centre.
+
+**The band is narrow by construction, not by choice.** Gate 4 turns on 5 versus 6
+failures across 2,700 mild rows, and gate 6 on 34 versus 30 out of 163. Both
+bounds are single-figure counts, so the edges carry sampling noise of the same
+order as the band width. A larger fleet would tighten them; this one cannot.
+
+**This tunes the generator, not the model.** The constraints were fixed in
+advance and are properties of the synthetic world, not model scores. No model
+result was consulted in choosing 2.4, and the resulting AUC is reported as
+measured whatever it turns out to be.
+
+**What would change it:** Real outcome data, which would remove the need for any
+of these gates.
+
+---
+
+## D-015 — Demo scenarios renamed; hazard is uniform across the fleet
+
+**Decision:** `coastal-short-severe` → `short-severe` ("2-day severe spike"),
+`inland-long-moderate` → `long-moderate` ("5-day moderate"), `baseline-mild`
+relabelled "3-day mild baseline".
+
+**Why:** One hourly temperature series now applies to all 900 assets across both
+coastal and inland areas, so the regional labels described a geography the model
+does not have. Naming a scenario "Coastal" while applying its weather to the
+whole fleet is a claim the system cannot support.
+
+Scenario ids appear in output filenames, brief cache keys and app routes, so
+everything was renamed and regenerated rather than edited by hand.
+
+**Recorded as a limitation rather than fixed:** hazard is modelled uniformly
+across the fleet. A real deployment would apply a forecast grid, and
+district-level hazard variation is the natural extension — `district`, `lat` and
+`lon` are already carried on every asset for exactly that.
+
+**What would change it:** A gridded forecast, which would make hazard features
+per-asset rather than per-event and would change the cross-validation grouping.
+
+---
+
+## D-016 — One provider, and it is the one that ran
+
+**Supersedes D-004 and D-010.**
+
+**Decision:** The Anthropic code path and its model constants are removed.
+`llm.py` calls Gemini only, `config.py` names one extraction model and one brief
+model, and `--provider` is gone from every script.
+
+**Alternatives:** Keep both paths and the switch, as originally built.
+
+**Why:** Only the Gemini path was ever executed, and only its cache is committed.
+A second provider present in the code but never run is a claim the repository
+cannot support — the first question a reviewer asks about it is "did you run
+it", and the honest answer was no. `config.py` now states one answer about what
+actually produced the committed artefacts.
+
+The pipeline-time versus serve-time distinction from D-004 stands unchanged:
+`app.py` still imports nothing that can reach an API, and `--offline` still fails
+loudly on a cache miss rather than reaching for the network.
+
+**What would change it:** A reason to compare providers on the extraction
+evaluation, which would mean running both over all 1,800 notes and committing
+both caches.
+
+---
+
+## D-017 — Model choice: gemini-3.5-flash-lite
+
+**Decision:** `EXTRACTION_MODEL = BRIEF_MODEL = "gemini-3.5-flash-lite"`.
+
+**Measured:** On the same inspection note, flash-lite returned a correct
+extraction in 0.8 s with 0 reasoning tokens; `gemini-2.5-flash` took 3.2 s and
+spent 593 reasoning tokens to reach the same four flags.
+
+**Why:** Build spec §3.6 says use the smallest available model first and escalate
+only if the evaluation shows it is not good enough. Reasoning tokens on a
+four-flag classification are latency and cost spent for nothing. The id is
+pinned rather than `gemini-flash-lite-latest`, because a floating alias would
+change the committed cache's provenance without changing its contents.
+
+**What would change it:** Per-flag precision or recall in
+`output/extraction_eval.md` that the brief or the ranking cannot tolerate,
+particularly on the resolution and negation categories.
+
+---
+
+## D-018 — The BM25 floor does not trigger, and was not raised until it did
+
+**Decision:** `BM25_FLOOR = 12.0`, below the observed minimum. The build spec's
+assertion that the floor must trigger on at least one asset is replaced by a
+reported measurement, in `retrieve.py` and in `output/bm25_scores.txt`.
+
+**Measured:** across all 75 generated queries the top BM25 score ranges 13.97 to
+25.59, median 23.08. There is no separated low tail — no cluster the floor could
+sit below while still firing on something.
+
+**Why it does not fire.** `build_query` concatenates a term list for every
+positive contribution, producing queries of 15 to 40 terms, and the corpus is 25
+topically dense procedures. A 15-term query always matches something. The weakest
+query in the set (13.97, a mild-scenario asset with six contributing factors)
+still returns three plausible documents.
+
+**Alternatives:** Raise the floor to about 14.5 so the lowest one or two queries
+fall below it. Rejected — that value sits inside the main cluster, is chosen only
+to make an assertion pass, and would start suppressing retrieval for assets whose
+documents are perfectly reasonable.
+
+**What this means for the design.** The `no_match` path and its fixed text are
+implemented and tested but unreached. That is a real limitation and is stated in
+the README rather than hidden behind a threshold tuned to exercise it.
+
+**What would change it:** A larger or more heterogeneous corpus, where a query
+built from one weak contribution could genuinely miss; or query construction that
+used only the top one or two contributions rather than all positive ones, which
+would produce short queries and a meaningful low tail.
+
+---
+
+## D-019 — Notes repeat at the new fleet scale, and the evaluation says so
+
+**Measured:** 1,800 notes contain 1,253 distinct texts — a 30.4% duplicate rate.
+The duplication is concentrated entirely in notes with no outstanding defect:
+those average 13.25 repeats each, while notes carrying one or more true flags
+average 1.13 and are almost all unique.
+
+**Why:** a note with no condition sentences is one or two distractor sentences
+drawn from a bank of twelve, so there are only a few dozen possible texts. At 300
+notes that was invisible; at 1,800 it is not.
+
+**Decision:** left as is, and recorded. Extraction is cached by note text, so the
+1,800 notes cost 1,253 API calls rather than 1,800 — the duplication is free at
+run time. The effect on the evaluation is that the "distractors only" category is
+about 60 distinct texts repeated, so its measured error rate of 0.0000 rests on
+far fewer independent items than its 644-note count suggests. The other three
+categories are essentially unaffected.
+
+**Alternatives:** Expand the distractor bank until duplicates disappear. That is
+straightforward and was not done because it would change every note and force a
+full re-extraction for a category that both methods already get right.
+
+**What would change it:** Any finding that depended on the distractors-only
+category, which currently none does.
+
+---
+
+## D-020 — The notes barely move AUC and nearly double precision at the crew's capacity
+
+**Measured, out-of-fold across 14,400 rows:**
+
+| Variant | AUC | Precision@15 | Failures found per 15 visits | Lift over random |
+|---|---|---|---|---|
+| Heuristic (peak temp × age) | 0.5830 | 0.0000 | 0.00 | 0.0× |
+| Without notes (9 features) | 0.8223 | 0.0458 | 0.69 | 4.0× |
+| Full model (13 features) | 0.8261 | 0.0792 | 1.19 | 7.0× |
+
+**The finding:** adding the four extracted condition flags moves pooled AUC by
+0.0038 — nothing — and moves precision at the crew's actual capacity from 0.69 to
+1.19 failures per 15 visits. On the metric the build spec leads with, the
+extraction layer looks like decoration. On the metric the operation runs on, it
+finds 70% more failures for the same crew.
+
+**Why the two disagree:** AUC integrates over every threshold, and almost all of
+its pairs sit far from the top of the ranking. The crew only ever sees the top
+15 of 900. A feature that sharpens the head of the distribution and does nothing
+elsewhere barely registers in AUC and matters entirely in practice.
+
+**Recorded rather than resolved:** the headline number stays AUC because the
+build spec asks for it, and precision@15 is reported alongside it everywhere,
+with the base rate given so the lift can be checked. Reporting only the ablation
+AUC gap would understate the extraction layer; reporting only the lift would
+overstate it.
+
+**What would change it:** A crew capacity closer to the fleet size, which would
+make the two metrics converge.

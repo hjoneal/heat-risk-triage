@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": "Outstanding defect notice from the last inspection round is still current",
+      "present": true
+    },
+    "ventilation_obstructed": {
+      "evidence": null,
+      "present": false
+    }
+  },
+  "input_tokens": 779,
+  "inspection_id": "INS-038-2",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 117,
+  "prompt_version": "v1"
+}

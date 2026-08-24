@@ -15,8 +15,6 @@ output/calibration.png
 import argparse
 import json
 
-import matplotlib
-matplotlib.use("Agg")  # no display; the pipeline runs headless
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -218,8 +216,7 @@ def write_metrics_markdown(metrics, path):
     lines = [
         "# Model metrics",
         "",
-        f"Extraction model: `{metrics['extraction_model']}` "
-        f"(provider `{metrics['extraction_provider']}`)",
+        f"Extraction model: `{metrics['extraction_model']}`",
         f"Training rows: {metrics['n_rows']}, failures: {metrics['n_failures']} "
         f"({metrics['base_rate']:.4f})",
         f"Cross-validation: GroupKFold({config.CV_FOLDS}) grouped on event_id",
@@ -272,13 +269,16 @@ def write_metrics_markdown(metrics, path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--provider", default=config.LLM_PROVIDER,
-                        choices=["anthropic", "gemini"],
-                        help="which provider's cached extractions to score with")
-    args = parser.parse_args()
+    # Headless only when run as a script. Setting this at import time would
+    # hijack the backend for anything that imports this module, which silently
+    # stops the notebook rendering its plots.
+    import matplotlib
+    matplotlib.use("Agg")
 
-    extraction_model = extract.extraction_model_for(args.provider)
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.parse_args()
+
+    extraction_model = config.EXTRACTION_MODEL
 
     assets = features.load_assets()
     events = features.load_events()
@@ -286,7 +286,7 @@ def main():
     outcomes = features.load_outcomes()
     inspections = features.load_inspections()
 
-    extractions = extract.load_extractions(inspections, args.provider, extraction_model)
+    extractions = extract.load_extractions(inspections, extraction_model)
     flags = features.asset_condition_flags(extractions)
     hazard_table = features.build_hazard_table(events, hourly)
 
@@ -343,7 +343,6 @@ def main():
     }
 
     metrics = {
-        "extraction_provider": args.provider,
         "extraction_model": extraction_model,
         "n_rows": int(len(labels)),
         "n_failures": int(labels.sum()),

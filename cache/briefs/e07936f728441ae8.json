@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, as outlined in SOP-015. Clear obstructed ventilation before the forecast heat event in preference to deferring it, because clearance is low-cost, immediate, and restores the cooling margin (SOP-015, SOP-011). Ensure any outstanding ventilation or airflow defects are prioritized ahead of the event in accordance with SOP-016, and record the clearance work against the originating defect to close it out upon completion (SOP-011, SOP-016).",
+  "cited_doc_ids": [
+    "SOP-015",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

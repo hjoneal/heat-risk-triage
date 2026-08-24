@@ -1,0 +1,82 @@
+{
+  "extraction_model": "gemini-3.5-flash-lite",
+  "n_rows": 14400,
+  "n_failures": 163,
+  "base_rate": 0.011319444444444444,
+  "ablations": {
+    "Heuristic baseline (peak temp x age)": {
+      "n_features": 2,
+      "auc": 0.5830103967412312,
+      "precision_at_15": 0.0,
+      "recall_at_15": 0.0
+    },
+    "Without notes": {
+      "n_features": 9,
+      "auc": 0.8222914371134403,
+      "precision_at_15": 0.04583333333333334,
+      "recall_at_15": 0.0377281746031746
+    },
+    "Full model": {
+      "n_features": 13,
+      "auc": 0.8260998840401598,
+      "precision_at_15": 0.07916666666666666,
+      "recall_at_15": 0.06086309523809524
+    }
+  },
+  "c_sweep": [
+    {
+      "C": 0.01,
+      "auc": 0.8135033100910916
+    },
+    {
+      "C": 0.1,
+      "auc": 0.826396355129273
+    },
+    {
+      "C": 1.0,
+      "auc": 0.8260998840401598
+    },
+    {
+      "C": 10.0,
+      "auc": 0.8219458414543286
+    }
+  ],
+  "brier": {
+    "model": 0.010485500107156851,
+    "base_rate": 0.01119131462191358,
+    "improvement": 0.0007058145147567293
+  },
+  "calibration_bins": [
+    {
+      "mean_predicted": 0.009319226499125808,
+      "observed": 0.00878981787497363,
+      "count": 14221
+    },
+    {
+      "mean_predicted": 0.13127268742314407,
+      "observed": 0.17365269461077845,
+      "count": 167
+    },
+    {
+      "mean_predicted": 0.22366486992716894,
+      "observed": 0.75,
+      "count": 12
+    }
+  ],
+  "coefficients": {
+    "peak_temp_c": 0.10604042134859806,
+    "degree_hours_above_30": 1.1381337055147893,
+    "max_overnight_min_c": -0.30087388848788355,
+    "consecutive_warm_nights": 0.13242337898635634,
+    "age_years": 0.05332904210217771,
+    "cooling_type_ordinal": -0.8437380570192892,
+    "peak_load_pct": 0.5425973776391572,
+    "days_since_maintenance": 0.19807360754850675,
+    "prior_heat_faults": 0.11439774426798284,
+    "flag_cooling_degraded": 0.19801449209566171,
+    "flag_ventilation_obstructed": 0.21965073246180322,
+    "flag_oil_issue": 0.27122670601469784,
+    "flag_overdue_remedial": 0.009179834910608163
+  },
+  "intercept": -5.596722346280685
+}

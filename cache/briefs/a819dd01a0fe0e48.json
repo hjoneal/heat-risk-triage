@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise attention on Willow Common before the heat event to address the active oil issue identified in the inspection notes, as oil level defects or active leaks are priority three items ahead of a heat event under SOP-016. Because the unit is 43 years old with an ONAN cooling type, apply the loading restrictions in MG-021 if the defect cannot be resolved before the event, in accordance with MG-023. Record every de-rating applied including the reason, value, and period as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

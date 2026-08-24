@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Underhill Hollow 230/34kV (SUB-SGW-095) and apply the loading restriction in MG-021 until the oil remedial work is complete and a retest returns within specification, as required by SOP-013 for a failed sample during a forecast heat event. For sustained events forecast to run beyond 48 hours with warm overnight minima, run available forced cooling continuously through the overnight period and apply the MG-021 loading reduction from the third day per MG-025. The supplied documents do not cover other specific mitigations for the oil issue or prior faults.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "SOP-013"
+  ],
+  "status": "ok"
+}

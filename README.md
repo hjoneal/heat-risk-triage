@@ -1,82 +1,70 @@
 # heat-risk-triage
 
-Ranking substation transformers by heat-failure risk 72 hours ahead of a forecast heat event, so a
-crew with a fixed number of interventions knows which assets to visit.
+Ranking 900 substation transformers by heat-failure risk 72 hours ahead of a forecast heat event, so
+a crew that can reach 15 of them knows which 15.
 
-The unit of output is a ranked queue with an explanation attached to every row: which factors drove
-the score, what the recorded condition of the asset is, and which maintenance procedure applies.
+The output is a ranked queue with an explanation attached to every row: which factors drove the
+score, what the recorded condition of the asset is, in the inspector's own words, and which
+maintenance procedure applies.
 
-## Status
-
-Specification complete; implementation not started. This repository currently contains the
-architecture diagram and this README. No results have been produced, so none are reported below.
+All data is synthetic. Every number below came out of a run and is reproduced from the files in
+`output/`.
 
 ## Problem
 
-A utility operating a fleet of substation transformers across an inland corridor receives a heat
-forecast. Some assets will fail; the crew can reach only a fraction of the fleet before the event
-begins. Ranking by forecast severity alone is wrong, because failure depends on the interaction
-between hazard exposure and the condition the asset is already in — and condition is recorded in
-free-text inspection notes rather than in structured fields.
+A utility receives a heat forecast. Some transformers will fail; the crew can reach a fraction of the
+fleet before the event begins. Ranking by forecast severity alone is wrong, because failure depends
+on the interaction between hazard exposure and the condition the asset is already in — and condition
+is recorded in free-text inspection notes rather than in structured fields.
 
-Heat risk also accumulates. Transformers shed heat overnight; during a multi-day event with warm
-overnight minimums they never fully reset, so core temperature ratchets upward across days. A
-five-day moderate event can be more damaging than a two-day severe one at a higher peak. The
-thermal stress feature is therefore an accumulated integral over the event, never a peak value.
+Heat damage also accumulates. Oil temperature lags ambient by a few hours, so a transformer
+substantially *does* reset overnight: at the fast end of the modelled range it sheds 96% of its
+offset over an eight-hour night. What the overnight minimum sets is the **floor it resets to**. A
+night at 27°C instead of 18°C starts the next day nine degrees hotter, and each successive day
+reaches a higher peak from a higher base. Because insulation ageing is Arrhenius and irreversible,
+five days of elevated temperature does five days of damage that the weather breaking does not give
+back.
+
+That is why thermal stress here is accumulated *equivalent ageing* rather than a peak, and why
+`max_overnight_min_c` and `consecutive_warm_nights` are features alongside degree-hours.
 
 ## Architecture
 
 ![Architecture](heat_risk_architecture_diagram.svg)
 
-Three layers plus deterministic validation, wired as a batch pipeline that writes JSON to `output/`.
-The web application only reads it.
+A batch pipeline writes JSON to `output/`; the web application only reads it.
 
-1. **Extraction** — an LLM turns free-text inspection notes into four boolean condition flags, each
-   with a verbatim evidence quote. A short keyword baseline exists solely as an evaluation
-   comparator.
-2. **Risk model** — 13 features (hazard, asset static, condition), standardised, then logistic
-   regression. Grouped cross-validation on event id, evaluated on pooled out-of-fold predictions,
-   refit on all historical events to score the demo scenarios.
-3. **Retrieval** — BM25 over a corpus of procedure documents, with the query built deterministically
-   from the asset's positive feature contributions, followed by an LLM action brief that may cite
-   only the retrieved documents.
-4. **Validation** — extraction evaluated against generation-time truth, retrieval assertions,
-   citation integrity, and a leakage check.
+1. **Extraction** (`extract.py`) — an LLM turns 1,800 free-text inspection notes into four boolean
+   condition flags, each with a verbatim evidence quote. Two rules do the work: a defect the note
+   records as *fixed* is false, and a defect the note records as *absent* is false. A ~20-line
+   keyword baseline exists only as an evaluation comparator.
+2. **Risk model** (`features.py`, `model.py`) — 13 features, `StandardScaler` → `LogisticRegression`,
+   `GroupKFold(5)` grouped on `event_id`, evaluated on pooled out-of-fold predictions and refit on
+   all 16 events to score the three demo scenarios.
+3. **Retrieval** (`retrieve.py`) — BM25 over 25 procedure documents, with the query built
+   deterministically from the asset's positive feature contributions, then an LLM action brief that
+   may cite only the retrieved documents.
+4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, retrieval
+   assertions, citation integrity, and a leakage check.
 
-Priority is `risk × customers_served` — expected customers affected — so calibration matters more
-than discrimination. There is no class weighting, resampling or post-hoc calibration layer.
+Priority is `risk × customers_served` — expected customers affected — so calibration matters as much
+as discrimination. There is no class weighting, no resampling, and no post-hoc calibration layer.
 
-Explanations are the model's own coefficients: each contribution is `coefficient × standardised
-value`, and the contributions sum to `logit(p) − intercept`. No SHAP, no surrogate model.
+Explanations are the model's own arithmetic: each contribution is `coefficient × standardised value`,
+and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
 
-## Design constraints
+### Design constraints
 
-- **Deterministic.** Fixed seed. The same inputs produce identical outputs on every run.
-- **Runs with no API key.** Every LLM call is cached to disk by content hash and the cache
-  directories are committed.
-- **Offline at serve time.** The application loads precomputed JSON at startup. No inference, no
-  network call, no CDN asset, no web font, no map tile at request time.
-- **No leakage.** Hazard features derive from ambient temperature only. Latent asset state never
-  enters the feature matrix; the hidden-state files are diagnostic and read only by validation.
-
-## Planned layout
-
-```
-config.py                  all constants
-generate_data.py           synthetic data generation
-extract.py                 Layer 1 — LLM extraction
-features.py                feature computation
-model.py                   Layer 2 — train, evaluate, score
-retrieve.py                Layer 3 — BM25 + brief generation
-validate.py                validation checks, writes report
-app.py                     FastAPI application
-templates/  static/        server-rendered UI
-data/                      generated artefacts
-cache/                     cached LLM results (committed)
-output/                    scored JSON, briefs, metrics, plots
-tests/
-notebooks/
-```
+- **Deterministic.** One seed. The same inputs produce byte-identical outputs; `generated_at` is a
+  fixed constant rather than the clock, for that reason.
+- **Runs with no API key.** Every LLM call is cached to disk by content hash and the cache is
+  committed. `--offline` fails loudly on a cache miss rather than reaching for the network.
+- **Offline at serve time.** `app.py` loads the scored JSON and briefs at startup. No inference, no
+  network call, no CDN asset, no web font, no map tile at request time. Its only write is appending
+  to `output/decisions.jsonl`.
+- **No leakage.** Hazard features derive from ambient temperature alone. `theta`, `tau`, `load_rise`,
+  `condition` and `thermal_stress` never enter the feature matrix. Only `validate.py` opens the
+  diagnostic files.
 
 ## Running
 
@@ -95,21 +83,165 @@ pytest tests/
 uvicorn app:app --reload
 ```
 
-Each script is independently re-runnable and idempotent.
+Each script is independently re-runnable and idempotent. `extract.py` and `retrieve.py` accept
+`--offline` to read the committed cache only. To re-run the LLM layers against the API, put a key in
+`.env` as `GEMINI_API_KEY=...` — `.env` is gitignored.
 
-## Data
+## Scale
 
-All data is synthetic and generated by `generate_data.py` from a fixed seed. Scale: 150 assets ×
-16 historical heat events for training, 3 demo scenarios, 300 inspection notes, 25 procedure
-documents.
+| Item | Count |
+|---|---|
+| Assets | 900 |
+| Historical heat events | 16 |
+| Training rows | 14,400 |
+| Failures | 163 (1.13%) |
+| Inspection notes | 1,800 (1,253 distinct texts) |
+| Procedure documents | 25 |
+| Demo scenarios | 3 |
+| Action briefs | 75 |
+| Crew capacity | 15 |
 
-The 150-asset corridor is a subset of a fleet of roughly 400 transformers; 150 is the number used
-everywhere in code.
+The fleet size is derived from the client brief rather than assumed: 8M residents ÷ ~2.5 per
+household ≈ 3.2M customer accounts; ÷ ~8,000 per substation ≈ 400 distribution substations; × ~2.2
+transformers each ≈ 900. The generated fleet totals 3,216,114 customers, which closes the loop.
 
-## Results
+## Assumptions
 
-None yet. Measured values will be recorded here once the pipeline has been run, taken directly from
-`output/` without adjustment.
+Every constant lives in `config.py` marked *chosen*, *measured* or *assumed*. The ones that carry
+weight:
+
+| Assumption | Value | Basis |
+|---|---|---|
+| Failure rate per asset per event | 0.01 | Inflated ~12× for trainability; see below |
+| Ageing reference temperature | 38.0 °C | Proxy scale; this model tracks bulk oil, not winding hot-spot |
+| Montsinger halving interval | 6 °C | Ageing rate doubles per 6 °C; literature range 6–8 |
+| Oil thermal time constant | 3–8 h | Bulk oil, not winding (which responds in minutes) |
+| Warm-night threshold | 24.0 °C | Overnight minimum above which recovery is materially reduced |
+| Hazard coefficient scale | 2.4 | Measured; the centre of the band both gates leave |
+| Customers per MVA | 92 | Substations run N-1, so customers per transformer sit well below rating |
+| Cooling offset | ONAN +2, ONAF 0, OFAF −2 °C | Forced cooling sheds heat |
+| Condition weights | age .35, maintenance .30, faults .20, noise .15 | Assumed |
+
+### The failure rate is not an annual rate
+
+CIGRE Technical Brochure 642 (2015), WG A2.37, *Transformer Reliability Survey* — 964 major failures
+across 167,459 transformer-years, 56 utilities, 21 countries — puts substation transformer failure
+below 1% per year: 0.8% for pre-1978 units, 0.4% for post-1978 units up to 20 years old. This fleet
+skews old, so 0.8% applies.
+
+**CIGRE supports the annual figure only.** It says nothing about a per-event rate. Deriving one — 900
+assets × 0.8% annual × ~40% heat-attributable ÷ ~4 events a year — gives roughly **0.08% per
+asset-event**. The generator uses **1%**, about twelve times that, because at the real rate 14,400
+rows would carry about a dozen positives, too few to fit 13 features.
+
+This scales predicted probabilities and preserves ranking, and the system consumes a ranking.
+Calibration is to the synthetic base rate; a production deployment would recalibrate against observed
+outcomes.
+
+## Measured results
+
+### Data gates
+
+All six pass. `output/data_checks.txt`.
+
+| Gate | Measured | Required |
+|---|---|---|
+| 1. Realised failure rate | 0.0113 | 0.008–0.013 |
+| 2. Long-moderate stress > short-severe | 0.95 vs 0.71 equivalent days | strictly greater |
+| 3. Non-zero stress on heat events | 0.9877 | ≥ 0.80 |
+| 4. Mild-event failure rate | 0.0019 | < 0.002 |
+| 5. Degree-hours vs peak correlation | 0.4961 | < 0.85 |
+| 6. Failures in better-maintained half | 0.2086 (34 of 163) | ≥ 0.20 |
+
+Gates 4 and 6 pull in opposite directions and leave a feasible band of [2.30, 2.50] for the hazard
+scale; 2.4 is its centre. Both turn on single-figure failure counts, so the band is narrow by
+construction. Details in `DECISIONS.md` D-014.
+
+Failures by event type: mild 5, short-severe 19, long-moderate 37, long-severe 102. All 16 events
+carry at least one failure.
+
+### Extraction
+
+1,800 notes, `gemini-3.5-flash-lite`, temperature 0. 1,253 API calls (duplicate note texts hit the
+cache), 1,380,764 input and 182,123 output tokens.
+
+**Zero extractions failed, zero were retried, zero came back wrapped in markdown fences. Zero of
+1,708 evidence quotes were not found verbatim in their note** (spec expectation: under 2%).
+
+| Flag | Actual positives | LLM P | LLM R | Keyword P | Keyword R |
+|---|---|---|---|---|---|
+| Cooling degraded | 380 | 0.922 | 0.958 | 0.652 | 1.000 |
+| Ventilation obstructed | 374 | 0.895 | 0.979 | 0.744 | 1.000 |
+| Oil issue | 407 | 0.875 | 0.963 | 0.702 | 0.725 |
+| Outstanding remedial work | 390 | 0.855 | 1.000 | 0.826 | 0.826 |
+
+The keyword baseline reaches recall 1.000 on two flags precisely because it cannot tell a fixed
+defect from an outstanding one — it flags everything the words appear in. The cost shows up in
+precision, and in the category breakdown:
+
+| Note category | Notes | LLM error rate | Keyword error rate |
+|---|---|---|---|
+| Straightforward positive | 864 | 0.0110 | 0.0946 |
+| Resolution present | 144 | 0.1302 | 0.3368 |
+| Negation present | 148 | 0.2061 | 0.3108 |
+| Distractors only | 644 | 0.0000 | 0.0000 |
+
+Negation is the hardest case for both. A 20.6% error rate on it is the weakest measured result in
+the extraction layer and is not hidden here.
+
+### Model
+
+Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`.
+
+| Variant | Features | AUC | Precision@15 | Recall@15 | Failures per 15 visits | Lift |
+|---|---|---|---|---|---|---|
+| Heuristic (peak × age) | 2 | 0.5830 | 0.0000 | 0.0000 | 0.00 | 0.0× |
+| Without notes | 9 | 0.8223 | 0.0458 | 0.0377 | 0.69 | 4.0× |
+| Full model | 13 | 0.8261 | 0.0792 | 0.0609 | 1.19 | 7.0× |
+
+Random selection of 15 assets would find 0.17 failures at the 1.13% base rate.
+
+**AUC 0.8261 is above the 0.70–0.82 range the specification expected.** It is recorded as measured
+and no parameter was adjusted to move it. It sits below the 0.90 line that would indicate leakage,
+and `validate.py` confirms the highest correlation between any feature and the hidden state is
+0.7695 (degree-hours against thermal stress), well under the 0.95 threshold.
+
+**The notes move AUC by 0.0038 and precision@15 from 0.69 to 1.19 failures per 15 visits.** Those two
+readings disagree because AUC integrates over every threshold and the crew only ever sees the top 15
+of 900. A feature that sharpens the head of the ranking barely registers in AUC and matters entirely
+in practice. Both are reported; neither alone is the honest summary.
+
+Mean within-event AUC is **0.6219** — the operational question is "given *this* forecast, which
+assets", and pooled AUC flatters it by including pairs that straddle two different events.
+
+Calibration: Brier **0.01049** against **0.01119** for a base-rate-only baseline. Reliability diagram
+in `output/calibration.png`.
+
+Regularisation check, recorded not searched: C=0.01 → 0.8135, C=0.1 → 0.8264, C=1.0 → 0.8261,
+C=10.0 → 0.8219.
+
+**Coefficient signs.** Degree-hours (+1.14), peak load (+0.54), time since maintenance (+0.20),
+prior faults (+0.11), age (+0.05) and all four condition flags (+0.01 to +0.27) are positive, as
+expected. Cooling type is −0.84, which is also correct: the ordinal runs ONAN→ONAF→OFAF, so a higher
+value means better cooling.
+
+`max_overnight_min_c` comes out at **−0.30**, which looks wrong and is not. Univariately it
+correlates **+0.094** with failure — the expected direction — but **+0.933** with degree-hours, which
+takes the shared signal and the +1.14 coefficient. The negative value is the residual. A coefficient
+on a feature collinear at r=0.93 with another is not interpretable on its own.
+
+### Retrieval and briefs
+
+75 briefs across three scenarios. **Citation integrity 100.00% (75 of 75)** — every brief cites only
+documents it was given, against a spec expectation of ≥99%.
+
+Top BM25 score per query ranges **13.97 to 25.59**, median 23.08. `BM25_FLOOR` is 12.0, below the
+observed minimum. **It does not trigger on any of the 75 queries**, so the `no_match` path is
+implemented and tested but unreached; the floor was not raised into the main cluster to make it fire.
+See `DECISIONS.md` D-018.
+
+79 tests pass. The cold-weather negative control is asserted exhaustively over the 39-term vocabulary
+`build_query` can emit, not only over hand-written queries.
 
 ## Scope exclusions
 
@@ -126,8 +258,57 @@ Out of scope by decision, not oversight.
 | Spatial / GIS analysis | GIS is a data dependency here, not an AI capability. Location and criticality enter as pre-computed fields. | PostGIS or equivalent, network topology model |
 | Real-time integration | Runs on fixed forecast scenarios against cached data so it is reproducible and demonstrable offline. | Live feed adapters, scheduling, monitoring |
 | LLM-as-judge evaluation of brief quality | Deterministic checks cover the failure modes that change decisions. A judge model would itself need validating. | A labelled set of good and bad briefs, plus human agreement measurement |
-| Map view | Would require external tile services, breaking the offline property. Latitude and longitude are stored as integration stubs only. | Local tile server or an accepted external dependency |
+| Map view | Would require external tile services, breaking the offline property. `lat`/`lon` are stored as integration stubs only. | Local tile server or an accepted external dependency |
 
 ## Limitations
 
-To be recorded against measured behaviour once the pipeline has been run.
+- **All data is synthetic.** The failure process is invented, and the model recovers a signal that
+  was put there deliberately. Nothing here is evidence about real transformers.
+- **The per-event failure rate is inflated about twelvefold** for trainability. Probabilities are
+  calibrated to the synthetic world, not the real one. Ranking is unaffected.
+- **Hazard is uniform across the fleet.** One hourly temperature series applies to all 900 assets. A
+  real deployment would apply a forecast grid; `district`, `lat` and `lon` are carried for exactly
+  that extension. This is why the scenarios carry no regional names.
+- **Only one of the two heat pathways is modelled.** Ambient heating the coolant is represented;
+  ambient driving electrical demand upward, which heats the windings further, is not. That is half of
+  the "capacity falls while demand rises" argument, and the prototype does not make it.
+- **Condition features describe the asset as of the forecast, not as of each historical event.** The
+  register holds a single maintenance date and the notes are undated relative to past events, so
+  `days_since_maintenance` and the four flags are static across the training window.
+- **The model tracks bulk oil, not winding hot-spot.** Hot-spot is the governing variable in the
+  standards, and the reference temperature here is a proxy on a different scale.
+- **The BM25 floor never fires** on the current corpus and query construction, so the `no_match`
+  path is untested against real traffic.
+- **30.4% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
+  The distractors-only evaluation category rests on far fewer independent items than its note count
+  suggests.
+- **Mean within-event AUC is 0.6219.** Within a single forecast the ranking is meaningfully better
+  than chance but not strong, and that is the number the operational task actually depends on.
+- **Missed failures are the ones with no recorded defect.** The design ranks recorded condition
+  against forecast stress, so an asset whose condition was never written down is invisible to it.
+  Continuous telemetry is the thing that would catch those, and it is a listed exclusion.
+
+## Repository
+
+```
+config.py                  all constants
+generate_data.py           synthetic data generation and six hard gates
+extract.py                 Layer 1 — LLM extraction, keyword baseline
+features.py                feature computation, leakage boundary
+model.py                   Layer 2 — train, evaluate, score, explain
+retrieve.py                Layer 3 — BM25 + brief generation
+llm.py                     one LLM call and the disk cache
+validate.py                extraction eval, leakage check, citation integrity
+app.py                     FastAPI application
+templates/  static/        server-rendered UI, no JavaScript
+data/                      generated artefacts and the procedure corpus
+cache/                     cached LLM results, committed
+output/                    scored JSON, briefs, metrics, plots
+notebooks/                 analytical record, committed with outputs
+tests/                     retrieval assertions, citation integrity
+DECISIONS.md               20 entries, append-only
+```
+
+`DECISIONS.md` records every non-obvious choice, including the three that changed the shape of the
+build: the thermal stress definition (D-008), the fleet-scale derivation (D-011), and the failure
+rate (D-012).

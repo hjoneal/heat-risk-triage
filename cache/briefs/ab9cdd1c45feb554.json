@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area, and clear any obstruction before the forecast heat event (SOP-015). For this ONAN unit, also verify whether any maintenance interval is overdue, as an asset with an unverified cooling system requires the detailed inspection to be brought forward in preference to accepting exposure (REG-042). Record every de-rating applied along with its reason, value, and period, and ensure the full rating is restored only after correcting and verifying the underlying condition (MG-021).",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-015",
+    "REG-042"
+  ],
+  "status": "ok"
+}

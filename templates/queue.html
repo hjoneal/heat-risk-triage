@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{{ scenario.scenario_label }} — Heat risk triage{% endblock %}
+{% block content %}
+
+<section class="hazard" aria-label="Forecast hazard">
+  <div class="hazard-figures">
+    <div class="figure"><span class="value">{{ "%.1f"|format(scenario.hazard.peak_temp_c) }}</span><span class="unit">°C</span><span class="label">Peak temperature</span></div>
+    <div class="figure"><span class="value">{{ scenario.hazard.consecutive_warm_nights }}</span><span class="label">Consecutive warm nights</span></div>
+    <div class="figure"><span class="value">{{ "%.0f"|format(scenario.hazard.degree_hours_above_30) }}</span><span class="label">Degree-hours above 30°C</span></div>
+    <div class="figure"><span class="value">{{ "%.1f"|format(scenario.hazard.max_overnight_min_c) }}</span><span class="unit">°C</span><span class="label">Warmest overnight minimum</span></div>
+    <div class="figure"><span class="value">{{ scenario.hazard.event_duration_days }}</span><span class="label">Days</span></div>
+  </div>
+
+  <figure class="sparkline">
+    <svg viewBox="0 0 {{ sparkline.width }} {{ sparkline.height }}" width="100%" height="{{ sparkline.height }}"
+         role="img" aria-label="Hourly ambient temperature across the event, from {{ sparkline.low }} to {{ sparkline.high }} degrees Celsius">
+      <polyline points="{{ sparkline.points }}" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+      {% for m in sparkline.markers %}
+        <circle cx="{{ m.x }}" cy="{{ m.y }}" r="2.5" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.25"/>
+      {% endfor %}
+    </svg>
+    <figcaption>Ambient temperature, hourly. Circles mark each overnight minimum — the floor the asset resets to before the next day.</figcaption>
+  </figure>
+</section>
+
+<p class="sortbar">
+  Sorted by {% if sort == 'risk' %}risk{% else %}expected impact{% endif %}.
+  {% if sort == 'risk' %}
+    <a href="/scenario/{{ scenario_id }}">Sort by expected impact</a>
+  {% else %}
+    <a href="/scenario/{{ scenario_id }}?sort=risk">Sort by risk</a>
+  {% endif %}
+</p>
+
+{% if not rows %}
+  <p class="empty">No assets exceed the review threshold for this forecast.</p>
+{% else %}
+<table class="queue">
+  <thead>
+    <tr>
+      <th scope="col" class="num">#</th>
+      <th scope="col">Asset</th>
+      <th scope="col" class="num">Risk</th>
+      <th scope="col" class="num">Customers</th>
+      <th scope="col" class="num">Expected impact</th>
+      <th scope="col" class="num">Criticality</th>
+      <th scope="col"><span class="visually-hidden">Decision</span></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    {% if row.position == crew_capacity + 1 %}
+    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} interventions</td></tr>
+    {% endif %}
+    <tr>
+      <td class="num rank">{{ row.position }}</td>
+      <td class="asset">
+        <a href="/scenario/{{ scenario_id }}/asset/{{ row.asset_id }}">{{ row.name }}</a>
+        <span class="asset-id">{{ row.asset_id }} · {{ row.district }}</span>
+        {% if row.extraction_status == 'failed' %}
+          <span class="reason">Condition data unavailable</span>
+        {% else %}
+          <span class="reason">{{ row.reasons | join(' · ') }}</span>
+        {% endif %}
+      </td>
+      <td class="num risk">
+        <span class="risk-figure">{{ "%.1f"|format(row.risk_pct) }}%</span>
+        <span class="risk-bar heat-{{ row.heat_step }}" aria-hidden="true"><span style="width: {{ "%.1f"|format(row.bar_pct) }}%"></span></span>
+      </td>
+      <td class="num">{{ "{:,}".format(row.customers_served) }}</td>
+      <td class="num">{{ "{:,.0f}".format(row.priority) }}</td>
+      <td class="num"><span class="criticality">{{ row.criticality }}</span></td>
+      <td class="decided">{% if row.decision %}<span title="{{ row.decision }}">✓</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<p class="footnote">
+  Expected impact is risk multiplied by customers served. Scored
+  {{ scenario.generated_at }} from cached extractions ({{ scenario.extraction_model }}).
+</p>
+{% endblock %}

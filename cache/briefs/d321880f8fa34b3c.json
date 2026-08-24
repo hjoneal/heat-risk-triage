@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect Langmere Common transformer SUB-SGW-331 for oil issues and apply the loading restriction in MG-021 until remedial work is complete and a retest returns within specification, as required by SOP-013. The supplied documents do not cover any other specific action for this asset's cooling type or age.",
+  "cited_doc_ids": [
+    "SOP-013",
+    "MG-021"
+  ],
+  "status": "ok"
+}

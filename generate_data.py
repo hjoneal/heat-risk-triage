@@ -25,15 +25,22 @@ import config
 # it can tell a defect that is outstanding from one that has been fixed.
 # ---------------------------------------------------------------------------
 
+# 40 x 30 = 1,200 combinations, drawn without replacement for 900 assets.
 NAME_FIRST = [
     "Cedar", "Willow", "Granite", "Meadow", "Ashford", "Bellview", "Kingsley",
     "Marlow", "Pinecrest", "Redwater", "Stonebridge", "Thornton", "Wexford",
-    "Fairmount", "Halloway",
+    "Fairmount", "Halloway", "Aldergrove", "Briarcliff", "Camden", "Draycott",
+    "Eastvale", "Fernbank", "Glenmoor", "Harrowgate", "Ivybridge", "Jessup",
+    "Kelvedon", "Langmere", "Mossvale", "Northcott", "Oakhurst", "Penrose",
+    "Quarrydale", "Rushmere", "Sandbourne", "Tilbrook", "Underhill", "Vernham",
+    "Westmarch", "Yarrow", "Zeller",
 ]
 
 NAME_SECOND = [
     "Hollow", "Ridge", "Creek", "Crossing", "Heights", "Junction", "Landing",
-    "Mill", "Park", "Springs", "Terrace", "Yard",
+    "Mill", "Park", "Springs", "Terrace", "Yard", "Bend", "Bluff", "Common",
+    "Dale", "Ferry", "Gate", "Green", "Grove", "Hill", "Lock", "Moor", "Point",
+    "Quay", "Reach", "Siding", "Vale", "Water", "Works",
 ]
 
 # Voltage class follows the rating, as it does on a real register.

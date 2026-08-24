@@ -1,0 +1,8 @@
+{
+  "brief": "Execute clearance work for any vegetation or obstruction defects as this takes precedence over other remedial activity ahead of a forecast heat event (SOP-011). Because the asset uses ONAN cooling, reduce permissible load in proportion to any reduced cooling capacity in addition to ambient de-rating (MG-021). Restore the full rating only when the underlying condition has been corrected and verified, and record every de-rating applied with its reason, value, and period (MG-021).",
+  "cited_doc_ids": [
+    "SOP-011",
+    "MG-021"
+  ],
+  "status": "ok"
+}

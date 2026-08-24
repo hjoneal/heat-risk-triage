@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise vegetation clearance work over other remedial activity for Willow Common 230/34kV (SUB-SGW-165) ahead of the heat event, as restricted airflow removes the cooling margin the unit relies on [SOP-011]. Complete work in categories 1 to 3 before the event begins wherever crew capacity allows [SOP-016]. A unit of advanced age with a history of high loading has a reduced margin against mechanical failure and should be prioritised for pre-event attention [MG-023].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

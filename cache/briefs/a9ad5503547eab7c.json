@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect the cooling system using the manual test facility before the forecast event begins, confirming that every fan starts and runs up to speed [SOP-014]. Because the unit's ONAF cooling has an oil issue and a warm overnight minimum, apply any required de-rating for reduced cooling and ambient conditions in accordance with MG-021 [MG-021, SOP-014]. Record the outcome of every stage test, the number of fans proved, and any defect found [SOP-014].",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-014"
+  ],
+  "status": "ok"
+}

@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstructions before the forecast heat event [SOP-015]. Maintain a minimum clearance of two metres between vegetation and the radiator face, and one metre between growth and the compound fence line [SOP-011]. Vegetation and obstruction clearance takes precedence over other remedial activity to restore the cooling margin [SOP-015, SOP-011].",
+  "cited_doc_ids": [
+    "SOP-015",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

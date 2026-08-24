@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": null,
+      "present": false
+    },
+    "ventilation_obstructed": {
+      "evidence": "Intake louvres on the north wall partially blocked by wind-blown debris",
+      "present": true
+    }
+  },
+  "input_tokens": 770,
+  "inspection_id": "INS-789-1",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 81,
+  "prompt_version": "v1"
+}
