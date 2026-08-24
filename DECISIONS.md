@@ -547,9 +547,19 @@ fall below it. Rejected — that value sits inside the main cluster, is chosen o
 to make an assertion pass, and would start suppressing retrieval for assets whose
 documents are perfectly reasonable.
 
-**What this means for the design.** The `no_match` path and its fixed text are
-implemented and tested but unreached. That is a real limitation and is stated in
-the README rather than hidden behind a threshold tuned to exercise it.
+**What this means for the design.** No real query reaches the `no_match` path.
+Left there, the branch and its fixed text would be unexecuted code, so two unit
+tests reach it with a synthetic degenerate query — which covers the behaviour
+without moving the production threshold to manufacture a trigger. That the path
+is unreachable in production is stated as a limitation rather than hidden behind
+a tuned threshold.
+
+The concrete cost of a floor that did fire: at 14.5 it suppresses exactly one of
+the 75 queries, baseline-mild / SUB-SGW-095, whose three retrieved documents —
+MG-021 de-rating, SOP-014 cooling inspection, MG-025 overnight recovery — are
+the right three for an asset driven by peak load, a warm overnight minimum, an
+oil issue and degraded cooling. The single query it would suppress is one where
+retrieval worked.
 
 **What would change it:** A larger or more heterogeneous corpus, where a query
 built from one weak contribution could genuinely miss; or query construction that

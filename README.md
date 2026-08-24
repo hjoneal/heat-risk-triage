@@ -236,11 +236,12 @@ on a feature collinear at r=0.93 with another is not interpretable on its own.
 documents it was given, against a spec expectation of ≥99%.
 
 Top BM25 score per query ranges **13.97 to 25.59**, median 23.08. `BM25_FLOOR` is 12.0, below the
-observed minimum. **It does not trigger on any of the 75 queries**, so the `no_match` path is
-implemented and tested but unreached; the floor was not raised into the main cluster to make it fire.
-See `DECISIONS.md` D-018.
+observed minimum. **It does not trigger on any of the 75 queries**, so no real query reaches the
+`no_match` path; the floor was not raised into the main cluster to make it fire. The branch is
+covered by two unit tests that reach it with a synthetic degenerate query instead. See
+`DECISIONS.md` D-018.
 
-79 tests pass. The cold-weather negative control is asserted exhaustively over the 39-term vocabulary
+81 tests pass. The cold-weather negative control is asserted exhaustively over the 39-term vocabulary
 `build_query` can emit, not only over hand-written queries.
 
 ## Scope exclusions
@@ -277,8 +278,9 @@ Out of scope by decision, not oversight.
   `days_since_maintenance` and the four flags are static across the training window.
 - **The model tracks bulk oil, not winding hot-spot.** Hot-spot is the governing variable in the
   standards, and the reference temperature here is a proxy on a different scale.
-- **The BM25 floor never fires** on the current corpus and query construction, so the `no_match`
-  path is untested against real traffic.
+- **The BM25 floor never fires** on the current corpus and query construction. Suppressing the
+  weakest query would mean discarding three correctly retrieved documents, so the `no_match` path is
+  reached only by unit tests, never by real traffic.
 - **30.4% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
   The distractors-only evaluation category rests on far fewer independent items than its note count
   suggests.

@@ -165,3 +165,35 @@ def test_retrieved_documents_respect_the_floor():
         else:
             assert record["retrieved"], f"{scenario_id}/{asset_id} returned nothing but is not no_match"
             assert record["retrieved"][0]["score"] >= config.BM25_FLOOR
+
+
+def test_no_match_branch_fires_on_a_degenerate_query():
+    """Exercise the floor's branch directly, since no real query reaches it.
+
+    `BM25_FLOOR` is set below the whole observed distribution and never fires on
+    the 75 generated queries (DECISIONS.md D-018), so without this the branch and
+    its fixed text would be unexecuted code. A one-term query against vocabulary
+    the corpus barely contains is the cheap way to reach it without moving the
+    production threshold to manufacture a trigger.
+    """
+    hits, status, top_score = retrieve.retrieve(INDEX, DOCUMENTS, ["zzzznonsense"])
+    assert status == "no_match"
+    assert hits == []
+    assert top_score < config.BM25_FLOOR
+
+
+def test_no_match_produces_the_fixed_brief_and_makes_no_call():
+    """A no_match asset gets fixed text and no LLM call.
+
+    `offline=True` would raise on a cache miss, so reaching the fixed text
+    without raising proves no call was attempted.
+    """
+    brief = retrieve.generate_brief(
+        asset={"asset_id": "SUB-SGW-001", "name": "x", "cooling_type": "ONAN",
+               "customers_served": 1000, "criticality": 3},
+        contributions=[], retrieved=[], documents_by_id={},
+        scenario_id="short-severe", model="unused", offline=True,
+    )
+    assert brief["status"] == "no_match"
+    assert brief["brief"] == config.NO_MATCH_BRIEF
+    assert brief["cited_doc_ids"] == []
