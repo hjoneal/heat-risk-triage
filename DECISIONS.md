@@ -624,3 +624,43 @@ overstate it.
 
 **What would change it:** A crew capacity closer to the fleet size, which would
 make the two metrics converge.
+
+
+---
+
+## D-021 — Results are reported against the Bayes ceiling, not against perfection
+
+**Decision:** `validate.py` computes and reports how the model ranks against the
+true generative probability, and `output/validation.md` and the README carry it
+alongside every headline figure.
+
+**Measured:**
+
+| Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
+|---|---|---|---|
+| The model (out-of-fold) | 0.8261 | 0.6219 | 0.0792 |
+| True generative probability | 0.8483 | 0.7192 | 0.0833 |
+
+The model reaches 86.5% of achievable within-event AUC and 95.0% of achievable
+precision at the crew's capacity.
+
+**Why it was added.** Precision@15 of 0.0792 means the crew finds about 1.2
+failures in 15 visits, which reads as a weak system. Measured against a
+*clairvoyant* ranking — one that simply knows which assets failed — it looks
+worse still, capturing 17.9% of what that ranking achieves. But a clairvoyant
+ranking is not a ceiling any model can approach, because the outcome is a
+Bernoulli draw at roughly 1% and most of its variation is irreducible. The
+honest ceiling is the true generative probability, and against that the model
+has little headroom left.
+
+Reporting the operational numbers without this context would understate the
+model; reporting the lift over random without it would overstate it. Both
+appear, with the ceiling between them.
+
+**The diagnostic reads hidden state, so it lives in `validate.py`** — the only
+module permitted to — and the generator intercept is re-solved by importing
+`generate_data.solve_intercept` rather than stored, so it cannot drift from the
+generator it describes.
+
+**What would change it:** Real outcome data, where no true probability exists and
+the ceiling would have to be estimated rather than computed.

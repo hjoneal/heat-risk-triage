@@ -12,10 +12,13 @@ import json
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import roc_auc_score
 
 import config
 import extract
 import features
+import generate_data
+import model
 
 
 def precision_recall(predicted, actual):
@@ -156,6 +159,57 @@ def leakage_check(assets, hazard_table, flags, outcomes):
     return correlations, worst
 
 
+def bayes_ceiling(assets, hazard_table, flags, outcomes):
+    """How close the model gets to the best any model could do.
+
+    Ranking by the true generative probability is the ceiling: it uses the exact
+    hidden state that produced the outcomes. Whatever it leaves on the table is
+    irreducible — outcomes are Bernoulli draws at roughly 1%, so most of the
+    variation is coin flip and no feature set can recover it.
+
+    Without this, precision@15 of 0.079 reads as a weak model. Against the
+    ceiling it reads as the problem being mostly noise.
+    """
+    hidden = pd.read_csv(config.DATA_DIR / "hidden_asset_state.csv")
+    hidden_stress = pd.read_csv(config.DATA_DIR / "hidden_thermal_stress.csv")
+
+    pairs, labels, groups = features.training_pairs(outcomes)
+    matrix = features.build_feature_matrix(assets, hazard_table, flags, pairs)
+    predicted = model.out_of_fold_predictions(matrix.to_numpy(), labels, groups)
+
+    stress_by_pair = {(r.asset_id, r.event_id): r.thermal_stress
+                      for r in hidden_stress.itertuples()}
+    condition_by_asset = dict(zip(hidden["asset_id"], hidden["condition"]))
+    load_by_asset = dict(zip(assets["asset_id"], assets["peak_load_pct"]))
+
+    stress = np.array([stress_by_pair[(a, e)] for a, e in
+                       zip(pairs["asset_id"], pairs["event_id"])])
+    condition = pairs["asset_id"].map(condition_by_asset).to_numpy(dtype=float)
+    load = pairs["asset_id"].map(load_by_asset).to_numpy(dtype=float)
+
+    # Re-solved rather than stored, so it cannot drift from the generator.
+    intercept = generate_data.solve_intercept(stress, condition, load)
+    logits = generate_data.failure_logits(stress, condition, load, intercept)
+    true_probability = 1.0 / (1.0 + np.exp(-logits))
+
+    def summarise(scores):
+        return {
+            "pooled_auc": float(roc_auc_score(labels, scores)),
+            "within_event_auc": float(np.mean([
+                roc_auc_score(labels[groups == e], scores[groups == e])
+                for e in pd.unique(groups)
+                if 0 < labels[groups == e].sum() < (groups == e).sum()
+            ])),
+            "precision_at_capacity": float(np.mean([
+                labels[groups == e][np.argsort(-scores[groups == e])[:config.CREW_CAPACITY]].sum()
+                / config.CREW_CAPACITY
+                for e in pd.unique(groups) if labels[groups == e].sum() > 0
+            ])),
+        }
+
+    return {"model": summarise(predicted), "ceiling": summarise(true_probability)}
+
+
 def citation_integrity():
     """Pass rate across every brief, as a percentage."""
     total = 0
@@ -242,7 +296,7 @@ def write_extraction_eval(per_flag, by_category, checked, evidence_failures,
     path.write_text("\n".join(lines) + "\n")
 
 
-def write_validation(correlations, worst, citations, path):
+def write_validation(correlations, worst, ceiling, citations, path):
     lines = [
         "# Validation",
         "",
@@ -268,7 +322,33 @@ def write_validation(correlations, worst, citations, path):
             f"{row['vs_condition']:+.4f} | {row['vs_thermal_stress']:+.4f} |"
         )
 
-    lines += ["", "## Citation integrity", ""]
+    lines += [
+        "",
+        "## Ranking quality against the Bayes ceiling",
+        "",
+        "Ranking by the true generative probability is the best any model could do:",
+        "it uses the exact hidden state that produced the outcomes. Outcomes are",
+        "Bernoulli draws at roughly 1%, so most of the remaining variation is",
+        "irreducible.",
+        "",
+        "| Ranked by | Pooled AUC | Within-event AUC | Precision@15 |",
+        "|---|---|---|---|",
+        f"| The model (out-of-fold) | {ceiling['model']['pooled_auc']:.4f} | "
+        f"{ceiling['model']['within_event_auc']:.4f} | "
+        f"{ceiling['model']['precision_at_capacity']:.4f} |",
+        f"| True generative probability | {ceiling['ceiling']['pooled_auc']:.4f} | "
+        f"{ceiling['ceiling']['within_event_auc']:.4f} | "
+        f"{ceiling['ceiling']['precision_at_capacity']:.4f} |",
+        "",
+        f"The model reaches "
+        f"**{100 * ceiling['model']['within_event_auc'] / ceiling['ceiling']['within_event_auc']:.1f}%** "
+        f"of the achievable within-event AUC and "
+        f"**{100 * ceiling['model']['precision_at_capacity'] / ceiling['ceiling']['precision_at_capacity']:.1f}%** "
+        f"of the achievable precision at the crew's capacity.",
+        "",
+        "## Citation integrity",
+        "",
+    ]
     if citations is None:
         lines.append("Briefs not present; run `retrieve.py` before validating citations.")
     else:
@@ -304,14 +384,20 @@ def main():
     flags = features.asset_condition_flags(extractions)
     hazard_table = features.build_hazard_table(events, hourly)
     correlations, worst = leakage_check(assets, hazard_table, flags, outcomes)
+    ceiling = bayes_ceiling(assets, hazard_table, flags, outcomes)
     citations = citation_integrity()
 
-    write_validation(correlations, worst, citations, config.OUTPUT_DIR / "validation.md")
+    write_validation(correlations, worst, ceiling, citations, config.OUTPUT_DIR / "validation.md")
 
     print(f"extraction: {n_failed} failed of {len(inspections)}; "
           f"{evidence_failures} evidence quotes not verbatim of {checked} checked")
     print(f"leakage: highest |correlation| with hidden state {worst:.4f} "
           f"(threshold {config.LEAKAGE_CORRELATION_MAX})")
+    print(f"ceiling: model reaches "
+          f"{100 * ceiling['model']['within_event_auc'] / ceiling['ceiling']['within_event_auc']:.1f}% "
+          f"of achievable within-event AUC, "
+          f"{100 * ceiling['model']['precision_at_capacity'] / ceiling['ceiling']['precision_at_capacity']:.1f}% "
+          f"of achievable precision@15")
     if citations:
         print(f"citations: {citations['rate']:.2f}% clean ({citations['passing']}/{citations['total']})")
     for flag, result in per_flag.items():

@@ -27,6 +27,20 @@ Highest absolute correlation with hidden state: **0.7695** (threshold 0.95).
 | Peak load | -0.0276 | +0.2392 |
 | Prior heat-related faults | +0.2205 | -0.0203 |
 
+## Ranking quality against the Bayes ceiling
+
+Ranking by the true generative probability is the best any model could do:
+it uses the exact hidden state that produced the outcomes. Outcomes are
+Bernoulli draws at roughly 1%, so most of the remaining variation is
+irreducible.
+
+| Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
+|---|---|---|---|
+| The model (out-of-fold) | 0.8261 | 0.6219 | 0.0792 |
+| True generative probability | 0.8483 | 0.7192 | 0.0833 |
+
+The model reaches **86.5%** of the achievable within-event AUC and **95.0%** of the achievable precision at the crew's capacity.
+
 ## Citation integrity
 
 **100.00%** of briefs cite only documents they were given (75 of 75).

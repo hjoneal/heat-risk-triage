@@ -214,6 +214,20 @@ in practice. Both are reported; neither alone is the honest summary.
 Mean within-event AUC is **0.6219** — the operational question is "given *this* forecast, which
 assets", and pooled AUC flatters it by including pairs that straddle two different events.
 
+**Against the Bayes ceiling.** Ranking by the true generative probability is the best any model could
+do, because it uses the exact hidden state that produced the outcomes:
+
+| Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
+|---|---|---|---|
+| The model (out-of-fold) | 0.8261 | 0.6219 | 0.0792 |
+| True generative probability | 0.8483 | 0.7192 | 0.0833 |
+
+The model reaches **86.5%** of achievable within-event AUC and **95.0%** of achievable precision at
+the crew's capacity. A perfect oracle with full knowledge of the hidden state would find 1.25
+failures per 15 visits against the model's 1.19. The absolute numbers are low because outcomes are
+Bernoulli draws at a 1% rate — most of the variation is irreducible — not because the model is
+leaving much on the table. Recomputed on every run by `validate.py`.
+
 Calibration: Brier **0.01049** against **0.01119** for a base-rate-only baseline. Reliability diagram
 in `output/calibration.png`.
 
@@ -284,8 +298,12 @@ Out of scope by decision, not oversight.
 - **30.4% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
   The distractors-only evaluation category rests on far fewer independent items than its note count
   suggests.
-- **Mean within-event AUC is 0.6219.** Within a single forecast the ranking is meaningfully better
-  than chance but not strong, and that is the number the operational task actually depends on.
+- **Mean within-event AUC is 0.6219**, and that is the number the operational task depends on — but
+  the Bayes ceiling for it is 0.7192, so the headroom is small. The ranking is limited by the
+  problem being mostly coin-flip at a 1% base rate, not by the model.
+- **The crew reaches 1.7% of the fleet.** Capacity stayed at 15 while the fleet grew sixfold, so 15
+  interventions now cover 15 of 900 rather than 15 of 150. Recall at 15 is correspondingly low in
+  absolute terms.
 - **Missed failures are the ones with no recorded defect.** The design ranks recorded condition
   against forecast stress, so an asset whose condition was never written down is invisible to it.
   Continuous telemetry is the thing that would catch those, and it is a listed exclusion.
