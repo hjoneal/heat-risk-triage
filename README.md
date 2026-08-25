@@ -28,6 +28,14 @@ back.
 That is why thermal stress here is accumulated *equivalent ageing* rather than a peak, and why
 `max_overnight_min_c` and `consecutive_warm_nights` are features alongside degree-hours.
 
+The second mechanism is that heat raises demand at the same time it degrades cooling. Air
+conditioning load climbs with ambient temperature, and resistive loss goes as the square of current,
+so a heavily loaded transformer diverges from a lightly loaded one as the day gets hotter rather than
+tracking it at a fixed offset. Measured in the generator, the ratio of mean thermal stress between
+the top and bottom load quintiles is 7.1 on a long-moderate event against 3.0 under a static load
+assumption. That differential is what a forecast can act on, and it is why `peak_load_pct` appears
+both on its own and multiplied by degree-hours.
+
 ## Architecture
 
 ![Architecture](heat_risk_architecture_diagram.svg)
@@ -47,8 +55,11 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
 3. **Retrieval** (`retrieve.py`) — BM25 over 25 procedure documents, with the query built
    deterministically from the asset's positive feature contributions, then an LLM action brief that
    may cite only the retrieved documents.
-4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, retrieval
-   assertions, citation integrity, and a leakage check.
+4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
+   check, and the Bayes ceiling. 120 tests across four files: retrieval behaviour
+   (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
+   terms are what let the forecast reorder the queue (`test_ranking.py`), and what the interface
+   must not misreport (`test_interface.py`).
 
 The asset page reports each factor's **effect on the odds** of failure — the exponential of its
 log-odds contribution, which is exact rather than a simplification — with the reading in its own
@@ -63,16 +74,20 @@ order, because in any other order it would assert that the rows above it get vis
 One 30-line script (`static/app.js`) makes the capacity slider live and then hides the Apply button
 it replaced. It issues no request of its own, and the interface works without it. D-034.
 
-The queue carries a crew-capacity control (5–25). It is the only input that changes which assets get
-visited: the ranking is fixed for a given forecast, and capacity decides where the line falls across
-it. Alongside it, the expected failures those visits would reach against the expected fleet total —
-at the long-moderate scenario, 5 visits reach 0.1 of 5.3, 15 reach 0.4, 25 reach 0.6.
+The queue carries a crew-capacity control (5–25), which decides where the line falls across the
+ranking. Beside it the page reports what those visits cover: at the long-moderate scenario the top 25
+assets are 2.8% of the fleet and carry 9.6% of its expected failures, 3.4× the risk of visiting 25 at
+random. That is a statement about where risk is concentrated, not about how much of it a visit
+removes — the model has no estimate of intervention effectiveness. D-032.
 
-Forecast values are deliberately **not** adjustable. The ranking is invariant to hazard: varying the
-scenario across ±3 °C of peak, 3–6 days and amplitudes 2.5–7.0 leaves the top 15 unchanged in every
-case, because within one forecast every asset gets identical hazard features, so the hazard term is a
-constant added to every log-odds and rescales all risks uniformly. A forecast slider would move every
-percentage and reorder nothing. See `DECISIONS.md` D-022.
+Forecast values are **not** adjustable, but no longer because they would change nothing. An earlier
+build measured the ranking as invariant to hazard, and it was: with only additive hazard features,
+every asset in a scenario receives the same addition to its log-odds, and adding a constant cannot
+reorder anything. The three interaction terms exist to remove that property, and they do — the top 15
+now differs by 3 to 9 assets between scenarios. What remains fixed is the *set of scenarios*: the
+four are precomputed, because scoring an arbitrary forecast would mean running the model at request
+time, which the offline-at-serve-time constraint rules out. See `DECISIONS.md` D-022 (superseded in
+part), D-024, D-026.
 
 Priority is `risk × customers_served` — expected customers affected — so calibration matters as much
 as discrimination. There is no class weighting, no resampling, and no post-hoc calibration layer.
@@ -88,10 +103,10 @@ and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
   committed. `--offline` fails loudly on a cache miss rather than reaching for the network.
 - **Offline at serve time.** `app.py` loads the scored JSON and briefs at startup. No inference, no
   network call, no CDN asset, no web font, no map tile at request time. Its only write is appending
-  to `output/decisions.jsonl`.
-- **No leakage.** Hazard features derive from ambient temperature alone. `theta`, `tau`, `load_rise`,
-  `condition` and `thermal_stress` never enter the feature matrix. Only `validate.py` opens the
-  diagnostic files.
+  to `output/decisions.jsonl`. The one script it serves is local, 30 lines, and issues no request.
+- **No leakage.** Hazard features derive from ambient temperature alone. `theta`, `tau`, the hourly
+  load rise, `condition` and `thermal_stress` never enter the feature matrix. Only `validate.py`
+  opens the diagnostic files.
 
 ## Running
 
@@ -229,7 +244,7 @@ the extraction layer and is not hidden here.
 
 ### Model
 
-Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`. 138 failures, base rate 1.13% → 0.96%.
+Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`. 138 failures, base rate 0.96%.
 
 | Variant | Features | Within-event AUC | Pooled AUC | Precision@15 | Recall@15 |
 |---|---|---|---|---|---|
@@ -336,7 +351,7 @@ Out of scope by decision, not oversight.
 | Water network (pumping stations, treatment) | Same architecture, different failure model. Building it twice adds no evidence. | Pump and treatment asset registers, hydraulic demand model |
 | Other hazards (hurricane, flood, wildfire) | Heat has the longest intervention window and the most predictable failure mechanism. The architecture is hazard-agnostic — the risk model is the swappable part. | Hazard-specific models; flood needs elevation and hydrology data |
 | Weather forecasting | The system consumes a forecast, it does not produce one. NWS/NOAA feeds are authoritative. | Nothing — permanently out of scope |
-| Load forecasting | Needs real SCADA history to be credible. The risk ranking is useful without it. | 2–3 years of half-hourly load telemetry per asset |
+| Load forecasting | Needs real SCADA history to be credible. The risk ranking is useful without it. The generator does model demand rising with temperature, but that is an assumed physical response inside the synthetic world, not a forecast of load from history. | 2–3 years of half-hourly load telemetry per asset |
 | Anomaly detection on telemetry | Complementary, not substitutable. Detects developing faults continuously; this model ranks known condition against forecast stress. | Streaming SCADA integration, labelled fault history |
 | Crew scheduling optimisation | The system ranks; it does not route. Optimisation needs crew locations, skills, shift rules and travel times. | Field operations system integration |
 | Spatial / GIS analysis | GIS is a data dependency here, not an AI capability. Location and criticality enter as pre-computed fields. | PostGIS or equivalent, network topology model |
@@ -367,10 +382,11 @@ Production MLOps Architecture*, October 2025.
   calibrated to the synthetic world, not the real one. Ranking is unaffected.
 - **Hazard is uniform across the fleet.** One hourly temperature series applies to all 900 assets. A
   real deployment would apply a forecast grid; `district`, `lat` and `lon` are carried for exactly
-  that extension. This is why the scenarios carry no regional names. It is also the deeper reason
-  the queue's membership barely moves between forecasts: with identical weather everywhere, the only
-  thing a forecast can reweight is each asset's own susceptibility, and that is a smaller effect
-  than the spread in how many customers sit behind each asset.
+  that extension. This is why the scenarios carry no regional names, and why the forecast moves the
+  queue less than it otherwise would: with identical weather everywhere, all a forecast can reweight
+  is each asset's own susceptibility. The top 15 still differs by 3 to 9 assets between scenarios,
+  but priority divergence runs consistently below risk divergence because `customers_served` spans
+  45× across the fleet — more than a forecast re-weights any asset's risk.
 - **Core temperature is inferred, not measured.** The thermal model drives an oil temperature from
   ambient through a first-order lag and a load-dependent rise, then accumulates Arrhenius ageing
   above a reference. A production system derives the same quantity — an accumulated equivalent-ageing
@@ -385,9 +401,6 @@ Production MLOps Architecture*, October 2025.
   against local climatology) rather than from where failures clustered, which would be circular. In
   this build the confound is measurable: `consecutive_warm_nights` correlates r=+0.86 with event
   duration and `degree_hours_above_30` r=+0.66, so both partly encode how long rather than how hot.
-- **Only one of the two heat pathways is modelled.** Ambient heating the coolant is represented;
-  ambient driving electrical demand upward, which heats the windings further, is not. That is half of
-  the "capacity falls while demand rises" argument, and the prototype does not make it.
 - **Condition features describe the asset as of the forecast, not as of each historical event.** The
   register holds a single maintenance date and the notes are undated relative to past events, so
   `days_since_maintenance` and the four flags are static across the training window.
@@ -424,15 +437,22 @@ retrieve.py                Layer 3 — BM25 + brief generation
 llm.py                     one LLM call and the disk cache
 validate.py                extraction eval, leakage check, citation integrity
 app.py                     FastAPI application
-templates/  static/        server-rendered UI, no JavaScript
+templates/  static/        server-rendered UI; one 30-line progressive-enhancement script
 data/                      generated artefacts and the procedure corpus
 cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
-tests/                     retrieval assertions, citation integrity
-DECISIONS.md               20 entries, append-only
+tests/                     retrieval, citations, ranking mechanism, interface invariants
+DECISIONS.md               35 entries, append-only
 ```
 
-`DECISIONS.md` records every non-obvious choice, including the three that changed the shape of the
-build: the thermal stress definition (D-008), the fleet-scale derivation (D-011), and the failure
-rate (D-012).
+`DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the
+build: the thermal stress definition (D-008), the fleet-scale derivation (D-011), the failure rate
+(D-012), coupling demand to temperature (D-023), and the interaction features that let a forecast
+reorder the queue (D-024, with D-031 on why their components are centred).
+
+Three entries record a measurement that overturned an earlier conclusion rather than confirming it,
+and are the most useful ones to read: D-026 (a specified gate, measured as unreachable, then
+reachable), D-027 (a sweep whose harness did not reproduce the pipeline, and the band it invented),
+and D-029 (pooled AUC flattering the model, and the extraction uplift that had not actually
+vanished).
