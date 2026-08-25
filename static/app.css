@@ -144,6 +144,61 @@ a { color: var(--accent); }
 
 /* Queue table ---------------------------------------------------------- */
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: none;
+  padding: 14px 24px;
+}
+
+.capacity { display: flex; align-items: center; gap: 12px; }
+
+.control-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.capacity input[type="range"] { width: 220px; accent-color: var(--accent); }
+
+.capacity-readout {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 130px;
+}
+
+.controls button {
+  padding: 7px 16px;
+  border: 1px solid var(--accent);
+  background: var(--surface);
+  color: var(--accent);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.control-note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.control-note strong {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text);
+}
+
 .sortbar {
   font-size: 13px;
   color: var(--text-muted);

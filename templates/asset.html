@@ -2,7 +2,7 @@
 {% block title %}{{ asset.name }} — Heat risk triage{% endblock %}
 {% block content %}
 
-<p class="backlink"><a href="/scenario/{{ scenario_id }}">← {{ scenario.scenario_label }} queue</a></p>
+<p class="backlink"><a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">← {{ scenario.scenario_label }} queue</a></p>
 
 <header class="asset-header">
   <h2>{{ asset.name }}</h2>
@@ -87,6 +87,7 @@
       {{ 'Accepted' if decision.decision == 'accept' else 'Removed' }}{% if decision.reason %} — {{ decision.reason }}{% endif %}.</p>
   {% endif %}
   <form method="post" action="/scenario/{{ scenario_id }}/asset/{{ asset.asset_id }}/decision">
+    <input type="hidden" name="capacity" value="{{ crew_capacity }}">
     <fieldset>
       <legend>Decision</legend>
       <label><input type="radio" name="decision" value="accept" required> Accept for dispatch</label>

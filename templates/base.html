@@ -11,7 +11,7 @@
   <h1>Heat risk triage</h1>
   <nav class="scenarios" aria-label="Forecast scenario">
     {% for s in scenarios %}
-      <a href="/scenario/{{ s.scenario_id }}"
+      <a href="/scenario/{{ s.scenario_id }}{% if crew_capacity %}?capacity={{ crew_capacity }}{% endif %}"
          class="scenario-link{% if s.scenario_id == scenario_id %} is-current{% endif %}"
          {% if s.scenario_id == scenario_id %}aria-current="page"{% endif %}>{{ s.label }}</a>
     {% endfor %}

@@ -23,12 +23,30 @@
   </figure>
 </section>
 
+<form class="controls" method="get" action="/scenario/{{ scenario_id }}">
+  <input type="hidden" name="sort" value="{{ sort }}">
+  <label class="capacity">
+    <span class="control-label">Crew capacity</span>
+    <input type="range" name="capacity" min="{{ capacity_min }}" max="{{ capacity_max }}"
+           step="1" value="{{ crew_capacity }}"
+           aria-describedby="capacity-readout">
+  </label>
+  <output id="capacity-readout" class="capacity-readout">{{ crew_capacity }} interventions</output>
+  <button type="submit">Apply</button>
+  <p class="control-note">
+    The ranking is fixed for a given forecast — capacity decides where the line falls across it.
+    These {{ crew_capacity }} visits are expected to reach
+    <strong>{{ "%.1f"|format(intercepted) }}</strong> of the
+    <strong>{{ "%.1f"|format(fleet_expected) }}</strong> failures this forecast implies fleet-wide.
+  </p>
+</form>
+
 <p class="sortbar">
   Sorted by {% if sort == 'risk' %}risk{% else %}expected impact{% endif %}.
   {% if sort == 'risk' %}
-    <a href="/scenario/{{ scenario_id }}">Sort by expected impact</a>
+    <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Sort by expected impact</a>
   {% else %}
-    <a href="/scenario/{{ scenario_id }}?sort=risk">Sort by risk</a>
+    <a href="/scenario/{{ scenario_id }}?sort=risk&amp;capacity={{ crew_capacity }}">Sort by risk</a>
   {% endif %}
 </p>
 
@@ -49,9 +67,6 @@
   </thead>
   <tbody>
   {% for row in rows %}
-    {% if row.position == crew_capacity + 1 %}
-    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} interventions</td></tr>
-    {% endif %}
     <tr>
       <td class="num rank">{{ row.position }}</td>
       <td class="asset">
@@ -72,6 +87,9 @@
       <td class="num"><span class="criticality">{{ row.criticality }}</span></td>
       <td class="decided">{% if row.decision %}<span title="{{ row.decision }}">✓</span>{% endif %}</td>
     </tr>
+    {% if row.position == crew_capacity %}
+    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} interventions</td></tr>
+    {% endif %}
   {% endfor %}
   </tbody>
 </table>

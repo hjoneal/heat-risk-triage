@@ -47,6 +47,17 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, retrieval
    assertions, citation integrity, and a leakage check.
 
+The queue carries a crew-capacity control (5–25). It is the only input that changes which assets get
+visited: the ranking is fixed for a given forecast, and capacity decides where the line falls across
+it. Alongside it, the expected failures those visits would reach against the expected fleet total —
+at the long-moderate scenario, 5 visits reach 0.1 of 5.3, 15 reach 0.4, 25 reach 0.6.
+
+Forecast values are deliberately **not** adjustable. The ranking is invariant to hazard: varying the
+scenario across ±3 °C of peak, 3–6 days and amplitudes 2.5–7.0 leaves the top 15 unchanged in every
+case, because within one forecast every asset gets identical hazard features, so the hazard term is a
+constant added to every log-odds and rescales all risks uniformly. A forecast slider would move every
+percentage and reorder nothing. See `DECISIONS.md` D-022.
+
 Priority is `risk × customers_served` — expected customers affected — so calibration matters as much
 as discrimination. There is no class weighting, no resampling, and no post-hoc calibration layer.
 

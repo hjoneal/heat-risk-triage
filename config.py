@@ -431,4 +431,11 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # ---------------------------------------------------------------------------
 
 QUEUE_ROWS = 25  # chosen: the briefed assets, so every visible row has a brief
+
+# The crew-capacity control's range. Capacity is the one input that genuinely
+# changes which assets get visited: the ranking is fixed for a given forecast,
+# and capacity decides where the line is drawn across it. Capped at QUEUE_ROWS
+# because past that the queue has no rows left to draw the line after.
+CREW_CAPACITY_MIN = 5  # chosen
+CREW_CAPACITY_MAX = 25  # chosen
 DECISIONS_LOG = OUTPUT_DIR / "decisions.jsonl"

@@ -126,6 +126,19 @@ def reason_line(asset):
     return [c["label"] for c in positive[:2]]
 
 
+def clamp_capacity(value):
+    """Keep the capacity control inside the range the queue can display.
+
+    A capacity beyond the rows on screen would put the line nowhere, and a
+    negative one would put it before the first row.
+    """
+    try:
+        capacity = int(value)
+    except (TypeError, ValueError):
+        return config.CREW_CAPACITY
+    return max(config.CREW_CAPACITY_MIN, min(config.CREW_CAPACITY_MAX, capacity))
+
+
 def queue_rows(scenario_id, sort_key):
     scored = SCORED[scenario_id]
     assets = scored["assets"][:config.QUEUE_ROWS]
@@ -161,22 +174,38 @@ def index():
 
 
 @app.get("/scenario/{scenario_id}")
-def queue(request: Request, scenario_id: str, sort: str = "priority"):
+def queue(request: Request, scenario_id: str, sort: str = "priority",
+          capacity: str = str(config.CREW_CAPACITY)):
     scored = SCORED[scenario_id]
+    crew_capacity = clamp_capacity(capacity)
+    rows = queue_rows(scenario_id, sort)
+
+    # Expected failures among the assets the crew would actually reach, against
+    # the expected total across the fleet. Both are sums of already-scored
+    # probabilities — no model runs here, and the ranking does not change with
+    # capacity; only where the line falls does.
+    intercepted = sum(row["risk"] for row in rows[:crew_capacity])
+    fleet_expected = sum(asset["risk"] for asset in scored["assets"])
+
     return templates.TemplateResponse("queue.html", {
         "request": request,
         "scenario": scored,
         "scenario_id": scenario_id,
         "scenarios": SCENARIO_LINKS,
-        "rows": queue_rows(scenario_id, sort),
+        "rows": rows,
         "sort": sort,
         "sparkline": sparkline(scored["hourly_temps"]),
-        "crew_capacity": config.CREW_CAPACITY,
+        "crew_capacity": crew_capacity,
+        "capacity_min": config.CREW_CAPACITY_MIN,
+        "capacity_max": config.CREW_CAPACITY_MAX,
+        "intercepted": intercepted,
+        "fleet_expected": fleet_expected,
     })
 
 
 @app.get("/scenario/{scenario_id}/asset/{asset_id}")
-def asset_detail(request: Request, scenario_id: str, asset_id: str):
+def asset_detail(request: Request, scenario_id: str, asset_id: str,
+                 capacity: str = str(config.CREW_CAPACITY)):
     scored = SCORED[scenario_id]
     asset = next(a for a in scored["assets"] if a["asset_id"] == asset_id)
     brief = BRIEFS[scenario_id].get(asset_id)
@@ -197,6 +226,7 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str):
         "cited": cited,
         "decision": decision,
         "intercept": scored["intercept"],
+        "crew_capacity": clamp_capacity(capacity),
     })
 
 
@@ -212,7 +242,8 @@ def procedure(request: Request, doc_id: str):
 
 @app.post("/scenario/{scenario_id}/asset/{asset_id}/decision")
 def record_decision(scenario_id: str, asset_id: str,
-                    decision: str = Form(...), reason: str = Form("")):
+                    decision: str = Form(...), reason: str = Form(""),
+                    capacity: str = Form(str(config.CREW_CAPACITY))):
     scored = SCORED[scenario_id]
     asset = next(a for a in scored["assets"] if a["asset_id"] == asset_id)
 
@@ -229,4 +260,5 @@ def record_decision(scenario_id: str, asset_id: str,
     with config.DECISIONS_LOG.open("a") as handle:
         handle.write(json.dumps(record) + "\n")
 
-    return RedirectResponse(f"/scenario/{scenario_id}", status_code=303)
+    return RedirectResponse(
+        f"/scenario/{scenario_id}?capacity={clamp_capacity(capacity)}", status_code=303)

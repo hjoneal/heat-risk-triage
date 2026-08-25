@@ -664,3 +664,49 @@ generator it describes.
 
 **What would change it:** Real outcome data, where no true probability exists and
 the ceiling would have to be estimated rather than computed.
+
+---
+
+## D-022 — Crew capacity is adjustable; forecast values are not
+
+**Decision:** The queue carries a crew-capacity control, range 5 to 25, applied
+as a query parameter with a plain form and a submit button. No JavaScript. The
+hazard values stay fixed at the three precomputed scenarios.
+
+**Why capacity and not the forecast.** Measured: the ranking is invariant to
+hazard. Varying the long-moderate scenario across ±3 °C of peak, 3 to 6 days,
+and amplitudes from 2.5 to 7.0 leaves the top 15 unchanged in every case —
+15 of 15 overlap, rank 1 never moves.
+
+That is structural rather than incidental. Within one forecast every asset gets
+identical hazard features, so the hazard term is a constant added to every
+asset's log-odds. At a 1% base rate the sigmoid is still in its exponential
+regime, so that constant is a uniform multiplicative rescaling of every risk, and
+`priority = risk × customers_served` preserves the order exactly. A forecast
+slider would move every percentage on screen and change nobody's queue position —
+which would imply a sensitivity the model does not have.
+
+Capacity is the opposite: it changes nothing about the scores and everything
+about which assets get visited, because it decides where the line falls across a
+fixed ranking. It is the only input on this screen that changes an outcome.
+
+**What it shows.** Alongside the line, the expected number of failures the
+selected visits would reach, against the expected total fleet-wide. At the
+long-moderate scenario: 5 visits reach 0.1 of 5.3, 15 reach 0.4, 25 reach 0.6.
+The diminishing return is visible, and so is the coverage problem — 25 visits
+against 900 assets intercept about a ninth of what the forecast implies.
+
+**Serve time.** Both figures are sums over probabilities already in the scored
+JSON. No model is loaded, no inference runs, no network call is made; the
+property in build spec §6.1 holds unchanged.
+
+**Alternatives:** Forecast sliders driving a re-ranked queue — rejected on the
+measurement above, and because off-template hazard would change the sign of
+standardised hazard contributions, changing the retrieval query and leaving the
+displayed LLM brief describing documents that no longer match. A fleet-magnitude
+sensitivity view without re-ranking remains viable and is not built.
+
+**What would change it:** Per-district hazard. If districts received different
+forecast values the hazard term would stop being uniform and the ranking would
+genuinely reorder, which is what would make a forecast control meaningful — and
+which is the extension already recorded in D-015.
