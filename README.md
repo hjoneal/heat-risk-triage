@@ -46,7 +46,7 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    condition flags, each with a verbatim evidence quote. Two rules do the work: a defect the note
    records as *fixed* is false, and a defect the note records as *absent* is false. A ~20-line
    keyword baseline exists only as an evaluation comparator.
-2. **Risk model** (`features.py`, `model.py`) — 16 features (4 hazard, 3 asset static, 6 condition,
+2. **Risk model** (`features.py`, `model.py`) — 15 features (3 hazard, 3 asset static, 6 condition,
    3 interaction), `StandardScaler` → `LogisticRegression`, `GroupKFold(5)` grouped on `event_id`,
    evaluated within event and pooled out-of-fold, then refit on all 16 events to score the four demo
    scenarios. The interaction terms exist because every hazard feature is constant within an event:
@@ -179,7 +179,7 @@ skews old, so 0.8% applies.
 **CIGRE supports the annual figure only.** It says nothing about a per-event rate. Deriving one — 900
 assets × 0.8% annual × ~40% heat-attributable ÷ ~4 events a year — gives roughly **0.08% per
 asset-event**. The generator uses **1%**, about twelve times that, because at the real rate 14,400
-rows would carry about a dozen positives, too few to fit 16 features.
+rows would carry about a dozen positives, too few to fit 15 features.
 
 This scales predicted probabilities and preserves ranking, and the system consumes a ranking.
 Calibration is to the synthetic base rate; a production deployment would recalibrate against observed
@@ -253,11 +253,11 @@ Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`. 138 failures, bas
 
 | Variant | Features | Within-event AUC | Pooled AUC | Precision@15 | Recall@15 |
 |---|---|---|---|---|---|
-| Heuristic (peak × age) | 2 | 0.5487 | 0.6039 | 0.0042 | 0.0018 |
-| Register only | 9 | 0.6468 | 0.8467 | 0.0667 | 0.0599 |
-| Register + notes | 13 | **0.6604** | 0.8472 | 0.0458 | 0.0275 |
-| Register + interactions, no notes | 11 | 0.6104 | 0.8412 | 0.0625 | 0.0471 |
-| Full model | 16 | 0.6213 | 0.8412 | 0.0542 | 0.0627 |
+| Heuristic baseline (peak temp x age) | 2 | 0.5487 | 0.6039 | 0.0042 | 0.0018 |
+| Register only | 8 | 0.6469 | 0.8480 | 0.0667 | 0.0599 |
+| Register + notes | 12 | 0.6605 | 0.8485 | 0.0458 | 0.0275 |
+| Register + interactions (no notes) | 10 | 0.6107 | 0.8431 | 0.0625 | 0.0471 |
+| Full model | 15 | 0.6216 | 0.8432 | 0.0542 | 0.0627 |
 
 **Read the within-event column, not the pooled one.** Pooling puts a mild event's rows beside a
 severe event's, so a model scores partly by telling those apart — which the hazard features make
@@ -299,9 +299,9 @@ place — the gaps between the middle three variants are not large enough to ran
 |---|---|---|---|---|---|---|
 | Heuristic baseline (peak temp x age) | 1 | 1 | 1 | 2 | 3 | 6 |
 | Register only | 11 | 16 | 21 | 25 | 28 | 32 |
-| Register + notes | 10 | 11 | 18 | 19 | 21 | 30 |
+| Register + notes | 10 | 11 | 18 | 19 | 22 | 30 |
 | Register + interactions (no notes) | 11 | 15 | 22 | 26 | 29 | 35 |
-| Full model | 10 | 13 | 16 | 20 | 26 | 33 |
+| Full model | 9 | 13 | 16 | 20 | 26 | 33 |
 
 Recall@k for the same variants:
 
@@ -309,9 +309,9 @@ Recall@k for the same variants:
 |---|---|---|---|---|---|---|
 | Heuristic baseline (peak temp x age) | 0.0018 | 0.0018 | 0.0018 | 0.0274 | 0.0338 | 0.0484 |
 | Register only | 0.0353 | 0.0599 | 0.0713 | 0.0856 | 0.0955 | 0.1119 |
-| Register + notes | 0.0257 | 0.0275 | 0.0855 | 0.0873 | 0.0955 | 0.1233 |
+| Register + notes | 0.0257 | 0.0275 | 0.0855 | 0.0873 | 0.0973 | 0.1233 |
 | Register + interactions (no notes) | 0.0389 | 0.0471 | 0.0952 | 0.1048 | 0.1354 | 0.1696 |
-| Full model | 0.0495 | 0.0627 | 0.0695 | 0.1065 | 0.1344 | 0.1582 |
+| Full model | 0.0239 | 0.0627 | 0.0695 | 0.1065 | 0.1344 | 0.1582 |
 
 **Crew capacity is a client operating parameter, not a property of the system**, and the 15 this
 build reports at was chosen rather than derived. A monthly substation inspection cadence puts
@@ -348,7 +348,7 @@ the crew's capacity. The absolute numbers are low because outcomes are Bernoulli
 most of the variation is irreducible — not because the model is leaving that much on the table.
 Recomputed on every run by `validate.py`.
 
-Calibration: Brier **0.00882** against **0.00949** for a base-rate-only baseline. Reliability diagram
+Calibration: Brier **0.00883** against **0.00949** for a base-rate-only baseline. Reliability diagram
 in `output/calibration.png`. Leakage check: highest correlation between any feature and the hidden
 state is **0.7234** (degree-hours against thermal stress), under the 0.95 threshold; pooled AUC is
 under the 0.90 line that would indicate leakage.
@@ -361,9 +361,20 @@ check that the default is not badly wrong rather than a search to be won.
 age and all four condition flags are positive, as expected. Cooling type is negative, which is also
 correct: the ordinal runs ONAN→ONAF→OFAF, so a higher value means better cooling.
 
-`peak_temp_c` (−0.24) and `max_overnight_min_c` (−0.31) are negative and are not interpretable alone.
-Both are collinear with degree-hours at r≈0.93, which takes the shared signal; the negatives are the
-residual. This pair predates the interaction terms.
+**`peak_temp_c` is negative (−0.31), and that is the project's premise rather than an artefact.**
+Univariately it correlates **+0.35** with the event failure rate; the negative sign is what remains
+once degree-hours is accounted for, and its partial correlation given degree-hours is **−0.45**. The
+reason is visible in the data: the two hottest events in the bank, at 42.2 °C and 41.8 °C, produced
+**zero failures between them**, because both were two-day spikes. At a comparable degree-hour total a
+higher peak means the heat was concentrated into a shorter event, and a shorter event does less
+damage. Dropping the feature measured *worse* (within-event AUC −0.0014), so it earns its place.
+
+`max_overnight_min_c` was a fourth hazard feature and has been **dropped**. Variance inflation factor
+49.4 — 98% predictable from the rest — with a coefficient that flipped sign between folds and an
+asset page reporting that a 32 °C night had lowered an asset's risk. Removing it left precision@15
+and @30 identical, moved within-event AUC by +0.0002, and took the model's worst VIF to 3.6. It is
+still computed and still shown on the forecast strip, because it is a real property of the weather;
+it is no longer a model input. `DECISIONS.md` D-040.
 
 It is worth recording how much worse this was. Built with **raw** interaction products rather than
 centred ones, five features came out wrong-signed, and the asset page for the highest-risk asset in
@@ -393,16 +404,23 @@ inapplicable document, but the constraint was holding by luck — one reaches **
 query term: `applies_to` is not indexed, so as a term it only matched cooling types written into a
 document's prose, which is one document for `ONAN` and none for `ONAF` or `OFAF`. D-037.
 
-Top BM25 score per query ranges **16.74 to 36.56**. `BM25_FLOOR` is 14.0, 16% below the observed
-minimum. This is its third derivation, and the pattern matters more than the number: the floor
-tracks query construction, and every change to `build_query` moves the distribution under it — 12.0
-against a minimum of 13.97, then coverage rising to 40 brought lower-ranked assets and their shorter
-queries in, then dropping the cooling-type term took one more term out of every query. A value left
-alone across those changes would not have meant the same thing twice, so `config.py` now says to
-re-run `retrieve.py --scores-only` and re-derive rather than assume. **It does not trigger on any of
-the 160 queries**, so no real query reaches the `no_match` path; the floor was not raised into the
-main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
-degenerate query instead. See `DECISIONS.md` D-018.
+The retrieval floor is a **per-term** score, not a total. A BM25 total is a sum of per-term
+contributions, so it grows with query length — measured across 160 queries the total correlates
+**+0.87** with the number of terms, which run from 13 to 50. An absolute floor on that quantity tests
+how long a query was, not how well it matched, and it needed re-deriving after every change to
+`build_query`: 12.0, then 16.0, then 14.0. That was treated as maintenance twice before being
+recognised as a design fault.
+
+It caught a real false positive on the fifth change. Dropping `max_overnight_min_c` removed three
+terms from every query carrying them, and one asset's 15-term query fell to a total of 12.03 against
+a floor of 14.0 — which would have suppressed three genuinely applicable procedures (insulation
+ageing, loading de-rating, maintenance compliance) for an old, heavily loaded, overdue asset. On
+per-term quality that query ranked **62nd of 160**: mid-pack, not degenerate.
+
+`BM25_FLOOR_PER_TERM` is **0.45**. Per-term scores run 0.589 to 1.360, median 0.845, so it sits 24%
+below the observed minimum and does not move when query construction does. A test asserts that the
+same terms repeated three times get the same verdict as the terms once. **It does not trigger on any
+of the 160 queries**, so no real query reaches the `no_match` path. `DECISIONS.md` D-041.
 
 291 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally

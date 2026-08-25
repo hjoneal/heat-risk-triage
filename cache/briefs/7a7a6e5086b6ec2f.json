@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because Briarcliff Bluff 230/34kV cannot be attended before the event [MG-023]. This unit of advanced age with a history of high loading has a reduced margin against mechanical failure [MG-023].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

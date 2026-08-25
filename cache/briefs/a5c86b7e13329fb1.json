@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise the Willow Common substation transformer ahead of the forecast heat event by checking for any outstanding work in categories 1 to 3 and completing it before the event begins wherever crew capacity allows, as outlined in SOP-016. Because this is an ageing unit that cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, as required by MG-023. Ensure that every de-rating applied is recorded along with its reason, value, and period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-023",
-    "MG-021",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

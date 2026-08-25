@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise Kingsley Green for pre-event attention before the forecast heat event, as it is an ageing unit with a history of high loading that has a reduced margin against mechanical failure (MG-023). If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision (MG-021).",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

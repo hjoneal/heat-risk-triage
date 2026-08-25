@@ -1,9 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for Langmere Common 230/34kV, as directed by MG-023 for ageing units that cannot be attended before an event. Note that the supplied documents do not cover any cooling-related actions for this asset, as its ONAN cooling type has no forced cooling stages to adjust under MG-021 or MG-025. Ensure every de-rating applied is recorded with its reason, value, and period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

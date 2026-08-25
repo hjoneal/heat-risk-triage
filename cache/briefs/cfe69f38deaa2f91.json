@@ -1,0 +1,7 @@
+{
+  "brief": "Review the open defect register for Oakhurst Point ahead of the forecast heat event, as governed by SOP-016. Because the supplied documents do not cover the specific operational history or cooling status required to determine if forced cooling or oil defects apply, no additional de-rating or remediation can be definitively instructed from the text. Ensure all open work items are evaluated for their effect on the unit's ability to shed heat in accordance with SOP-016.",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "status": "ok"
+}

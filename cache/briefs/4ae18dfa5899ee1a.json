@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstruction before the heat event, as outlined in SOP-015. Additionally, because the Marlow Crossing unit has an ONAN cooling type and prior heat-related faults, apply the permissible load reductions set out in MG-021 if ambient conditions require de-rating. If this ageing unit cannot be attended prior to the event, apply the loading restriction in MG-021 in accordance with MG-023 in preference to accepting the exposure.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-015"
-  ],
-  "status": "ok"
-}

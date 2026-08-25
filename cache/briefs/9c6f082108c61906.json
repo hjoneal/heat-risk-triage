@@ -1,8 +1,0 @@
-{
-  "brief": "Crews should bring forward the detailed inspection for Kingsley Green 138/13kV (SUB-SGW-699) prior to the heat event, as its maintenance interval compliance is overdue and its cooling system unverified [REG-042]. Because this unit uses ONAN cooling, the cooling stage de-rating rules in MG-021 do not require forced cooling adjustments, but ambient and sustained event de-ratings must be applied if thresholds are met [MG-021]. Record every de-rating applied along with its reason, value, and period, and restore the full rating only after underlying conditions are corrected and verified [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "REG-042"
-  ],
-  "status": "ok"
-}

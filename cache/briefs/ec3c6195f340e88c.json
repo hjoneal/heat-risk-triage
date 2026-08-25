@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise outstanding work orders for Langmere Lock 230/34kV ahead of the forecast heat event by addressing failed or degraded forced cooling, obstructed ventilation, or oil level and leak defects first, as set out in SOP-016. If category 4 oil condition defects cannot be completed before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Record every applied de-rating along with its reason, value, and period as required by MG-021.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

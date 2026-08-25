@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise vegetation and obstruction clearance work ahead of the heat event if any clearance defect is outstanding for this unit, as restricted airflow removes its cooling margin according to SOP-011. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure in accordance with MG-023. Record every de-rating applied, including the reason, value, and period, and restore the full rating only when the underlying condition is corrected and verified as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

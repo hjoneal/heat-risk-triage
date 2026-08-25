@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, check blades, insect mesh, and damper travel, and walk the airflow path before the heat event per SOP-015. Since the detailed inspection is overdue per REG-042, bring it forward in preference to accepting the exposure.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "REG-042"
+  ],
+  "status": "ok"
+}

@@ -1,9 +1,0 @@
-{
-  "brief": "As this unit's cooling type is ONAN and the supplied documents do not provide a loading restriction for an ONAN unit facing these conditions, no specific loading restriction can be applied under MG-021. Review the open defect register for outstanding work and re-prioritise any items affecting heat dissipation in accordance with SOP-016. Prioritise this unit for pre-event attention because its advanced age reduces its margin against mechanical failure during sustained thermal exposure as described in MG-023.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

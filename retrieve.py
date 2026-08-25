@@ -106,7 +106,10 @@ def retrieve(index, documents, query_terms, cooling_type=None):
     ranked = sorted(candidates, key=lambda i: -scores[i])[:config.BM25_TOP_K]
     top_score = float(scores[ranked[0]]) if ranked else 0.0
 
-    if top_score < config.BM25_FLOOR:
+    # Per term, because a BM25 total scales with query length and a short query
+    # is not a bad one. See config.BM25_FLOOR_PER_TERM.
+    per_term = top_score / len(query_terms) if query_terms else 0.0
+    if per_term < config.BM25_FLOOR_PER_TERM:
         return [], "no_match", top_score
 
     hits = [
@@ -228,20 +231,33 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
 
 
 def write_score_distribution(all_top_scores, path):
-    """The evidence behind BM25_FLOOR, written out so the value can be checked."""
-    ordered = sorted(all_top_scores)
+    """The evidence behind BM25_FLOOR_PER_TERM, written out so it can be checked.
+
+    Both the total and the per-term score, because the total is what a reader
+    sees on a brief and the per-term figure is what the floor actually tests.
+    """
+    totals = sorted(s for s, _ in all_top_scores)
+    per_term = sorted(s / n if n else 0.0 for s, n in all_top_scores)
+    fired = sum(1 for value in per_term if value < config.BM25_FLOOR_PER_TERM)
     lines = [
         "Top BM25 score per query, across all generated queries.",
-        f"queries: {len(ordered)}",
-        f"floor in force: {config.BM25_FLOOR}",
-        f"triggered on: {sum(1 for s in ordered if s < config.BM25_FLOOR)} of {len(ordered)} queries",
-        f"minimum: {ordered[0]:.4f}",
-        f"maximum: {ordered[-1]:.4f}",
-        f"median:  {ordered[len(ordered) // 2]:.4f}",
+        f"queries: {len(totals)}",
+        f"floor in force: {config.BM25_FLOOR_PER_TERM} per query term",
+        f"triggered on: {fired} of {len(totals)} queries",
         "",
-        "sorted ascending:",
+        "The floor is per term because a BM25 total scales with query length:",
+        "measured, the total correlates +0.87 with the number of terms. A short",
+        "query is not a bad one, and an absolute floor would reject it for being",
+        "short. See DECISIONS.md D-041.",
+        "",
+        f"total score   minimum {totals[0]:.4f}  median {totals[len(totals) // 2]:.4f}  "
+        f"maximum {totals[-1]:.4f}",
+        f"per-term      minimum {per_term[0]:.4f}  median {per_term[len(per_term) // 2]:.4f}  "
+        f"maximum {per_term[-1]:.4f}",
+        "",
+        "per-term scores, sorted ascending:",
     ]
-    lines += [f"  {score:.4f}" for score in ordered]
+    lines += [f"  {value:.4f}" for value in per_term]
     path.write_text("\n".join(lines) + "\n")
 
 
@@ -270,7 +286,7 @@ def main():
                 asset["contributions"], scored["hazard"]["peak_temp_c"])
             retrieved, status, top_score = retrieve(
                 index, documents, query_terms, asset["cooling_type"])
-            all_top_scores.append(top_score)
+            all_top_scores.append((top_score, len(query_terms)))
 
             if status == "no_match":
                 no_match_count += 1
@@ -294,18 +310,20 @@ def main():
             print(f"wrote {path.name}: {len(briefs)} briefs")
 
     write_score_distribution(all_top_scores, config.OUTPUT_DIR / "bm25_scores.txt")
-    print(f"queries: {len(all_top_scores)}, top score range "
-          f"{min(all_top_scores):.3f} to {max(all_top_scores):.3f}")
-    print(f"below the floor of {config.BM25_FLOOR}: {no_match_count}")
+    totals = [s for s, _ in all_top_scores]
+    per_term = [s / n if n else 0.0 for s, n in all_top_scores]
+    print(f"queries: {len(totals)}, top score range {min(totals):.3f} to {max(totals):.3f}, "
+          f"per-term {min(per_term):.3f} to {max(per_term):.3f}")
+    print(f"below the floor of {config.BM25_FLOOR_PER_TERM} per term: {no_match_count}")
 
     # Build spec section 5.4 asks that the floor trigger on at least one asset.
     # It does not, and the value was not raised into the main cluster to make it.
     # Reported here and in output/bm25_scores.txt so the fact is visible rather
     # than implied by an assertion that quietly passes. See DECISIONS.md D-018.
     if no_match_count == 0:
-        print(f"note: the floor of {config.BM25_FLOOR} did not trigger on any of "
-              f"{len(all_top_scores)} queries (lowest top score "
-              f"{min(all_top_scores):.2f}); the no_match path is untaken.")
+        print(f"note: the floor of {config.BM25_FLOOR_PER_TERM} per term did not trigger "
+              f"on any of {len(totals)} queries (lowest per-term {min(per_term):.3f}); "
+              f"the no_match path is untaken.")
 
 
 if __name__ == "__main__":

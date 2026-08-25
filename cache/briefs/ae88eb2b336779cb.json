@@ -1,0 +1,9 @@
+{
+  "brief": "Prior to the forecast heat event, review the open defect register for Tilbrook Mill to determine if there is an active oil leak or oil level below minimum, as this ranks third in priority for heat event preparation [SOP-016]. If oil condition defects are present and cannot be remedied before the event, apply the loading restriction in MG-021 rather than accepting the exposure [SOP-016, MG-023]. Record every de-rating applied along with its reason, value, and period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

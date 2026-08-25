@@ -1,9 +1,0 @@
-{
-  "brief": "Crews must inspect intake and exhaust louvres for blockage exceeding one quarter of the free area, prove full travel on dampers, and clear any obstructed ventilation in preference to deferring it [SOP-015]. Where an ageing unit cannot be attended before a heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-015"
-  ],
-  "status": "ok"
-}

@@ -13,33 +13,33 @@
       "recall_at_15": 0.0017889087656529517
     },
     "Register only": {
-      "n_features": 9,
-      "auc": 0.8466605289418115,
-      "within_event_auc": 0.646818249375817,
+      "n_features": 8,
+      "auc": 0.8480445655730543,
+      "within_event_auc": 0.6468779100198336,
       "n_events_scored": 13,
       "precision_at_15": 0.06666666666666667,
       "recall_at_15": 0.059887033724243026
     },
     "Register + notes": {
-      "n_features": 13,
-      "auc": 0.8472123144710072,
-      "within_event_auc": 0.6604484977951077,
+      "n_features": 12,
+      "auc": 0.8484561183158245,
+      "within_event_auc": 0.6604781503504473,
       "n_events_scored": 13,
       "precision_at_15": 0.04583333333333334,
       "recall_at_15": 0.027463062346783272
     },
     "Register + interactions (no notes)": {
-      "n_features": 11,
-      "auc": 0.8412153304920953,
-      "within_event_auc": 0.6103556740078357,
+      "n_features": 10,
+      "auc": 0.8430810362593208,
+      "within_event_auc": 0.6106619530903962,
       "n_events_scored": 13,
       "precision_at_15": 0.0625,
       "recall_at_15": 0.0470665209037302
     },
     "Full model": {
-      "n_features": 16,
-      "auc": 0.84118382892413,
-      "within_event_auc": 0.621343685993238,
+      "n_features": 15,
+      "auc": 0.8432446411768172,
+      "within_event_auc": 0.6215718655543451,
       "n_events_scored": 13,
       "precision_at_15": 0.05416666666666667,
       "recall_at_15": 0.06271947260319354
@@ -51,9 +51,9 @@
   "capacity_sweep": [
     {
       "capacity": 10,
-      "precision": 0.0625,
-      "recall": 0.04952627045650301,
-      "hits": 10,
+      "precision": 0.05625,
+      "recall": 0.023885244815477373,
+      "hits": 9,
       "fleet_share": 0.011111111111111112,
       "is_default": false
     },
@@ -234,9 +234,9 @@
       },
       {
         "capacity": 30,
-        "precision": 0.04375,
-        "recall": 0.09551613330683098,
-        "hits": 21,
+        "precision": 0.04583333333333334,
+        "recall": 0.09730504207248393,
+        "hits": 22,
         "fleet_share": 0.03333333333333333,
         "is_default": false
       },
@@ -302,9 +302,9 @@
     "Full model": [
       {
         "capacity": 10,
-        "precision": 0.0625,
-        "recall": 0.04952627045650301,
-        "hits": 10,
+        "precision": 0.05625,
+        "recall": 0.023885244815477373,
+        "hits": 9,
         "fleet_share": 0.011111111111111112,
         "is_default": false
       },
@@ -353,145 +353,144 @@
   "c_sweep": [
     {
       "C": 0.01,
-      "auc": 0.8521214781755105
+      "auc": 0.8494357154615793
     },
     {
       "C": 0.1,
-      "auc": 0.8475446052040588
+      "auc": 0.8467184511796829
     },
     {
       "C": 1.0,
-      "auc": 0.84118382892413
+      "auc": 0.8432446411768172
     },
     {
       "C": 10.0,
-      "auc": 0.8365718977560721
+      "auc": 0.8424357622058415
     }
   ],
   "brier": {
-    "model": 0.008815558523163307,
+    "model": 0.008831808123205182,
     "base_rate": 0.009491493055555557,
-    "improvement": 0.0006759345323922496
+    "improvement": 0.0006596849323503746
   },
   "calibration_bins": [
     {
-      "mean_predicted": 0.006923266329754834,
-      "observed": 0.006299546998867497,
-      "count": 14128
+      "mean_predicted": 0.006917660915949817,
+      "observed": 0.006288863764838892,
+      "count": 14152
     },
     {
-      "mean_predicted": 0.13906911356714544,
-      "observed": 0.15246636771300448,
-      "count": 223
+      "mean_predicted": 0.13475683325753457,
+      "observed": 0.18660287081339713,
+      "count": 209
     },
     {
-      "mean_predicted": 0.2347980270498718,
-      "observed": 0.3,
-      "count": 40
+      "mean_predicted": 0.22994306048921234,
+      "observed": 0.25806451612903225,
+      "count": 31
     },
     {
-      "mean_predicted": 0.34969285205651757,
-      "observed": 0.3333333333333333,
-      "count": 9
+      "mean_predicted": 0.31511152814536,
+      "observed": 0.2857142857142857,
+      "count": 7
+    },
+    {
+      "mean_predicted": 0.41139376839043673,
+      "observed": 0.0,
+      "count": 1
     }
   ],
   "coefficients": {
-    "peak_temp_c": -0.24384189867939993,
-    "degree_hours_above_30": 1.0918919355103203,
-    "max_overnight_min_c": -0.3060490289393921,
-    "consecutive_warm_nights": 0.3153894012252227,
-    "age_years": 0.11504485788986903,
-    "cooling_type_ordinal": -0.5695766215017359,
-    "peak_load_pct": 0.573777450601827,
-    "days_since_maintenance": 0.250666525794307,
-    "prior_heat_faults": 0.2179102669154358,
-    "flag_cooling_degraded": 0.037367447203013576,
-    "flag_ventilation_obstructed": 0.016094910145959075,
-    "flag_oil_issue": 0.15635279378644168,
-    "flag_overdue_remedial": 0.03573407197285892,
-    "load_x_degree_hours": 0.3868276087936758,
-    "condition_x_degree_hours": 0.0387154488730473,
-    "age_x_warm_nights": 0.1904763652689708
+    "peak_temp_c": -0.30620153827336355,
+    "degree_hours_above_30": 0.9708053089040816,
+    "consecutive_warm_nights": 0.17012250529120415,
+    "age_years": 0.11058253780897667,
+    "cooling_type_ordinal": -0.569210388866443,
+    "peak_load_pct": 0.5683336379328636,
+    "days_since_maintenance": 0.2505639412606066,
+    "prior_heat_faults": 0.21754454750416297,
+    "flag_cooling_degraded": 0.037436900586366145,
+    "flag_ventilation_obstructed": 0.016384115086159664,
+    "flag_oil_issue": 0.15671886026368131,
+    "flag_overdue_remedial": 0.036194393697770604,
+    "load_x_degree_hours": 0.39057805700124276,
+    "condition_x_degree_hours": 0.03858873037066797,
+    "age_x_warm_nights": 0.19192741854563417
   },
   "fold_coefficients": {
     "peak_temp_c": {
-      "mean": -0.2336040195176728,
-      "sd": 0.32668144053895615,
+      "mean": -0.2817205466698228,
+      "sd": 0.3203860905080006,
       "sign_flips": true
     },
     "degree_hours_above_30": {
-      "mean": 1.0244302011578417,
-      "sd": 0.2472125817670738,
+      "mean": 0.9263349870651243,
+      "sd": 0.25788074113107706,
       "sign_flips": false
     },
-    "max_overnight_min_c": {
-      "mean": -0.23627716291644302,
-      "sd": 0.2728256181189901,
-      "sign_flips": true
-    },
     "consecutive_warm_nights": {
-      "mean": 0.3303691369408018,
-      "sd": 0.08779309655043342,
+      "mean": 0.22537250955391125,
+      "sd": 0.1821136020687892,
       "sign_flips": false
     },
     "age_years": {
-      "mean": 0.11658521878343978,
-      "sd": 0.08648908196670312,
+      "mean": 0.1142992236380262,
+      "sd": 0.08379299121511553,
       "sign_flips": true
     },
     "cooling_type_ordinal": {
-      "mean": -0.5494572528318346,
-      "sd": 0.16963300791870597,
+      "mean": -0.5492587284238581,
+      "sd": 0.1694909817222569,
       "sign_flips": false
     },
     "peak_load_pct": {
-      "mean": 0.5674020294140267,
-      "sd": 0.0503635513781026,
+      "mean": 0.5655890683329162,
+      "sd": 0.04699473802301766,
       "sign_flips": false
     },
     "days_since_maintenance": {
-      "mean": 0.25403872197066285,
-      "sd": 0.05720089417084501,
+      "mean": 0.2540028267459834,
+      "sd": 0.057176080326449275,
       "sign_flips": false
     },
     "prior_heat_faults": {
-      "mean": 0.220636630382824,
-      "sd": 0.03013746395826388,
+      "mean": 0.22048563418712538,
+      "sd": 0.03021800716395554,
       "sign_flips": false
     },
     "flag_cooling_degraded": {
-      "mean": 0.045274951936484564,
-      "sd": 0.05632483151727601,
+      "mean": 0.04541142496567886,
+      "sd": 0.056511149717776196,
       "sign_flips": false
     },
     "flag_ventilation_obstructed": {
-      "mean": 0.014121849170749726,
-      "sd": 0.00965100594507695,
+      "mean": 0.014352187964369217,
+      "sd": 0.009466365892672452,
       "sign_flips": false
     },
     "flag_oil_issue": {
-      "mean": 0.1524381759995304,
-      "sd": 0.027977637251682244,
+      "mean": 0.15268964155076992,
+      "sd": 0.02780636193364625,
       "sign_flips": false
     },
     "flag_overdue_remedial": {
-      "mean": 0.0314977419286591,
-      "sd": 0.07043265360185114,
+      "mean": 0.0317854177174575,
+      "sd": 0.07035367497939848,
       "sign_flips": true
     },
     "load_x_degree_hours": {
-      "mean": 0.38268411355338644,
-      "sd": 0.07960313610432052,
+      "mean": 0.3835602272172703,
+      "sd": 0.07950145180486502,
       "sign_flips": false
     },
     "condition_x_degree_hours": {
-      "mean": 0.02601387658031809,
-      "sd": 0.061276539492430886,
+      "mean": 0.025804019879273964,
+      "sd": 0.061474578349597686,
       "sign_flips": true
     },
     "age_x_warm_nights": {
-      "mean": 0.19631895696908905,
-      "sd": 0.12066047617018606,
+      "mean": 0.1965966483098769,
+      "sd": 0.12017113913918602,
       "sign_flips": false
     }
   },
@@ -499,13 +498,13 @@
     [
       "short-severe",
       "long-moderate",
-      3,
+      4,
       5
     ],
     [
       "short-severe",
       "long-severe",
-      4,
+      5,
       6
     ],
     [
@@ -518,7 +517,7 @@
       "long-moderate",
       "long-severe",
       3,
-      4
+      5
     ],
     [
       "long-moderate",
@@ -533,5 +532,5 @@
       13
     ]
   ],
-  "intercept": -5.827351088334045
+  "intercept": -5.834234302288525
 }

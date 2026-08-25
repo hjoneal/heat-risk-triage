@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect the open defect register for Granite Works 138/13kV to establish and review all open items before the forecast heat event, re-prioritising outstanding work against the unit's ability to shed heat as governed by SOP-016. Because the asset relies on ONAN cooling, apply the loading and de-rating rules set out in MG-021 if ambient conditions or reduced cooling capacity require it. Ensure any clearance work for vegetation or compound obstruction takes precedence as specified in SOP-011 where an obstruction defect is outstanding.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

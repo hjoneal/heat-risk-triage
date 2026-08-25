@@ -2,7 +2,7 @@
 
 ## Leakage
 
-Feature matrix columns equal `FEATURES` exactly, in order: 16 columns.
+Feature matrix columns equal `FEATURES` exactly, in order: 15 columns.
 
 Hazard features derive from ambient temperature alone. `theta`, `tau`,
 the hourly load rise, `condition` and `thermal_stress` never enter the
@@ -19,7 +19,6 @@ Highest absolute correlation with hidden state: **0.7234** (threshold 0.95).
 | Feature | vs condition | vs thermal stress |
 |---|---|---|
 | Accumulated heat above 30°C | -0.0000 | +0.7234 |
-| Warmest overnight minimum | -0.0000 | +0.6397 |
 | Consecutive warm nights | -0.0000 | +0.5176 |
 | Time since last maintenance | +0.4723 | -0.0204 |
 | Peak load | -0.0030 | +0.4374 |
@@ -44,7 +43,7 @@ irreducible.
 
 | Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
 |---|---|---|---|
-| The model (out-of-fold) | 0.8412 | 0.6213 | 0.0667 |
+| The model (out-of-fold) | 0.8432 | 0.6216 | 0.0667 |
 | True generative probability | 0.8683 | 0.7260 | 0.1077 |
 
 The model reaches **85.6%** of the achievable within-event AUC and **61.9%** of the achievable precision at the crew's capacity.

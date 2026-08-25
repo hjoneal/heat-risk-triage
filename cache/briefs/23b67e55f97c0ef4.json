@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritize pre-event attention for this advanced-age unit with a history of high loading to protect against mechanical failure during the heat event, as outlined in MG-023. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, citing MG-023. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified rather than when the event ends, in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

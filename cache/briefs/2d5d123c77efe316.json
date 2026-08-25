@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise Ashford Crossing for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure (MG-023). Review open work orders and re-prioritise outstanding work against the unit's ability to shed heat, completing any defects concerning failed cooling, obstructed airflow, or oil level and leaks before the event begins (SOP-016). Bring forward any overdue detailed inspection in preference to accepting the heat exposure, as the time elapsed since the last maintenance bounds how current the recorded condition is (REG-042).",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-016",
+    "REG-042"
+  ],
+  "status": "ok"
+}

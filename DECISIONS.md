@@ -1320,3 +1320,82 @@ at k=15 and recovers by k=40. Given the counts involved none of those orderings
 is established, which is itself the finding worth recording: at 16 events this
 comparison cannot rank its middle three variants, and reporting one capacity
 concealed that.
+
+## D-040 — `max_overnight_min_c` is dropped from the feature set
+
+**Decision:** `FEATURES` goes from 16 to 15. The reading is still computed, still
+written to the scored JSON and still shown on the forecast strip, because it is a
+real property of the weather. It is no longer a model input.
+
+**Why.** Variance inflation factor of **49.4** — 98% of it was predictable from
+the other fifteen features, and it correlated 0.933 with degree-hours. Its
+coefficient flipped sign between cross-validation folds, with a fold standard
+deviation larger than the coefficient itself. On screen it was reporting that a
+32 °C overnight minimum had *lowered* an asset's risk, which is not a claim the
+model can defend and not one a crew supervisor should be shown.
+
+**What it cost: nothing measurable.** Precision@15 and @30 are byte-identical,
+13 and 26 hits as before; within-event AUC moved +0.0002 and pooled AUC +0.0020;
+Brier was unchanged at 0.0088; forecast divergence was marginally better. The
+model's worst VIF fell from 49.4 to 3.6 and one of the two sign-flipping hazard
+coefficients disappeared.
+
+**Why nothing changed, which is the part worth understanding.** A hazard feature
+takes exactly one value within an event. It adds the same number to all 900
+logits in that event and therefore *cannot reorder them*. The hazard main effects
+set the level of risk, never the within-event ranking — which is the same algebra
+that governs the interaction terms (D-024), applied to the main effects. So this
+was never a ranking-quality decision: it was about coefficient stability, the
+explanation on screen, and calibration. All three improved or held.
+
+**What was NOT dropped, and why.** `peak_temp_c` is also negative and also flips
+sign, and dropping it measured *worse* (within-event AUC −0.0014, CI just
+excluding zero). Its negative coefficient is not an artefact: given equal
+accumulated heat, a higher peak means the heat was concentrated into a shorter
+event, and a shorter event does less damage. The two hottest events in the bank,
+at 42.2 °C and 41.8 °C, produced zero failures between them. That is the
+project's premise appearing in a fitted coefficient, and it earns its place.
+
+**A result deliberately not acted on.** Dropping all three of peak temperature,
+overnight minimum and warm nights measured *better* on within-event AUC
+(+0.0038, CI [+0.0011, +0.0074]). It is not adopted. Six variants were compared
+across three metrics — eighteen comparisons, in which roughly one spurious result
+at 95% confidence is expected — the effect is 0.004 AUC, and the power analysis
+in D-036 already established that 16 events cannot resolve differences this size.
+The `max_overnight_min_c` case is different in kind: the claim there is not that
+it is better but that it is *indistinguishable on every metric* while removing
+the worst collinearity in the model and a misleading row from the interface.
+That is an argument from parsimony, which is the right sort of argument to make
+at this sample size.
+
+## D-041 — The retrieval floor is a per-term score, not a total
+
+**Decision:** `BM25_FLOOR` becomes `BM25_FLOOR_PER_TERM = 0.45`. `retrieve`
+divides the top score by the number of query terms before comparing.
+
+**The defect.** A BM25 total is a sum of per-term contributions, so it grows with
+query length. Measured across 160 queries, the total correlates **+0.87** with
+the number of terms: query lengths run 13 to 50 and totals 12.0 to 36.6. An
+absolute floor on that quantity tests how long a query was, not how well it
+matched.
+
+That is why the value needed re-deriving four times — 12.0, then 16.0, then 14.0
+— once after raising `BRIEF_TOP_N`, once after removing the cooling-type term,
+once after dropping `max_overnight_min_c`. Each change altered term counts and
+moved a threshold that had stopped meaning what it said. The pattern was recorded
+each time and treated as maintenance; it was a design fault.
+
+**It caught a real false positive on the fifth.** Dropping `max_overnight_min_c`
+took three terms out of every query carrying it, and one asset's 15-term query
+fell to a total of 12.03 against a floor of 14.0. It would have been given the
+fixed no-match text, suppressing three genuinely applicable procedures —
+insulation ageing, loading de-rating, maintenance interval compliance — for an
+old, heavily loaded, overdue asset. On per-term quality that query ranked **62nd
+of 160**: mid-pack, not degenerate. The floor was about to reject a good match
+for being brief.
+
+**The new value.** Per-term score runs 0.589 to 1.360 across the 160 queries,
+median 0.845. 0.45 sits 24% below the observed minimum and, unlike the total,
+does not move when query construction changes. A test asserts that the same terms
+repeated three times receive the same verdict as the terms once — identical match
+quality, identical decision, whatever the length.

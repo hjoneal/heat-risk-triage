@@ -1,0 +1,9 @@
+{
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; REG-042 Maintenance interval compliance.",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "REG-042"
+  ],
+  "status": "fallback"
+}

@@ -1,9 +1,0 @@
-{
-  "brief": "Review the open defect register for the asset and complete outstanding work that affects the unit's ability to shed heat before the event begins, prioritizing items in descending order of priority from failed or degraded forced cooling to oil condition defects. For an ageing unit with advanced age and a history of high loading that cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. Record every de-rating applied, the reason, the value, and the period.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

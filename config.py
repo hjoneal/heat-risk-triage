@@ -302,10 +302,18 @@ LOW_CONDITION_FAILURE_SHARE_MIN = 0.20  # chosen: gate 6
 # ---------------------------------------------------------------------------
 
 FEATURES = [
-    # hazard (4) — ambient temperature only, never the asset's own thermal state
+    # hazard (3) — ambient temperature only, never the asset's own thermal state.
+    # `max_overnight_min_c` was a fourth and was dropped: at a variance inflation
+    # factor of 49.4 it was 98% predictable from the rest, its coefficient flipped
+    # sign between cross-validation folds, and the asset page was reporting that a
+    # 32 C night had lowered an asset's risk. Removing it left every ranking
+    # metric identical — a hazard feature is constant within an event and so
+    # cannot reorder the assets in one — while taking the model's worst VIF to
+    # 3.6. It is still computed and still shown on the forecast strip, because it
+    # is a real property of the weather; it is no longer a model input.
+    # See DECISIONS.md D-040.
     "peak_temp_c",
     "degree_hours_above_30",
-    "max_overnight_min_c",
     "consecutive_warm_nights",
     # asset static (3)
     "age_years",
@@ -323,7 +331,7 @@ FEATURES = [
     "condition_x_degree_hours",
     "age_x_warm_nights",
 ]
-assert len(FEATURES) == 16
+assert len(FEATURES) == 15
 
 # Logistic regression is additive in the log-odds, so with hazard features that
 # are constant within an event the hazard block adds the same number to every
@@ -375,13 +383,12 @@ NO_NOTES_FEATURES = [
     name for name in FEATURES
     if not name.startswith("flag_") and name != "condition_x_degree_hours"
 ]
-assert len(NO_NOTES_FEATURES) == 11
+assert len(NO_NOTES_FEATURES) == 10
 
 # The only path from a feature name to anything a human reads.
 FEATURE_LABELS = {
     "peak_temp_c": "Peak temperature",
     "degree_hours_above_30": "Accumulated heat above 30°C",
-    "max_overnight_min_c": "Warmest overnight minimum",
     "consecutive_warm_nights": "Consecutive warm nights",
     "age_years": "Age",
     "cooling_type_ordinal": "Cooling system type",
@@ -404,7 +411,6 @@ assert set(FEATURE_LABELS) == set(FEATURES)
 FEATURE_UNITS = {
     "peak_temp_c": "°C",
     "degree_hours_above_30": "°C·h",
-    "max_overnight_min_c": "°C",
     "consecutive_warm_nights": "nights",
     "age_years": "years",
     "cooling_type_ordinal": "",  # rendered as the cooling type's name
@@ -524,24 +530,24 @@ BM25_TOP_K = 3  # chosen: as many procedures as a supervisor will read
 # Preserves hyphenated identifiers such as sop-014, which \w+ would split.
 TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 
-# Set below the main cluster in output/bm25_scores.txt: across all 160 generated
-# queries the top score ranges 16.74 to 36.56, with no separated low tail. 14.0
-# sits 16% below the observed minimum.
+# The floor is a per-term score, not a total. BM25 sums a contribution per query
+# term, so a total scales with how many terms the query has: measured across 160
+# queries, total score correlates +0.87 with query length. An absolute floor on
+# that quantity tests how long the query was, not how well it matched — which is
+# why the previous value needed re-deriving after every change to build_query,
+# four times, each one moving a threshold that had stopped meaning what it said.
 #
-# This is the third derivation, and the pattern is worth stating rather than
-# repeating silently: the floor tracks query construction, and every change to
-# build_query moves the distribution under it. It was 12.0 against a minimum of
-# 13.97; raising BRIEF_TOP_N to 40 brought lower-ranked assets in and their
-# shorter queries pulled the minimum down; removing the cooling-type term took
-# one more term out of every query and pulled it down again. A value left alone
-# across those changes would not have meant the same thing twice.
+# It caught a real false positive on the fifth. Dropping max_overnight_min_c
+# removed three terms from every query that carried it, and one asset's 15-term
+# query fell to a total of 12.03 against a floor of 14.0 — suppressing three
+# genuinely applicable procedures (insulation ageing, loading de-rating,
+# maintenance compliance) for an old, heavily loaded, overdue asset. On per-term
+# quality that same query ranked 62nd of 160: mid-pack, not degenerate.
 #
-# Anyone changing build_query should re-run `retrieve.py --scores-only` and
-# re-derive this rather than assume it still holds. It does not fire on any of
-# the 160, which is recorded rather than engineered around: build_query
-# concatenates a term list per positive contribution, and against 25 topically
-# dense procedures such a query always matches something. See DECISIONS.md D-018.
-BM25_FLOOR = 14.0  # measured
+# Per-term score across the 160 queries runs 0.589 to 1.360, median 0.845. 0.45
+# sits 24% below the observed minimum and does not move when query length does.
+# See DECISIONS.md D-018 and D-041.
+BM25_FLOOR_PER_TERM = 0.45  # measured
 
 # Covers the top of CAPACITY_SWEEP, so every row reachable at any reported
 # capacity carries an action brief rather than only those inside the default 15.
@@ -556,7 +562,6 @@ QUERY_TERMS = {
     "flag_oil_issue": ["oil", "level", "seepage", "sampling"],
     "flag_overdue_remedial": ["work", "order", "outstanding", "deferred"],
     "consecutive_warm_nights": ["sustained", "overnight", "thermal", "loading"],
-    "max_overnight_min_c": ["overnight", "cooling", "recovery"],
     "age_years": ["ageing", "insulation", "end-of-life"],
     "peak_load_pct": ["loading", "capacity", "de-rating"],
     "degree_hours_above_30": ["sustained", "high", "ambient"],

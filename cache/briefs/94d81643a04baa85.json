@@ -1,7 +1,0 @@
-{
-  "brief": "Crews should inspect the transformer and verify its cooling system configuration. For this ONAN cooling installation, apply the ambient de-rating requirements set out in MG-021. For sustained events exceeding 48 hours with overnight minima above 24 degrees, apply the further 5 percent reduction from the third day onward as directed in MG-021.",
-  "cited_doc_ids": [
-    "MG-021"
-  ],
-  "status": "ok"
-}

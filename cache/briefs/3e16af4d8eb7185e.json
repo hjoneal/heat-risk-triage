@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise outstanding work orders for Tilbrook Mill 230/34kV (SUB-SGW-307) before the heat event begins, addressing defects in descending order of priority with a focus on forced cooling, ventilation, and oil issues [SOP-016]. For this ageing unit with a reduced margin against mechanical failure, apply the loading restriction in MG-021 if it cannot be attended before the event [MG-023]. Reduce permissible load for ambient conditions and apply any required de-rating for reduced cooling, recording every de-rating applied along with the reason, value, and period [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

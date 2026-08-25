@@ -4,14 +4,14 @@ Top 15 assets, compared pairwise across the 4 demo scenarios.
 By priority is the crew's queue order (risk x customers_served); by risk
 is the model's own ranking, which is what the interaction features act on.
 
-  short-severe vs long-moderate: 3 of 15 differ by priority, 5 by risk alone
-  short-severe vs long-severe: 4 of 15 differ by priority, 6 by risk alone
+  short-severe vs long-moderate: 4 of 15 differ by priority, 5 by risk alone
+  short-severe vs long-severe: 5 of 15 differ by priority, 6 by risk alone
   short-severe vs baseline-mild: 4 of 15 differ by priority, 7 by risk alone
-  long-moderate vs long-severe: 3 of 15 differ by priority, 4 by risk alone
+  long-moderate vs long-severe: 3 of 15 differ by priority, 5 by risk alone
   long-moderate vs baseline-mild: 7 of 15 differ by priority, 12 by risk alone
   long-severe vs baseline-mild: 8 of 15 differ by priority, 13 by risk alone
 
-Priority divergence runs 3 to 8 against 4 to 13 by risk. Priority is damped because
+Priority divergence runs 3 to 8 against 5 to 13 by risk. Priority is damped because
 customers_served spans 45x across the fleet, far more than the forecast
 re-weights any asset's risk, so the queue is stabler than the ranking
 underneath it. It is no longer frozen: an earlier build measured 0 here,

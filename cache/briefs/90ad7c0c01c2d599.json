@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect the open defect register for the Langmere Lock unit and prioritise any outstanding remedial work in descending order of forced-cooling, ventilation, and oil level or leak categories before the event begins. Since this unit is an ageing asset with a history of high loading and has outstanding remedial work, review its loading and apply the appropriate de-rating if the work cannot be completed. Record every de-rating applied along with its reason, value, and period.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

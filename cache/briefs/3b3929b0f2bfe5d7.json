@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise outstanding work orders for this asset in descending order of priority, focusing first on failed or degraded forced cooling, obstructed ventilation, and oil level or active leaks before the heat event begins, as mandated by SOP-016. Because the cooling type is ONAN and forced cooling is not applicable, ensure that any ambient de-rating or reduced cooling rules from MG-021 and any ventilation or airflow inspections from SOP-015 are applied as appropriate. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "SOP-015",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

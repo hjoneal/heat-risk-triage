@@ -1,8 +1,0 @@
-{
-  "brief": "Review the open defect register for Ivybridge Green before the forecast heat event and re-prioritise outstanding work according to its effect on the unit's ability to shed heat, completing work in categories 1 to 3 wherever crew capacity allows (SOP-016). Inspect all intake and exhaust louvres for blockage exceeding one quarter of the free area, ensuring any obstructed ventilation is cleared in preference to deferring it (SOP-015). The supplied documents do not cover any specific loading restrictions or de-rating requirements based on the asset's age, customer count, criticality, or the specific values listed for peak load, cooling type, and warmest overnight minimum (MG-021, SOP-015, SOP-016).",
-  "cited_doc_ids": [
-    "SOP-015",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

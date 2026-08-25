@@ -1,8 +1,0 @@
-{
-  "brief": "Crews must apply the loading reductions required by MG-021 if the heat event extends beyond 48 hours with overnight minima above 24 degrees, noting that Kingsley Green 138/13kV has an ONAN cooling type. The supplied documents do not specify any other procedural steps for this asset under the current event conditions. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-025"
-  ],
-  "status": "ok"
-}

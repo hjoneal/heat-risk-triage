@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise outstanding work affecting the unit's ability to shed heat in descending order of priority, completing work in categories 1 to 3 before the event begins wherever crew capacity allows, and apply a loading restriction for category 4 items that cannot be completed [SOP-016]. Where an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

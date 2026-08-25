@@ -1,0 +1,8 @@
+{
+  "brief": "Prior to the forecast heat event, review the open defect register for Northcott Bend 230/34kV (SUB-SGW-518) in accordance with SOP-016 to identify any outstanding work affecting heat shedding, such as failed or degraded forced cooling, obstructed ventilation, or oil level issues. Complete work in priority categories 1 to 3 before the event begins wherever crew capacity allows, as required by SOP-016. If the asset has forced cooling, run it continuously through the overnight period during events forecast to run beyond 48 hours with warm overnight minima, per MG-025.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-025"
+  ],
+  "status": "ok"
+}

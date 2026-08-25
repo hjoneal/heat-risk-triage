@@ -49,7 +49,7 @@ FIXED_QUERIES = [
      "work order outstanding deferred",
      {"SOP-016"}),
     ("warm nights and sustained loading",
-     "sustained overnight thermal loading recovery",
+     "sustained overnight thermal loading ageing insulation",
      {"MG-025"}),
     ("ageing insulation",
      "ageing insulation end-of-life",
@@ -164,22 +164,24 @@ def test_retrieved_documents_respect_the_floor():
                 f"{scenario_id}/{asset_id} is no_match but carries retrieved documents"
         else:
             assert record["retrieved"], f"{scenario_id}/{asset_id} returned nothing but is not no_match"
-            assert record["retrieved"][0]["score"] >= config.BM25_FLOOR
+            per_term = record["retrieved"][0]["score"] / len(record["query_terms"])
+            assert per_term >= config.BM25_FLOOR_PER_TERM, \
+                f"{scenario_id}/{asset_id} scored {per_term:.3f} per term but was returned"
 
 
 def test_no_match_branch_fires_on_a_degenerate_query():
     """Exercise the floor's branch directly, since no real query reaches it.
 
-    `BM25_FLOOR` is set below the whole observed distribution and never fires on
-    any generated query (DECISIONS.md D-018), so without this the branch and
-    its fixed text would be unexecuted code. A one-term query against vocabulary
-    the corpus barely contains is the cheap way to reach it without moving the
-    production threshold to manufacture a trigger.
+    `BM25_FLOOR_PER_TERM` is set below the whole observed distribution and never
+    fires on any generated query (DECISIONS.md D-018), so without this the branch
+    and its fixed text would be unexecuted code. A one-term query against
+    vocabulary the corpus barely contains is the cheap way to reach it without
+    moving the production threshold to manufacture a trigger.
     """
     hits, status, top_score = retrieve.retrieve(INDEX, DOCUMENTS, ["zzzznonsense"])
     assert status == "no_match"
     assert hits == []
-    assert top_score < config.BM25_FLOOR
+    assert top_score / 1 < config.BM25_FLOOR_PER_TERM
 
 
 def test_no_match_produces_the_fixed_brief_and_makes_no_call():
@@ -222,7 +224,7 @@ def test_retrieval_never_returns_an_inapplicable_procedure(cooling_type):
     terms most likely to surface those documents."""
     query = (config.QUERY_TERMS["flag_cooling_degraded"]
              + config.QUERY_TERMS["flag_ventilation_obstructed"]
-             + config.QUERY_TERMS["max_overnight_min_c"]
+             + config.QUERY_TERMS["consecutive_warm_nights"]
              + config.QUERY_TERMS["peak_load_pct"]
              + config.HIGH_AMBIENT_QUERY_TERMS)
     hits, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, cooling_type)
@@ -235,7 +237,7 @@ def test_the_filter_changes_what_ONAN_units_can_receive():
     """Guard against the filter being a no-op: without it the restricted
     documents must be reachable, otherwise this test proves nothing."""
     query = (config.QUERY_TERMS["flag_cooling_degraded"] * 4
-             + config.QUERY_TERMS["max_overnight_min_c"])
+             + config.QUERY_TERMS["consecutive_warm_nights"])
     unfiltered, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, None)
     filtered, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, "ONAN")
     assert {h["doc_id"] for h in unfiltered} & RESTRICTED, \
@@ -254,3 +256,23 @@ def test_the_cooling_type_is_no_longer_a_query_term():
     asset = scored["assets"][0]
     terms = retrieve.build_query(asset["contributions"], scored["hazard"]["peak_temp_c"])
     assert not set(terms) & set(config.COOLING_TYPES)
+
+
+def test_the_floor_does_not_reject_a_query_for_being_short():
+    """The defect the per-term floor exists to prevent.
+
+    A short query scores a low BM25 *total* simply because there are fewer terms
+    to accumulate over — total score correlates +0.87 with query length. Under an
+    absolute floor a well-matched 15-term query was rejected while a poorly
+    matched 44-term one passed. Same terms, repeated: the match quality per term
+    is identical, so the floor's verdict must be too.
+    """
+    short = config.QUERY_TERMS["peak_load_pct"] + config.QUERY_TERMS["age_years"]
+    long = short * 3
+    _, short_status, short_score = retrieve.retrieve(INDEX, DOCUMENTS, short)
+    _, long_status, long_score = retrieve.retrieve(INDEX, DOCUMENTS, long)
+    assert long_score > short_score, "the long query should score a higher total"
+    assert short_status == long_status, (
+        f"the same match quality was judged {short_status} at {len(short)} terms and "
+        f"{long_status} at {len(long)} terms"
+    )

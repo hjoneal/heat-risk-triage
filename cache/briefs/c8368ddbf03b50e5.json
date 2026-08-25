@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise this ageing unit with a history of high loading for pre-event attention, as units of advanced age and high loading have a reduced margin against mechanical failure under heat events [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. If a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity to restore the cooling margin [SOP-011].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

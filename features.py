@@ -1,4 +1,4 @@
-"""Build the 16-column feature matrix from the asset register, the weather and
+"""Build the 15-column feature matrix from the asset register, the weather and
 the extracted condition flags.
 
 The leakage boundary lives here. Hazard features derive from ambient temperature
@@ -46,7 +46,11 @@ def longest_run(flags):
 
 
 def hazard_features(temps):
-    """The four hazard features, from ambient temperature only.
+    """The hazard readings, from ambient temperature only.
+
+    Four are computed; three are model features. `max_overnight_min_c` is kept
+    because the forecast strip shows it and it is a real property of the weather,
+    but it was dropped from FEATURES for collinearity — see config.FEATURES.
 
     Overnight minimum is read from the first six hours of each day, where the
     diurnal curve bottoms out. Peak temperature alone would rank a short severe
@@ -153,7 +157,6 @@ def build_feature_matrix(assets, hazard_table, flags, pairs):
     matrix = pd.DataFrame(index=merged.index)
     matrix["peak_temp_c"] = merged["peak_temp_c"]
     matrix["degree_hours_above_30"] = merged["degree_hours_above_30"]
-    matrix["max_overnight_min_c"] = merged["max_overnight_min_c"]
     matrix["consecutive_warm_nights"] = merged["consecutive_warm_nights"]
     matrix["age_years"] = merged["event_id"].map(event_year) - merged["install_year"]
     matrix["cooling_type_ordinal"] = merged["cooling_type"].map(config.COOLING_TYPE_ORDINAL)

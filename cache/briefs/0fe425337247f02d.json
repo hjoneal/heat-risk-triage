@@ -1,0 +1,7 @@
+{
+  "brief": "Inspect the asset's conservator sight glass at settled temperature and verify whether the oil level is below the minimum mark, as specified in SOP-012. If the level is below the mark, make-up oil must be added before the unit is exposed to the forecast heat event (SOP-012).",
+  "cited_doc_ids": [
+    "SOP-012"
+  ],
+  "status": "ok"
+}

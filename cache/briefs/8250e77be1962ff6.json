@@ -1,8 +1,0 @@
-{
-  "brief": "Inspect Yarrow Mill transformer and apply the loading restriction in MG-023 in preference to accepting exposure ahead of the forecast heat event. For sustained events exceeding 48 hours, apply the further 5 percent reduction from the third day onward as specified in MG-021, noting that the supplied documents do not cover any specific overnight recovery protocol since the unit cooling type is ONAN rather than forced cooling. Record every de-rating applied along with the reason, value, and period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}
