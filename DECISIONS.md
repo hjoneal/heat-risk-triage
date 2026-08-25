@@ -1473,3 +1473,39 @@ tests fail on four counts.
 render looks fine in a diff and is useless. That has happened here once, when
 `matplotlib.use("Agg")` at import time in `model.py` hijacked the backend for
 anything importing it and the notebook committed with every plot missing.
+
+## D-044 — README figures are checked cell by cell, not "does this number appear"
+
+**Decision:** `tests/test_readme.py` parses the README's tables and compares each
+cell against the file that produced it. Prose claims about dropped features are
+checked too.
+
+**Why the previous audits passed while the file was wrong.** Twice during this
+build I audited the README by asking whether each correct value appeared
+*somewhere* in the text. Both audits reported everything matching. Both times the
+file contained errors, because a value that is right in one table and stale in
+another satisfies a membership test.
+
+A reader found two the audits had missed. The capacity sweep reported the full
+model's recall@10 as **0.0495** while the per-variant table three paragraphs
+above reported **0.0239** for the same model on the same predictions — the sweep
+table had not been regenerated after `max_overnight_min_c` was dropped, and the
+membership audit passed because 0.0239 appeared correctly in the other table.
+Separately, a limitation described "the 13-feature model" as the better one on
+discrimination; that variant had become 12 features when the drop landed.
+
+**What the tests assert.** Every cell of the ablation table, the capacity sweep
+and both per-variant tables against `metrics.json`, positionally. That the two
+tables carrying the full model's recall agree with each other, which is the exact
+failure that occurred. Headline counts against `config`. And that no feature
+removed from `FEATURES` is still described in prose as a feature — the second
+error was prose, which is why the numeric sweep could not have found it either.
+
+**Verified against the real errors.** Both were reintroduced and both fail:
+`sweep k=10 precision: README 0.0625, metrics 0.0563` and `the capacity sweep
+table and the per-variant table disagree at k=10`.
+
+**The general lesson, since it now applies to two tests in this repo.** A check
+of the form "the right answer appears somewhere" is not a check. The notebook
+freshness test (D-043) has the same weakness and it is documented there; here it
+was not a theoretical weakness but the actual cause of two shipped errors.

@@ -62,11 +62,11 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    action brief that may reference only the documents it was given — checked in its citation array
    *and* in its prose. D-037, D-038.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 303 tests across five files: retrieval behaviour
+   check, and the Bayes ceiling. 310 tests across six files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
    terms are what let the forecast reorder the queue (`test_ranking.py`), what the interface must not
-   misreport (`test_interface.py`), and whether the committed notebook still matches the pipeline
-   (`test_notebook.py`).
+   misreport (`test_interface.py`), whether the committed notebook still matches the pipeline
+   (`test_notebook.py`), and whether this README's tables still match `output/` (`test_readme.py`).
 
 The asset page reports each factor's **effect on the odds** of failure — the exponential of its
 log-odds contribution, which is exact rather than a simplification — with the reading in its own
@@ -324,7 +324,7 @@ capacity figure can read off their own number:
 
 | Capacity | Precision@k | Recall@k | % of fleet |
 |---|---|---|---|
-| 10 | 0.0625 | 0.0495 | 1.1% |
+| 10 | 0.0563 | 0.0239 | 1.1% |
 | 15 **(default)** | 0.0542 | 0.0627 | 1.7% |
 | 20 | 0.0500 | 0.0695 | 2.2% |
 | 25 | 0.0500 | 0.1065 | 2.8% |
@@ -432,7 +432,7 @@ below the observed minimum and does not move when query construction does. A tes
 same terms repeated three times get the same verdict as the terms once. **It does not trigger on any
 of the 160 queries**, so no real query reaches the `no_match` path. `DECISIONS.md` D-041.
 
-303 tests pass, including a freshness check on the notebook: it is committed with its outputs, so
+310 tests pass, including a freshness check on the notebook: it is committed with its outputs, so
 re-running the pipeline silently invalidates every figure in it. The check compares its displayed
 numbers against `output/metrics.json` without executing it, and also asserts it ran clean, rendered
 its plots, and imports from the modules rather than reimplementing them. It went stale twice during
@@ -516,8 +516,9 @@ Production MLOps Architecture*, October 2025.
   the Bayes ceiling for it is 0.7260, so the headroom is small. The ranking is limited by the
   problem being mostly coin-flip at a 1% base rate, not by the model.
 - **The interaction terms cost 0.039 of within-event AUC.** They are kept because without them the
-  forecast cannot change the ranking at all, but on discrimination alone the 13-feature model is the
-  better one, and that trade is a judgement rather than a measurement.
+  forecast cannot change the ranking at all, but on discrimination alone the
+  12-feature *Register + notes* variant is the better one, and that trade is a judgement rather
+  than a measurement.
 - **The crew reaches 1.7% of the fleet.** Capacity stayed at 15 while the fleet grew sixfold, so 15
   interventions now cover 15 of 900 rather than 15 of 150. Recall at 15 is correspondingly low in
   absolute terms — and is a consequence of a conservative capacity assumption rather than of the
@@ -552,8 +553,8 @@ data/                      generated artefacts and the procedure corpus
 cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
-tests/                     retrieval, citations, ranking, interface, notebook freshness
-DECISIONS.md               43 entries, append-only
+tests/                     retrieval, citations, ranking, interface, notebook and README freshness
+DECISIONS.md               44 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

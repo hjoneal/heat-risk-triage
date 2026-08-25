@@ -1,0 +1,182 @@
+"""The README reproduces numbers from output/; those copies must not drift.
+
+Every figure in the README is a transcription of something a script wrote. The
+transcription is done by hand, so it goes stale silently — and it has, repeatedly.
+Two audits during the build passed while the file contained wrong numbers,
+because they asked whether the correct value appeared *anywhere* in the README. A
+value that is right in one table and stale in another satisfies that test and
+misleads a reader, which is precisely what happened: the capacity sweep reported
+recall@10 as 0.0495 while the per-variant table three paragraphs above reported
+0.0239 for the same model.
+
+These tests parse the README's tables and compare them **cell by cell** against
+the file that produced them. A stale cell fails even when the same number appears
+correctly elsewhere.
+"""
+
+import json
+import re
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import config  # noqa: E402
+
+README = config.REPO_ROOT / "README.md"
+
+
+def load_readme():
+    if not README.exists():
+        pytest.skip("README.md not present")
+    return README.read_text()
+
+
+def load_metrics():
+    path = config.OUTPUT_DIR / "metrics.json"
+    if not path.exists():
+        pytest.skip("metrics.json not present; run model.py first")
+    return json.loads(path.read_text())
+
+
+def tables(text):
+    """Every markdown table, as a list of rows of stripped cells."""
+    found = []
+    current = []
+    for line in text.splitlines():
+        if line.startswith("|"):
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if not all(set(c) <= set("- :") for c in cells):  # skip separator rows
+                current.append(cells)
+        elif current:
+            found.append(current)
+            current = []
+    if current:
+        found.append(current)
+    return found
+
+
+def table_with_header(text, *header_prefix):
+    """The one table whose header row starts with these cells.
+
+    Matched on a prefix rather than the first cell alone: three tables in the
+    README are headed "Variant" and they carry different columns.
+    """
+    matches = [t for t in tables(text)
+               if t and tuple(t[0][:len(header_prefix)]) == header_prefix]
+    assert len(matches) == 1, \
+        f"expected exactly one table headed {header_prefix}, found {len(matches)}"
+    return matches[0]
+
+
+def numeric(cell):
+    """The number in a cell, ignoring markdown emphasis and annotations."""
+    stripped = re.sub(r"[*`]|\s*\(default\)\s*", "", cell).strip().rstrip("%")
+    return float(stripped)
+
+
+def test_the_ablation_table_matches_metrics():
+    metrics = load_metrics()
+    rows = table_with_header(load_readme(), "Variant", "Features")
+    body = {r[0].strip("*"): r for r in rows[1:]}
+    for name, result in metrics["ablations"].items():
+        assert name in body, f"{name} is missing from the README ablation table"
+        row = body[name]
+        for column, key, places in [(1, "n_features", 0), (2, "within_event_auc", 4),
+                                    (3, "auc", 4), (4, "precision_at_15", 4),
+                                    (5, "recall_at_15", 4)]:
+            expected = f"{result[key]:.{places}f}"
+            assert numeric(row[column]) == float(expected), (
+                f"ablation table, {name}, {key}: README says {row[column]}, "
+                f"metrics.json says {expected}"
+            )
+
+
+def test_the_capacity_sweep_table_matches_metrics():
+    """The table that was wrong. Recall@10 read 0.0495 against a true 0.0239."""
+    metrics = load_metrics()
+    rows = table_with_header(load_readme(), "Capacity", "Precision@k")
+    body = {int(numeric(r[0])): r for r in rows[1:]}
+    for entry in metrics["capacity_sweep"]:
+        k = entry["capacity"]
+        assert k in body, f"capacity {k} missing from the README sweep table"
+        row = body[k]
+        assert numeric(row[1]) == float(f"{entry['precision']:.4f}"), \
+            f"sweep k={k} precision: README {row[1]}, metrics {entry['precision']:.4f}"
+        assert numeric(row[2]) == float(f"{entry['recall']:.4f}"), \
+            f"sweep k={k} recall: README {row[2]}, metrics {entry['recall']:.4f}"
+        assert numeric(row[3]) == float(f"{entry['fleet_share'] * 100:.1f}"), \
+            f"sweep k={k} fleet share: README {row[3]}"
+
+
+@pytest.mark.parametrize("field,places", [("hits", 0), ("recall", 4)])
+def test_the_per_variant_tables_match_metrics(field, places):
+    """Two tables share a header, so they are matched by the values they carry."""
+    metrics = load_metrics()
+    by_variant = metrics["capacity_sweep_by_variant"]
+    expected_first = f"{by_variant['Register only'][0][field]:.{places}f}"
+
+    candidates = [t for t in tables(load_readme())
+                  if t and t[0][0] == "Variant" and len(t[0]) == len(config.CAPACITY_SWEEP) + 1]
+    matching = [t for t in candidates
+                if any(r[0] == "Register only" and numeric(r[1]) == float(expected_first)
+                       for r in t[1:])]
+    assert matching, f"no README table carries the per-variant {field} figures"
+
+    body = {r[0]: r for r in matching[0][1:]}
+    for name, rows in by_variant.items():
+        assert name in body, f"{name} missing from the per-variant {field} table"
+        for column, entry in enumerate(rows, start=1):
+            expected = f"{entry[field]:.{places}f}"
+            assert numeric(body[name][column]) == float(expected), (
+                f"per-variant {field}, {name}, k={entry['capacity']}: "
+                f"README says {body[name][column]}, metrics says {expected}"
+            )
+
+
+def test_the_two_recall_tables_do_not_contradict_each_other():
+    """The specific failure: the full model's recall appears in two tables.
+
+    They are transcribed separately and were allowed to disagree. Whatever the
+    source says, the README must say the same thing in both places.
+    """
+    metrics = load_metrics()
+    sweep = {r["capacity"]: r["recall"] for r in metrics["capacity_sweep"]}
+    variant = {r["capacity"]: r["recall"]
+               for r in metrics["capacity_sweep_by_variant"]["Full model"]}
+    assert sweep == variant, "metrics.json itself disagrees; model.py is at fault"
+
+    text = load_readme()
+    rows = table_with_header(text, "Capacity", "Precision@k")
+    for entry in metrics["capacity_sweep"]:
+        printed = numeric({int(numeric(r[0])): r for r in rows[1:]}[entry["capacity"]][2])
+        assert printed == float(f"{variant[entry['capacity']]:.4f}"), (
+            f"the capacity sweep table and the per-variant table disagree at "
+            f"k={entry['capacity']}"
+        )
+
+
+def test_headline_counts_match_the_build():
+    text = load_readme()
+    for label, expected in [
+        ("features", f"{len(config.FEATURES)} features"),
+        ("scenarios", f"| Demo scenarios | {len(config.SCENARIOS)} |"),
+        ("briefs", f"| Action briefs | {config.BRIEF_TOP_N * len(config.SCENARIOS)} |"),
+        ("assets", f"| Assets | {config.N_ASSETS} |"),
+    ]:
+        assert expected in text, f"README {label}: expected {expected!r}"
+
+
+def test_no_dropped_feature_is_described_as_a_feature():
+    """Prose survives numeric audits. Two claims about `max_overnight_min_c`
+    outlived its removal because neither contained a number."""
+    text = load_readme()
+    for name in ["max_overnight_min_c"]:
+        if name in config.FEATURES:
+            continue
+        for pattern in [rf"`{name}`[^.]{{0,60}}\bis a feature\b",
+                        rf"`{name}`[^.]{{0,60}}\bare features\b"]:
+            assert not re.search(pattern, text), \
+                f"README still describes the dropped {name} as a feature"
