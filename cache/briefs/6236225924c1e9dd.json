@@ -1,0 +1,9 @@
+{
+  "brief": "Crews must inspect all intake and exhaust louvres for blockage before the forecast heat event, clearing any obstruction exceeding one quarter of the free area as detailed in SOP-015. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward in accordance with MG-021. Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, per MG-025, and record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

@@ -1,8 +1,0 @@
-{
-  "brief": "Prioritise Fernbank Green (SUB-SGW-820) for pre-event attention, as its advanced age of 53 years reduces its margin against mechanical failure during sustained thermal exposure (MG-023). Because the unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Ensure any de-rating applied is recorded along with the reason, value, and period (MG-021).",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

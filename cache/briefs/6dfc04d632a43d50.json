@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect Halloway Hill 138/13kV (SUB-SGW-490) and apply the loading reduction in MG-021 if a heat event is forecast within the remedial window of an open sampling defect [SOP-013]. The supplied documents do not cover whether ONAN cooling units require continuous overnight fan operation, as the guidance in MG-025 applies specifically to units with forced cooling [MG-025]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-025",
-    "SOP-013"
-  ],
-  "status": "ok"
-}

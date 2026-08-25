@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Camden Green prior to the forecast heat event to verify the unverified cooling system resulting from overdue detailed maintenance [REG-042]. Because this unit of advanced age has a history of high loading and reduced margin against mechanical failure, apply the loading restriction in MG-021 if it cannot be attended before the event [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "REG-042"
+  ],
+  "status": "ok"
+}

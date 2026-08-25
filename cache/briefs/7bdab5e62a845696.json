@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this unit [MG-023]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Record every de-rating applied, the reason, the value and the period [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

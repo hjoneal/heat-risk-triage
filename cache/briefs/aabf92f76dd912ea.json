@@ -1,7 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, as specified in SOP-015, and clear any obstruction before the forecast heat event. The supplied documents do not cover the asset's cooling type (ONAN) or its specific loading and de-rating thresholds for this event configuration. Furthermore, the documents do not provide guidance for the asset's age, customer count, criticality, or the specific values recorded in its ranking.",
-  "cited_doc_ids": [
-    "SOP-015"
-  ],
-  "status": "ok"
-}

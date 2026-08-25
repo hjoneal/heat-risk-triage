@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading reduction in MG-021 from the third day onward since the event extends beyond 48 hours with overnight minima above 24 degrees [MG-021, MG-025]. Since the unit has ONAN cooling, the forced cooling directive from MG-025 does not apply. Record every de-rating applied, the reason, the value, and the period [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-025"
-  ],
-  "status": "ok"
-}

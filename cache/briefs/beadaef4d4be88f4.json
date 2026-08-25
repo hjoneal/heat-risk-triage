@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, as well as dampers and the airflow path, to ensure ventilation is clear before the heat event in accordance with SOP-015. For this ONAN cooling unit, apply ambient de-rating if the average ambient over the preceding 24 hours exceeds 30 degrees, reducing permissible load by 1.5 percent of rating for each degree above 30 degrees as specified in MG-021. Note that the supplied documents do not require any additional sustained-event loading reduction because the recorded overnight minimum of 17.76 degrees is below the 24-degree threshold for multi-day events in MG-021 and MG-025.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

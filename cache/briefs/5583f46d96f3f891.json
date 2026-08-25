@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect Underhill Hollow 230/34kV (SUB-SGW-095) for accumulated heat and heavy sustained load conditions (MG-021, MG-025). Check ventilation grilles and intake louvres for accumulated leaf litter, seed heads, and nesting material (SOP-011). Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop stages out (MG-025).",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-025",
-    "SOP-011"
-  ],
-  "status": "ok"
-}

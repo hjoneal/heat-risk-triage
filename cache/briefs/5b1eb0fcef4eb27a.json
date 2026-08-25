@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise clearance work over other remedial activity where an obstruction defect is outstanding, as restricted airflow removes the cooling margin the unit relies on during sustained high ambient conditions [SOP-011]. Complete outstanding work in categories 1 to 3 before the event begins wherever crew capacity allows [SOP-016]. Record every de-rating applied, the reason, the value and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

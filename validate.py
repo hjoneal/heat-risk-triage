@@ -9,6 +9,7 @@ Writes: output/extraction_eval.md, output/validation.md
 """
 
 import json
+import re
 
 import numpy as np
 import pandas as pd
@@ -206,11 +207,22 @@ def bayes_ceiling(assets, hazard_table, flags, outcomes):
     return {"model": summarise(predicted), "ceiling": summarise(true_probability)}
 
 
+DOC_ID_IN_TEXT = re.compile(config.DOC_ID_PATTERN)
+
+
 def citation_integrity():
-    """Pass rate across every brief, as a percentage."""
+    """Pass rate across every brief, as a percentage.
+
+    Two checks, not one. The `cited_doc_ids` array must be a subset of what was
+    retrieved — and so must every doc id the model wrote into the prose. The
+    second was added after the first reported 100% clean while two briefs named a
+    procedure in a sentence that had never been supplied: a valid array beside an
+    invented reference. Both are counted here so the headline cannot hide either.
+    """
     total = 0
     passing = 0
     offenders = []
+    in_text_offenders = []
     for scenario_id, _, _, _, _, _ in config.SCENARIOS:
         path = config.OUTPUT_DIR / f"briefs_{scenario_id}.json"
         if not path.exists():
@@ -219,13 +231,19 @@ def citation_integrity():
             total += 1
             retrieved = {hit["doc_id"] for hit in record["retrieved"]}
             cited = set(record["cited_doc_ids"])
-            if cited <= retrieved:
+            mentioned = set(DOC_ID_IN_TEXT.findall(record["brief"]))
+            array_clean = cited <= retrieved
+            text_clean = mentioned <= retrieved
+            if array_clean and text_clean:
                 passing += 1
-            else:
+            if not array_clean:
                 offenders.append((scenario_id, asset_id, sorted(cited - retrieved)))
+            if not text_clean:
+                in_text_offenders.append((scenario_id, asset_id, sorted(mentioned - retrieved)))
     return {"total": total, "passing": passing,
             "rate": 100.0 * passing / total if total else float("nan"),
-            "offenders": offenders}
+            "offenders": offenders,
+            "in_text_offenders": in_text_offenders}
 
 
 def write_extraction_eval(per_flag, by_category, checked, evidence_failures,
@@ -353,12 +371,31 @@ def write_validation(correlations, worst, ceiling, citations, path):
     if citations is None:
         lines.append("Briefs not present; run `retrieve.py` before validating citations.")
     else:
-        lines.append(f"**{citations['rate']:.2f}%** of briefs cite only documents they were given "
-                     f"({citations['passing']} of {citations['total']}).")
+        lines.append(f"**{citations['rate']:.2f}%** of briefs reference only documents they were "
+                     f"given ({citations['passing']} of {citations['total']}).")
+        lines += [
+            "",
+            "Checked twice: the `cited_doc_ids` array, and every doc id written into the",
+            "prose. The second check exists because the first reported 100% clean while two",
+            "briefs named a procedure in a sentence that had never been supplied — a valid",
+            "array beside an invented reference. A supplied document may itself cite another",
+            "procedure by id, and passing that id on reads as an attached document when it is",
+            "not one.",
+            "",
+            f"| Check | Failing |",
+            "|---|---|",
+            f"| `cited_doc_ids` outside the retrieved set | {len(citations['offenders'])} |",
+            f"| doc id in the prose outside the retrieved set | {len(citations['in_text_offenders'])} |",
+        ]
         if citations["offenders"]:
             lines.append("")
             lines.append("Briefs citing documents they were not given:")
             for scenario_id, asset_id, extra in citations["offenders"]:
+                lines.append(f"- {scenario_id} / {asset_id}: {extra}")
+        if citations["in_text_offenders"]:
+            lines.append("")
+            lines.append("Briefs naming an unsupplied document in the prose:")
+            for scenario_id, asset_id, extra in citations["in_text_offenders"]:
                 lines.append(f"- {scenario_id} / {asset_id}: {extra}")
     path.write_text("\n".join(lines) + "\n")
 
@@ -400,7 +437,9 @@ def main():
           f"{100 * ceiling['model']['precision_at_capacity'] / ceiling['ceiling']['precision_at_capacity']:.1f}% "
           f"of achievable precision@15")
     if citations:
-        print(f"citations: {citations['rate']:.2f}% clean ({citations['passing']}/{citations['total']})")
+        print(f"citations: {citations['rate']:.2f}% clean ({citations['passing']}/{citations['total']})"
+              f"  array offenders {len(citations['offenders'])},"
+              f" in-text offenders {len(citations['in_text_offenders'])}")
     for flag, result in per_flag.items():
         print(f"  {flag}: LLM P={result['llm']['precision']:.3f} R={result['llm']['recall']:.3f} | "
               f"keyword P={result['baseline']['precision']:.3f} R={result['baseline']['recall']:.3f}")

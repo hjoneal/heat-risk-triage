@@ -1,9 +1,0 @@
-{
-  "brief": "Run the forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025. Apply the loading reduction in MG-021 from the third day on events forecast to run beyond 48 hours with warm overnight minima, drawing on MG-025. Prioritise this unit for pre-event attention ahead of younger units given its age and cumulative loading history, in accordance with MG-023.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

@@ -1,8 +1,0 @@
-{
-  "brief": "Because Briarcliff Hill transformer is an ageing unit with a history of high loading and reduced margin against mechanical failure, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Alternatively, where forced cooling is available, run it continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
-  "cited_doc_ids": [
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

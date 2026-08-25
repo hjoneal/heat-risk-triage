@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise Rushmere Junction 230/34kV (SUB-SGW-732) for pre-event attention because units of advanced age with high loading histories have reduced margins against mechanical failure under thermal stress [MG-023]. If this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Where a vegetation or obstruction defect is outstanding on the unit, clearance work takes precedence over other remedial activity to ensure adequate airflow [SOP-011].",
-  "cited_doc_ids": [
-    "MG-023",
-    "MG-021",
-    "SOP-011"
-  ],
-  "status": "ok"
-}

@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 to Redwater Yard 138/13kV ahead of the forecast heat event, as this unit cannot be attended before the event in accordance with MG-023. Ensure all applied de-ratings, reasons, values, and periods are recorded as required by MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

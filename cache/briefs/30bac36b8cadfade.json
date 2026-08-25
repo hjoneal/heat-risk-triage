@@ -1,0 +1,9 @@
+{
+  "brief": "The supplied documents do not cover the situation regarding asset SUB-SGW-765, as no defect register, inspection findings, or work orders were provided to evaluate against the heat event procedures. Crew supervision should therefore request the open work order register and inspection records for this ONAN unit before attempting any de-rating or remedial action under MG-021, SOP-015, or SOP-016.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-015",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

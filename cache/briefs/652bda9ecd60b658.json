@@ -1,8 +1,0 @@
-{
-  "brief": "Crews must inspect ventilation grilles and intake louvres for accumulated leaf litter, seed heads, and nesting material, noting that bird nesting is common between March and July (SOP-011). Airflow to radiator banks and ventilation openings must remain unobstructed at all times, requiring a minimum clearance of two metres between any growth and the radiator face and one metre between growth and the compound fence line (SOP-011). Because the unit is ONAN cooled with an accumulated heat value of 774 and peak load of 0.931, the supplied documents do not cover any specific de-rating calculation for this cooling type beyond the general ambient de-rating of 1.5 percent per degree above 30 degrees (MG-021).",
-  "cited_doc_ids": [
-    "SOP-011",
-    "MG-021"
-  ],
-  "status": "ok"
-}

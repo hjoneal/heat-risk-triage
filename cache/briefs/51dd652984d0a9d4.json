@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise outstanding work orders for Langmere Lock before the heat event by addressing failed or degraded forced cooling, obstructed ventilation, or oil level and leak defects first, as set out in SOP-016. Because the unit is 29 years old and facing a sustained event with overnight minima above 24 degrees, apply the ambient and sustained event de-rating rules in MG-021 if the work cannot be completed. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

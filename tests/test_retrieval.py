@@ -197,3 +197,60 @@ def test_no_match_produces_the_fixed_brief_and_makes_no_call():
     assert brief["status"] == "no_match"
     assert brief["brief"] == config.NO_MATCH_BRIEF
     assert brief["cited_doc_ids"] == []
+
+
+# --- Applicability -------------------------------------------------------
+
+APPLIES_TO = {d["doc_id"]: set(d["applies_to"]) for d in DOCUMENTS}
+RESTRICTED = {doc_id for doc_id, types in APPLIES_TO.items()
+              if types != set(config.COOLING_TYPES)}
+
+
+def test_the_corpus_actually_has_something_to_filter():
+    """If every document applied to every cooling type the filter would be
+    machinery for a case that does not exist. Two documents do not."""
+    assert RESTRICTED, "no document is cooling-type restricted; the filter is pointless"
+    for doc_id in RESTRICTED:
+        assert "ONAN" not in APPLIES_TO[doc_id], \
+            "the restriction this filter was written for is ONAN having no fans"
+
+
+@pytest.mark.parametrize("cooling_type", config.COOLING_TYPES)
+def test_retrieval_never_returns_an_inapplicable_procedure(cooling_type):
+    """A procedure for a forced-air cooling system does not become relevant to a
+    naturally-cooled unit by scoring well. Checked against a query built from the
+    terms most likely to surface those documents."""
+    query = (config.QUERY_TERMS["flag_cooling_degraded"]
+             + config.QUERY_TERMS["flag_ventilation_obstructed"]
+             + config.QUERY_TERMS["max_overnight_min_c"]
+             + config.QUERY_TERMS["peak_load_pct"]
+             + config.HIGH_AMBIENT_QUERY_TERMS)
+    hits, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, cooling_type)
+    for hit in hits:
+        assert cooling_type in APPLIES_TO[hit["doc_id"]], \
+            f"{hit['doc_id']} does not apply to {cooling_type} but was returned"
+
+
+def test_the_filter_changes_what_ONAN_units_can_receive():
+    """Guard against the filter being a no-op: without it the restricted
+    documents must be reachable, otherwise this test proves nothing."""
+    query = (config.QUERY_TERMS["flag_cooling_degraded"] * 4
+             + config.QUERY_TERMS["max_overnight_min_c"])
+    unfiltered, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, None)
+    filtered, _, _ = retrieve.retrieve(INDEX, DOCUMENTS, query, "ONAN")
+    assert {h["doc_id"] for h in unfiltered} & RESTRICTED, \
+        "the probe query does not reach a restricted document, so it tests nothing"
+    assert not {h["doc_id"] for h in filtered} & RESTRICTED
+
+
+def test_the_cooling_type_is_no_longer_a_query_term():
+    """It could not do the job: applies_to is not indexed, so as a term it only
+    matched cooling types written into a document's prose."""
+    import json
+    path = config.OUTPUT_DIR / f"scored_{config.SCENARIOS[0][0]}.json"
+    if not path.exists():
+        pytest.skip("scored output not present")
+    scored = json.loads(path.read_text())
+    asset = scored["assets"][0]
+    terms = retrieve.build_query(asset["contributions"], scored["hazard"]["peak_temp_c"])
+    assert not set(terms) & set(config.COOLING_TYPES)

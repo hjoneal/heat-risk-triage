@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for Willow Vale 230/34kV (SUB-SGW-709) pursuant to MG-023, as the supplied documents do not cover any forced cooling actions for ONAN cooling type units. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified per MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

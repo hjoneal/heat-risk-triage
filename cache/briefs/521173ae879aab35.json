@@ -1,7 +1,0 @@
-{
-  "brief": "Crews must apply the loading restriction in MG-021 to the Northcott Bend transformer prior to the heat event, as no procedure documents cover checking its ONAN cooling system or 24-year age directly. Record every de-rating applied along with its reason, value, and period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified rather than when the event ends.",
-  "cited_doc_ids": [
-    "MG-021"
-  ],
-  "status": "ok"
-}

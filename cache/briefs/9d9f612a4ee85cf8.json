@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this unit as instructed in MG-023. This unit of advanced age with a history of high loading has a reduced margin against mechanical failure and should be prioritised for pre-event attention ahead of a younger unit in otherwise similar condition (MG-023).",
-  "cited_doc_ids": [
-    "MG-023",
-    "MG-021"
-  ],
-  "status": "ok"
-}

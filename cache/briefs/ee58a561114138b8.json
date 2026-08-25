@@ -1,9 +1,0 @@
-{
-  "brief": "The supplied documents do not cover the specific oil issue noted in the asset facts, as MG-021, MG-023, and MG-025 address loading de-rating, insulation ageing, and overnight thermal recovery rather than oil defects. For this ONAN cooling unit with no forced cooling to reduce, apply the ambient de-ratings and sustained-event loading restrictions set out in MG-021 if the heat event extends beyond 48 hours with overnight minima above 24 degrees [MG-021, MG-023, MG-025]. Prioritise pre-event attention for this unit due to its 34-year age and high loading history [MG-023].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

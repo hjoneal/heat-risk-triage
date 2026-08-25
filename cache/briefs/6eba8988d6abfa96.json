@@ -1,0 +1,8 @@
+{
+  "brief": "Apply the loading reduction in MG-021 in preference to accepting the exposure because the supplied documents do not cover any specific operational response for this unit's ONAN cooling type under the forecast conditions.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

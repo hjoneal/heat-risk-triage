@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, clearing any obstruction exceeding one quarter of the free area before the forecast heat event according to SOP-015. Check that louvre blades are neither bent, corroded, nor missing, and verify that insect mesh is intact and not blinded by dust as specified in SOP-015. Apply the loading restriction in MG-021 in preference to accepting the exposure if this ageing unit cannot be attended before the event per MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-015"
+  ],
+  "status": "ok"
+}

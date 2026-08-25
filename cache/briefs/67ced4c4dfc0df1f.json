@@ -1,0 +1,9 @@
+{
+  "brief": "Reduce the permissible load on Kingsley Green 138/13kV (SUB-SGW-699) in accordance with the ambient de-rating and sustained event requirements in MG-021 and MG-025, since the unit has accumulated heat above 30 degrees and sustained heavy load during the heat event. Consider emergency load transfer pursuant to ERP-032 if the unit approaches its temperature limit, ensuring the receiving asset's capacity is assessed with MG-021 de-ratings applied. Record every de-rating applied, the reason, the value, and the period as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "ERP-032"
+  ],
+  "status": "ok"
+}

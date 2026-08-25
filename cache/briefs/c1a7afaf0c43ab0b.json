@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, and clear any obstruction before the forecast heat event according to SOP-015. Because this unit has ONAN cooling, verify that the permissible load is reduced for high ambient temperatures as instructed in MG-021. Apply the loading restrictions specified in MG-021 to manage the risks associated with this asset's advanced age as outlined in MG-023.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

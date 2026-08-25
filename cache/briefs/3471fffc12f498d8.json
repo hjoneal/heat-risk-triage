@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres, dampers, and the airflow path for Underhill Hollow 230/34kV to clear any blockage exceeding one quarter of the free area, prove full damper travel, and check for recirculation [SOP-015]. Apply ambient and reduced-cooling de-rating as required, recording every de-rating applied, the reason, the value, and the period [MG-021]. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

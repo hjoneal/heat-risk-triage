@@ -1,0 +1,9 @@
+{
+  "brief": "Review the open defect register for the Westmarch Park asset before the heat event in accordance with SOP-016. Because this unit has an ONAN cooling system and is 47 years old, apply the loading restrictions in MG-021 if it cannot be attended before the event, as guided by MG-023. Record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

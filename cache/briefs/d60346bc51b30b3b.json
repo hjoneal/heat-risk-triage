@@ -1,0 +1,9 @@
+{
+  "brief": "Clear any encroaching vegetation or obstructions to maintain unobstructed airflow to the radiator banks and ventilation openings, giving clearance work precedence over other remedial activity as specified in SOP-011 and SOP-015. Inspect all intake and exhaust louvres for blockage by debris, and record every de-rating applied along with its reason, value, and period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, per MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-015"
+  ],
+  "status": "ok"
+}

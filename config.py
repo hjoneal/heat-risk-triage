@@ -525,22 +525,23 @@ BM25_TOP_K = 3  # chosen: as many procedures as a supervisor will read
 TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 
 # Set below the main cluster in output/bm25_scores.txt: across all 160 generated
-# queries the top score ranges 17.76 to 36.76, with no separated low tail. 16.0
-# sits 9.9% below the observed minimum.
+# queries the top score ranges 16.74 to 36.56, with no separated low tail. 14.0
+# sits 16% below the observed minimum.
 #
-# That margin has narrowed and is worth watching. It was 13% when BRIEF_TOP_N was
-# 25; raising it to 40 brought ranks 26 to 40 into the sample, and a lower-ranked
-# asset has fewer positive contributions, so a shorter query and a lower top
-# score. The floor was left at 16.0 rather than lowered to restore the margin,
-# because it still does not fire and moving a threshold each time the sample
-# grows is churn — but the drift is one-directional, and a further rise in
-# BRIEF_TOP_N should be checked against this rather than assumed safe.
+# This is the third derivation, and the pattern is worth stating rather than
+# repeating silently: the floor tracks query construction, and every change to
+# build_query moves the distribution under it. It was 12.0 against a minimum of
+# 13.97; raising BRIEF_TOP_N to 40 brought lower-ranked assets in and their
+# shorter queries pulled the minimum down; removing the cooling-type term took
+# one more term out of every query and pulled it down again. A value left alone
+# across those changes would not have meant the same thing twice.
 #
-# It does not fire on any of the 160. That is recorded rather than engineered
-# around: build_query concatenates a term list per positive contribution, and
-# against 25 topically dense procedures such a query always matches something.
-# See DECISIONS.md D-018.
-BM25_FLOOR = 16.0  # measured
+# Anyone changing build_query should re-run `retrieve.py --scores-only` and
+# re-derive this rather than assume it still holds. It does not fire on any of
+# the 160, which is recorded rather than engineered around: build_query
+# concatenates a term list per positive contribution, and against 25 topically
+# dense procedures such a query always matches something. See DECISIONS.md D-018.
+BM25_FLOOR = 14.0  # measured
 
 # Covers the top of CAPACITY_SWEEP, so every row reachable at any reported
 # capacity carries an action brief rather than only those inside the default 15.
@@ -571,6 +572,24 @@ assert set(QUERY_TERMS) == set(FEATURES)
 
 HIGH_AMBIENT_QUERY_TERMS = ["de-rating", "high", "ambient", "temperature"]  # chosen
 
+# Applicability is a filter, not a query term. Two of the 25 procedures — fan
+# control and pre-event cooling inspection — apply only to ONAF and OFAF units,
+# because an ONAN transformer has no forced-air cooling system to inspect. That is
+# a hard constraint on what may be put in front of a crew, and BM25 relevance
+# cannot express it: measured before this filter existed, SOP-014 reached rank 4
+# for 9 of the 135 briefed ONAN assets, one place outside the top-3 cut.
+#
+# The asset's cooling type was previously appended to every query instead, which
+# did not do this job. `applies_to` is not indexed, so the term could only match
+# cooling types written into a document's prose: "onan" appears in exactly one
+# document and "onaf"/"ofaf" in none, making the term inert for 81 of 200 assets
+# and a high-IDF accident for the rest. See DECISIONS.md D-037.
+FILTER_BY_COOLING_TYPE = True  # chosen
+
+# Doc ids as they appear in a brief's prose, so a reference the model wrote into
+# a sentence can be checked the same way its cited_doc_ids array is.
+DOC_ID_PATTERN = r"\b(?:SOP|MG|ERP|REG)-\d{3}\b"  # chosen
+
 NO_MATCH_BRIEF = (
     "No specific procedure matched this asset's condition profile. "
     "Recommend general pre-event inspection."
@@ -592,7 +611,7 @@ BRIEF_MODEL = "gemini-3.5-flash-lite"  # measured
 # Bumping either version invalidates every cache key built with it, which is how
 # a prompt change is forced to re-run rather than silently reuse old output.
 PROMPT_VERSION = "v1"  # chosen
-BRIEF_PROMPT_VERSION = "v1"  # chosen
+BRIEF_PROMPT_VERSION = "v2"  # chosen: v2 forbids naming an unsupplied doc in the prose
 
 LLM_TEMPERATURE = 0.0  # chosen: deterministic decoding
 EXTRACTION_MAX_TOKENS = 1024  # chosen: four flags with short quotes

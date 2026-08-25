@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Halloway Hill 138/13kV (SUB-SGW-490) and apply the loading reductions and operational responses required by MG-021 and MG-025 during sustained heat events, as the supplied documents do not contain specific oil sampling or dissolved gas analysis results for this asset. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "SOP-013"
+  ],
+  "status": "ok"
+}

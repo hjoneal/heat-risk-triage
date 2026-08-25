@@ -1,9 +1,0 @@
-{
-  "brief": "Apply the loading reduction in MG-021 from the third day for events extending beyond 48 hours with overnight minima above 24 degrees, as detailed in MG-021 and MG-025. Prioritize this aging unit for pre-event attention in accordance with MG-023 ahead of younger units in similar condition. The supplied documents do not cover any specific on-site physical interventions beyond applying these loading restrictions and prioritization measures.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

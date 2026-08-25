@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area, and clear any obstruction before the forecast heat event in accordance with SOP-015. Apply the loading restriction in MG-021 in preference to accepting exposure for this ageing unit (MG-023).",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-015",
+    "MG-023"
+  ],
+  "status": "ok"
+}

@@ -1202,3 +1202,82 @@ only.
 **What would change it.** A capacity figure from the client, at which point the
 sweep becomes a sanity check rather than the headline and `CREW_CAPACITY` moves to
 match. Until then the honest form of the answer is a curve.
+
+## D-037 — Cooling-type applicability is a filter, not a query term
+
+**Decision:** `retrieve` excludes documents whose `applies_to` does not contain
+the asset's cooling type, before ranking. `build_query` no longer appends the
+cooling type to the query.
+
+**What was wrong.** The cooling type was a query term, which looked like it
+biased retrieval toward applicable procedures. It could not: `load_corpus` parses
+`applies_to` out of the front matter and `build_index` indexes only title and
+body, so the term could only ever match a cooling type written into a document's
+prose. Measured across the corpus, `onan` appears in the indexed text of exactly
+one document and `onaf` and `ofaf` in none.
+
+The effect, over 200 assets: the term changed nothing at all for the 81 ONAF and
+OFAF units, and changed the result for 42 of 119 ONAN units — not by matching
+applicability but because `onan` is a near-unique high-IDF token in MG-021. A
+term that reshuffles the ranking for one cooling type and is inert for the other
+two is worse than no term, because its presence implies a filter that is not
+happening.
+
+**Why a filter rather than a better term.** Two of the 25 procedures — MG-022
+(forced-air cooling commissioning and fan control) and SOP-014 (pre-event cooling
+system inspection) — apply to ONAF and OFAF only. An ONAN transformer is
+naturally cooled and has no forced-air system to commission or inspect. That is a
+constraint on what may be put in front of a crew, and relevance cannot express
+it: a document does not become applicable by scoring well.
+
+**How close it was to firing.** Zero briefs had ever retrieved an inapplicable
+document, so the constraint was holding by luck. Measured, an inapplicable
+document reached **rank 4 for 9 of the 135 briefed ONAN assets** — one place
+outside the top-3 cut — both before and after the query term was removed. 164 of
+900 assets are ONAN with degraded cooling recorded in their notes, which is the
+combination that pulls those documents up. The guard does not currently fire and
+is not there because it does; it is there because a hard constraint should be
+enforced rather than observed.
+
+**Alternatives considered.** Indexing `applies_to` would have made the term mean
+what it looked like it meant, but 23 of 25 documents apply to all three types, so
+the token would land in almost every document, carry near-zero IDF, and quietly
+stop discriminating — the same failure in a form that is harder to see. Filtering
+states the constraint where it can be asserted.
+
+**What would change it.** A corpus with genuinely cooling-specific guidance in
+quantity, at which point applicability might deserve to influence ranking as well
+as membership. With two restricted documents out of 25 it does not.
+
+## D-038 — Citation integrity is checked in the prose, not only in the array
+
+**Decision:** `generate_brief` rejects and retries any brief whose text names a
+doc id outside the retrieved set, the same way it already rejects a bad
+`cited_doc_ids` array. `validate.py` reports both counts. `BRIEF_PROMPT_VERSION`
+goes to v2, and the system prompt now forbids passing on an id that appears
+inside a supplied document.
+
+**The gap.** The citation check validated `cited_doc_ids` and never looked at the
+brief text. Measured across 160 briefs, 158 named a doc id in their prose and
+**2 named one that had never been retrieved** — while the array beside them was a
+clean subset, so all 160 passed and the report read 100.00%. The headline was
+true and narrower than it sounded.
+
+**The subtler case, which is not a hallucination.** The top-ranked asset's brief
+read "Apply the loading restriction in MG-023". MG-023 line 33 says "apply the
+loading restriction in **MG-021**". The model lifted a real sentence from a real
+supplied document and substituted the id of the document it was reading for the
+id that sentence points at. Every id involved was retrieved, so neither the old
+check nor the new one catches it — the restriction genuinely exists, in the other
+document. The v2 prompt addresses it directly, because a rule can be stated even
+where an assertion cannot.
+
+**Why the prompt version moved.** A prompt change invalidates every cache key
+built with the old one, which is the mechanism that forces a re-run rather than
+letting stale output sit behind new validation. All 160 briefs were regenerated.
+
+**What this does not cover.** A brief that misattributes an instruction between
+two documents that were *both* retrieved stays invisible to both checks. Catching
+that needs the claim checked against the document's content, not its id, and
+that is an LLM-as-judge evaluation — a listed exclusion, and one that would
+itself need validating.

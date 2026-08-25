@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit prior to the heat event, as outlined in MG-023. Note that the supplied documents do not cover any specific crew actions for ONAN cooling types beyond what is provided in the general loading and ageing procedures. Ensure all applied de-ratings are recorded along with the reason, value, and period in accordance with MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

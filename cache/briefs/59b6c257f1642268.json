@@ -1,8 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, check that damper and airflow paths are clear, and clear any obstruction before the forecast heat event according to SOP-015. For this ONAN cooling installation, reduce permissible load in proportion to the lost cooling capacity if forced cooling is partially unavailable, apply ambient de-rating based on average ambient temperatures above 30 degrees, and apply an additional 5 percent reduction from the third day onward for events extending beyond 48 hours with overnight minima above 24 degrees as specified in MG-021. The supplied documents do not cover specific guidance for the recorded oil issue.",
-  "cited_doc_ids": [
-    "SOP-015",
-    "MG-021"
-  ],
-  "status": "ok"
-}

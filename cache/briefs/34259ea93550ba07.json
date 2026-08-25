@@ -1,8 +1,0 @@
-{
-  "brief": "Prioritise Oakhurst Point (SUB-SGW-509) for attention before the forecast heat event, as its advanced age and prior thermal exposure leave it with a reduced margin against mechanical failure (MG-023). Because the unit has an ONAN cooling type and the documents do not cover specific manual cooling configurations or alternate checks for this asset, apply the sustained event loading reduction from MG-021 if it cannot be otherwise attended. Record every de-rating applied, the reason, the value, and the period (MG-021).",
-  "cited_doc_ids": [
-    "MG-023",
-    "MG-021"
-  ],
-  "status": "ok"
-}

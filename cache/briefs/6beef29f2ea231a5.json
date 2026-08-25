@@ -1,9 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure for this ageing unit, as outlined in MG-023. Note that for this ONAN cooling type, the forced cooling provisions in MG-025 regarding continuous overnight running do not apply. The supplied documents do not cover any additional actions for this asset.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

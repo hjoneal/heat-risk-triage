@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect Camden Works 230/34kV (SUB-SGW-781) and clear any vegetation or obstruction encroaching on the ventilation openings or radiator banks, giving clearance work precedence over other remedial activity as specified in SOP-011. Reduce permissible load in accordance with MG-021 by assessing the average ambient over the 24 hours preceding the loading decision against the reference average of 30 degrees. Record every de-rating applied, the reason, the value, and the period pursuant to MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

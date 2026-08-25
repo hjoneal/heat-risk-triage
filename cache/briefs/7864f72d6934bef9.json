@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, as blockage above one quarter of the free area obstructed is a defect requiring clearance before a forecast heat event (SOP-015). Because the asset has an ONAN cooling type, ensure permissible load reductions are calculated in accordance with ambient and cooling de-rating requirements (MG-021). Furthermore, re-prioritise outstanding work against the unit's ability to shed heat, completing any failed forced cooling, obstructed ventilation, or oil level defects before the event begins wherever crew capacity allows (SOP-016).",
-  "cited_doc_ids": [
-    "MG-021",
-    "SOP-015",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

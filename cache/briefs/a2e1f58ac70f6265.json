@@ -1,0 +1,8 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure for this ageing unit, as outlined in MG-023. Note that the supplied documents do not cover forced cooling operation for this ONAN cooling type.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

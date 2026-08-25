@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise outstanding work orders for Harrowgate Ridge that affect the unit's ability to shed heat, addressing any items in the cooling, ventilation, or oil level categories before the event begins [SOP-016]. If the ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

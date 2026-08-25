@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise this unit for pre-event attention ahead of younger units due to its advanced age and cumulative loading history, as outlined in MG-023. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

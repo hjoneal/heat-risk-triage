@@ -1,8 +1,0 @@
-{
-  "brief": "Inspect Langmere Common substation transformer SUB-SGW-331 to apply operational loading restrictions and thermal monitoring before the forecast heat event, as outlined in MG-023. The supplied documents do not cover specific threshold adjustments for this ONAN cooling unit operating with an overnight minimum of 17.76 degrees, so standard pre-event loading restrictions from MG-021 apply. Crews should ensure all monitoring and recording requirements specified in MG-021 are followed.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

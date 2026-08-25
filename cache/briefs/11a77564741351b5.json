@@ -1,8 +1,0 @@
-{
-  "brief": "Complete any outstanding work on failed or degraded forced cooling, obstructed ventilation, or oil level and leak defects before the forecast heat event begins [SOP-016]. Apply ambient de-rating by reducing permissible load by 1.5 percent for each degree of average ambient above 30 degrees [MG-021]. For this ONAF unit with a warm overnight minimum above 24 degrees extending beyond 48 hours, apply a further 5 percent reduction from the third day onward [MG-021]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

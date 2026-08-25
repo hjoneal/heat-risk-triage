@@ -52,11 +52,15 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    scenarios. The interaction terms exist because every hazard feature is constant within an event:
    without them the forecast adds the same number to every asset's log-odds and cannot reorder
    anything at all.
-3. **Retrieval** (`retrieve.py`) — BM25 over 25 procedure documents, with the query built
-   deterministically from the asset's positive feature contributions, then an LLM action brief that
-   may cite only the retrieved documents.
+3. **Retrieval** (`retrieve.py`) — BM25 over 25 procedure documents, whole-document rather than
+   chunked because 300 words is already the unit a supervisor reads. Applicability is filtered before
+   relevance is scored: two procedures cover forced-air cooling systems, which a naturally-cooled
+   ONAN unit does not have, and a document does not become applicable by ranking well. The query is
+   built deterministically from the asset's positive feature contributions, then an LLM writes an
+   action brief that may reference only the documents it was given — checked in its citation array
+   *and* in its prose. D-037, D-038.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 123 tests across four files: retrieval behaviour
+   check, and the Bayes ceiling. 289 tests across four files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
    terms are what let the forecast reorder the queue (`test_ranking.py`), and what the interface
    must not misreport (`test_interface.py`).
@@ -349,20 +353,34 @@ Per-fold coefficient means and standard deviations, sign flips included, are in 
 
 ### Retrieval and briefs
 
-160 briefs across four scenarios. **Citation integrity 100.00% (160 of 160)** — every brief cites
-only documents it was given, against a spec expectation of ≥99%.
+160 briefs across four scenarios. **Citation integrity 100.00% (160 of 160)** on both checks — the
+`cited_doc_ids` array and every doc id written into the prose — against a spec expectation of ≥99%.
 
-Top BM25 score per query ranges **17.76 to 36.76**. `BM25_FLOOR` is 16.0, 9.9% below the observed
-minimum. That margin was 13% when briefs covered the top 25; raising coverage to 40 brought
-lower-ranked assets into the sample, and an asset with fewer positive contributions produces a
-shorter query and a lower top score. The floor was left where it is rather than lowered to restore
-the margin, because it still does not fire and moving a threshold each time the sample grows is
-churn — but the drift is one-directional and is noted in `config.py` for whoever raises coverage
-next. **It does not trigger on any of the 160 queries**, so no real query reaches the `no_match`
-path; the floor was not raised into the main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
+The second check was added after the first reported 100% clean while **2 of 160 briefs named a
+procedure in a sentence that had never been retrieved**, with a valid citation array sitting beside
+the invented reference. `BRIEF_PROMPT_VERSION` moved to v2, which forbids passing on an id found
+inside a supplied document, and all 160 briefs were regenerated. Both offenders are gone.
+`DECISIONS.md` D-038.
+
+Retrieval filters on applicability before scoring relevance: MG-022 and SOP-014 cover forced-air
+cooling systems and do not apply to naturally-cooled ONAN units. No brief had ever returned an
+inapplicable document, but the constraint was holding by luck — one reaches **rank 4 for 9 of the
+135 briefed ONAN assets**, one place outside the top-3 cut. The asset's cooling type is no longer a
+query term: `applies_to` is not indexed, so as a term it only matched cooling types written into a
+document's prose, which is one document for `ONAN` and none for `ONAF` or `OFAF`. D-037.
+
+Top BM25 score per query ranges **16.74 to 36.56**. `BM25_FLOOR` is 14.0, 16% below the observed
+minimum. This is its third derivation, and the pattern matters more than the number: the floor
+tracks query construction, and every change to `build_query` moves the distribution under it — 12.0
+against a minimum of 13.97, then coverage rising to 40 brought lower-ranked assets and their shorter
+queries in, then dropping the cooling-type term took one more term out of every query. A value left
+alone across those changes would not have meant the same thing twice, so `config.py` now says to
+re-run `retrieve.py --scores-only` and re-derive rather than assume. **It does not trigger on any of
+the 160 queries**, so no real query reaches the `no_match` path; the floor was not raised into the
+main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
 degenerate query instead. See `DECISIONS.md` D-018.
 
-123 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+289 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
@@ -450,6 +468,13 @@ Production MLOps Architecture*, October 2025.
   ranking. The sweep above shows how it moves: 0.063 at 15, 0.134 at 30, 0.158 at 40. A derivation
   from inspection cadence puts realistic capacity nearer 30, and that figure was deliberately not
   adopted in the same change that measured its effect. D-036.
+- **A brief can still misattribute between two documents it was given.** Citation integrity is
+  checked on the `cited_doc_ids` array and on every doc id in the prose, but both are membership
+  tests. A brief that takes an instruction from one supplied document and attributes it to another
+  supplied document passes both — and one does: the top-ranked asset's brief lifts a sentence from
+  MG-023 that itself points at MG-021, and substitutes the id of the document it was reading. The
+  v2 prompt forbids this explicitly, which is the most that can be asserted without checking claims
+  against document *content*. That is an LLM-as-judge evaluation, a listed exclusion.
 - **Missed failures are the ones with no recorded defect.** The design ranks recorded condition
   against forecast stress, so an asset whose condition was never written down is invisible to it.
   Continuous telemetry is the thing that would catch those, and it is a listed exclusion.
@@ -472,7 +497,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking mechanism, interface invariants
-DECISIONS.md               36 entries, append-only
+DECISIONS.md               38 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

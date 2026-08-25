@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise outstanding work orders against this asset's ability to shed heat in accordance with SOP-016 before the heat event begins. Because this asset has ONAN cooling, the de-rating rules in MG-021 for forced cooling do not apply. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed by MG-023.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

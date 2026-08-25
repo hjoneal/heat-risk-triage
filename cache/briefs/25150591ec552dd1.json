@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage by debris, leaf litter, nesting material, and accumulated dust as specified in SOP-015. Walk the airflow path to confirm that no stored material, temporary screening, or subsequently installed equipment obstructs the path, and check for recirculation between exhaust and nearby intake per SOP-015. Maintain a minimum clearance of two metres between any growth and the radiator face and one metre between growth and the compound fence line, keeping ground cover below 150mm as outlined in SOP-011. Note that according to MG-023, a unit of advanced age with high loading has a reduced margin against mechanical failure and requires prioritized pre-event attention.",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "SOP-015"
+  ],
+  "status": "ok"
+}

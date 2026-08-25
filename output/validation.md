@@ -51,4 +51,16 @@ The model reaches **85.6%** of the achievable within-event AUC and **61.9%** of 
 
 ## Citation integrity
 
-**100.00%** of briefs cite only documents they were given (160 of 160).
+**100.00%** of briefs reference only documents they were given (160 of 160).
+
+Checked twice: the `cited_doc_ids` array, and every doc id written into the
+prose. The second check exists because the first reported 100% clean while two
+briefs named a procedure in a sentence that had never been supplied — a valid
+array beside an invented reference. A supplied document may itself cite another
+procedure by id, and passing that id on reads as an attached document when it is
+not one.
+
+| Check | Failing |
+|---|---|
+| `cited_doc_ids` outside the retrieved set | 0 |
+| doc id in the prose outside the retrieved set | 0 |

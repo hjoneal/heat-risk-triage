@@ -1,0 +1,9 @@
+{
+  "brief": "Crews should apply the loading restriction in MG-021 in preference to accepting exposure, as this unit cannot be attended before the event according to MG-023. Additionally, note that the supplied documents do not cover any specific action for ONAN cooling systems facing warm overnight minima beyond the general loading restrictions and thermal recovery guidelines in MG-021, MG-023, and MG-025.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

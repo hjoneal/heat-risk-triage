@@ -1,0 +1,8 @@
+{
+  "brief": "Consider load transfer to move demand from Draycott Bluff to an adjacent asset with available capacity, per ERP-032. Before switching, confirm the receiving asset's available capacity by applying the de-rating in MG-021 to both assets and check the receiving asset's condition. Coordinate the execution with the operations desk according to ERP-032.",
+  "cited_doc_ids": [
+    "ERP-032",
+    "MG-021"
+  ],
+  "status": "ok"
+}

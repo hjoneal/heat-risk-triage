@@ -1,9 +1,0 @@
-{
-  "brief": "Review the open defect register for Ivybridge Green (SUB-SGW-340) before the heat event in accordance with SOP-016. The supplied documents do not cover the specific conditions of this ONAN unit regarding the 17.71 degree overnight minimum or peak load value. Where work orders or de-ratings are applied, record them as specified in MG-021 and SOP-016.",
-  "cited_doc_ids": [
-    "MG-021",
-    "SOP-016",
-    "SOP-015"
-  ],
-  "status": "ok"
-}

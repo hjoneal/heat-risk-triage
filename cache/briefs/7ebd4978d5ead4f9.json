@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise Ivybridge Green 230/34kV (SUB-SGW-340) for pre-event attention ahead of younger units due to its advanced age in service and history of high loading [MG-023]. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Note that because this unit has ONAN cooling and the supplied documents do not cover forced cooling or sustained event reductions for ONAN units, no additional cooling management or sustained-event fan guidance from MG-021 or MG-025 is applicable.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

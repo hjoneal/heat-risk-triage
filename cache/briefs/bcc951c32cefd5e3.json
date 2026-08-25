@@ -1,0 +1,8 @@
+{
+  "brief": "Crews should apply the loading reduction in MG-021 from the third day on events forecast to run beyond 48 hours with warm overnight minima [MG-025]. The supplied documents do not cover any forced cooling adjustments for this asset because its cooling type is ONAN. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

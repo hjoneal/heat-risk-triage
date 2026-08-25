@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect the Draycott Bluff 230/34kV transformer and apply the loading and de-rating rules in MG-021 to account for its accumulated heat and heavy sustained load before the heat event. If the unit approaches its temperature limit or cannot clear a defect, consider emergency load transfer to an adjacent asset while applying the assessment and monitoring steps in ERP-032. If oil sampling indicates a failure, recondition or replace the oil and apply MG-021 restrictions until retested and verified per SOP-013.",
-  "cited_doc_ids": [
-    "MG-021",
-    "ERP-032",
-    "SOP-013"
-  ],
-  "status": "ok"
-}

@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect and remediate the oil issue before the heat event begins, as it is a category 3 priority for work ahead of heat events per SOP-016. Because Bellview Reach is 34 years old and has an oil issue from inspection notes, apply the loading restriction in MG-021 if the defect cannot be attended before the event in accordance with MG-023. Record every de-rating applied, the reason, the value, and the period per MG-021.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

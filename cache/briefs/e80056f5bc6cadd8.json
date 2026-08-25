@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect the Granite Works substation (SUB-SGW-765) to verify whether any vegetation or obstruction defects are outstanding, giving clearance work precedence over other remedial activity as guided by SOP-011. Re-prioritise any other outstanding work based on its effect on the unit's ability to shed heat in accordance with SOP-016. Ensure that every de-rating applied is recorded along with its reason, value, and period as instructed in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

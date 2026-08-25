@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage, checking that obstructions do not exceed one quarter of the free area before the forecast heat event as outlined in SOP-015. Additionally, review open work orders against the asset to re-prioritise any outstanding items affecting the unit's ability to shed heat pursuant to SOP-016. If the unit experiences sustained ambient conditions above the reference thresholds, apply permissible load reductions in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-015",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

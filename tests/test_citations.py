@@ -1,11 +1,16 @@
 """Citation integrity.
 
-A brief may cite only the documents it was given. A citation to anything else is
-the failure mode the retrieval layer exists to prevent, and it is checked across
-every brief rather than sampled.
+A brief may reference only the documents it was given. A reference to anything
+else is the failure mode the retrieval layer exists to prevent, and it is checked
+across every brief rather than sampled.
+
+Two checks: the `cited_doc_ids` array, and every doc id written into the prose.
+The second exists because the first reported 100% clean while two briefs named a
+procedure in a sentence that had never been supplied. See DECISIONS.md D-038.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -64,3 +69,23 @@ def test_briefs_are_not_empty():
     for scenario_id, asset_id, record in all_briefs():
         assert record["brief"] and record["brief"].strip(), \
             f"{scenario_id}/{asset_id} has an empty brief"
+
+
+DOC_ID_IN_TEXT = re.compile(config.DOC_ID_PATTERN)
+
+
+@pytest.mark.parametrize("scenario_id,asset_id,record", all_briefs(),
+                         ids=[f"{s}/{a}" for s, a, _ in all_briefs()])
+def test_no_brief_names_a_document_it_was_not_given(scenario_id, asset_id, record):
+    """The gap the cited_doc_ids check left open.
+
+    A brief could name a procedure in a sentence while its citation array stayed
+    a clean subset of what was retrieved — the array was valid and the reference
+    invented. Two of 160 did exactly that. A supplied document may cite another
+    procedure by id, and passing that id on reads to a supervisor as a document
+    they were handed.
+    """
+    retrieved = {hit["doc_id"] for hit in record["retrieved"]}
+    mentioned = set(DOC_ID_IN_TEXT.findall(record["brief"]))
+    assert mentioned <= retrieved, \
+        f"names {sorted(mentioned - retrieved)}, was given {sorted(retrieved)}"

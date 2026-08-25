@@ -1,0 +1,8 @@
+{
+  "brief": "Reduce the permissible load on Kingsley Green by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021]. Consider load transfer if the unit is approaching its temperature limit, if a cooling defect cannot be cleared before the event, or if an overtemperature alarm is received and load cannot otherwise be reduced [ERP-032]. Confirm the receiving asset's available capacity at the prevailing ambient temperature by applying the de-rating in MG-021 to both assets before switching [ERP-032].",
+  "cited_doc_ids": [
+    "MG-021",
+    "ERP-032"
+  ],
+  "status": "ok"
+}

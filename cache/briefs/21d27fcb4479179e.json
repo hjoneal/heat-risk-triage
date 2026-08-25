@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect Underhill Bluff before the heat event, noting that its advanced age of 54 years reduces its margin against mechanical failure under thermal stress (MG-023). Because this asset has ONAN cooling and the documents do not cover forced cooling operations for this type, apply the ambient and sustained event loading restrictions outlined in MG-021. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

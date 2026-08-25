@@ -21,6 +21,7 @@ import config
 import llm
 
 TOKEN = re.compile(config.TOKEN_PATTERN)
+DOC_ID_IN_TEXT = re.compile(config.DOC_ID_PATTERN)
 
 
 def tokenise(text):
@@ -46,7 +47,9 @@ def load_corpus():
             "doc_id": fields["doc_id"],
             "title": fields["title"],
             "category": fields["category"],
-            "applies_to": fields["applies_to"],
+            # Parsed rather than kept as the raw "[ONAN, ONAF, OFAF]" string,
+            # because it is now a filter and not just a field to display.
+            "applies_to": [t.strip() for t in fields["applies_to"].strip("[]").split(",") if t.strip()],
             "body": body.strip(),
         })
     assert len(documents) == config.N_PROCEDURES, \
@@ -61,31 +64,46 @@ def build_index(documents):
     return BM25Okapi(corpus, k1=config.BM25_K1, b=config.BM25_B)
 
 
-def build_query(cooling_type, contributions, peak_temp_c):
+def build_query(contributions, peak_temp_c):
     """Assemble query terms from the contributions that pushed risk up.
 
     Only positive contributions: a feature that lowered this asset's risk is not
     a reason to send a crew, and including it would retrieve procedures for a
     problem the asset does not have.
+
+    The asset's cooling type used to be appended here. It is a filter now, applied
+    in `retrieve` against each document's `applies_to`, because as a query term it
+    could not do the job: `applies_to` is not indexed, so it only ever matched
+    cooling types written into a document's prose. See DECISIONS.md D-037.
     """
     terms = []
     for contribution in contributions:
         if contribution["contribution"] > 0:
             terms += config.QUERY_TERMS[contribution["feature"]]
-    terms.append(cooling_type)
     if peak_temp_c > config.HIGH_AMBIENT_QUERY_C:
         terms += config.HIGH_AMBIENT_QUERY_TERMS
     return terms
 
 
-def retrieve(index, documents, query_terms):
-    """Top-k documents above the score floor.
+def retrieve(index, documents, query_terms, cooling_type=None):
+    """Top-k applicable documents above the score floor.
+
+    Applicability is checked before relevance, not after. A procedure for a
+    forced-air cooling system does not become relevant to a naturally-cooled unit
+    by scoring well against its query — the unit has no fans — so an inapplicable
+    document is removed from the candidate set rather than ranked and hoped
+    against. `cooling_type` of None disables the filter, which is what the corpus
+    tests use when they are checking the index rather than an asset.
 
     Below the floor there is no useful match, and returning the least-bad of a
     bad set would put a procedure in front of a crew that does not apply.
     """
     scores = index.get_scores([term.lower() for term in query_terms])
-    ranked = sorted(range(len(documents)), key=lambda i: -scores[i])[:config.BM25_TOP_K]
+    candidates = range(len(documents))
+    if cooling_type is not None and config.FILTER_BY_COOLING_TYPE:
+        candidates = [i for i in candidates if cooling_type in documents[i]["applies_to"]]
+        assert candidates, f"no procedure applies to cooling type {cooling_type}"
+    ranked = sorted(candidates, key=lambda i: -scores[i])[:config.BM25_TOP_K]
     top_score = float(scores[ranked[0]]) if ranked else 0.0
 
     if top_score < config.BM25_FLOOR:
@@ -111,6 +129,9 @@ Constraints:
 - Use only the supplied asset facts and the supplied procedure documents. Do not \
 introduce any procedure, threshold or figure that is not in them.
 - Cite the doc_id of every document you draw on.
+- Refer only to the doc_ids supplied below. A supplied document may itself \
+mention another procedure by id; do not pass that id on as though it were \
+attached, and do not attribute a supplied document's instruction to the wrong id.
 - If the supplied documents do not cover the situation, say so plainly rather \
 than improvising guidance.
 
@@ -185,6 +206,12 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
             # A citation to a document the model was not given is the failure
             # mode this layer exists to prevent; retry rather than accept it.
             continue
+        # The same check against the prose. Validating only the cited_doc_ids
+        # array left a gap: a brief could name a procedure in a sentence that was
+        # never retrieved, and the array beside it would still be a clean subset.
+        # Measured before this check existed, 2 of 160 briefs did exactly that.
+        if not set(DOC_ID_IN_TEXT.findall(brief)) <= retrieved_ids:
+            continue
         record = {"brief": brief, "cited_doc_ids": cited, "status": "ok"}
         llm.write_cache(config.BRIEF_CACHE_DIR, key, record)
         return record
@@ -240,8 +267,9 @@ def main():
         briefs = {}
         for asset in scored["assets"][:config.BRIEF_TOP_N]:
             query_terms = build_query(
-                asset["cooling_type"], asset["contributions"], scored["hazard"]["peak_temp_c"])
-            retrieved, status, top_score = retrieve(index, documents, query_terms)
+                asset["contributions"], scored["hazard"]["peak_temp_c"])
+            retrieved, status, top_score = retrieve(
+                index, documents, query_terms, asset["cooling_type"])
             all_top_scores.append(top_score)
 
             if status == "no_match":

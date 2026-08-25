@@ -1,9 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure, as Ashford Hill is an ageing unit that cannot be attended before the event [MG-023]. Since the unit has an ONAN cooling type, the supplied documents do not cover forced cooling management for this asset [MG-021, MG-025]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "MG-025"
-  ],
-  "status": "ok"
-}

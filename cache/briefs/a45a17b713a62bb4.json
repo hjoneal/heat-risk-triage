@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise Underhill Reach for pre-event attention because units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling [MG-023]. Where an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. If the event extends beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Run available forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

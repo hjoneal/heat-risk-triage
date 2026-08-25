@@ -1,0 +1,8 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where this ageing unit cannot be attended before the heat event [MG-023]. A unit of advanced age with a history of high loading has a reduced margin against mechanical failure and must be prioritised for pre-event attention ahead of a younger unit in otherwise similar condition [MG-023].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

@@ -1,0 +1,8 @@
+{
+  "brief": "Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward as required by MG-021. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

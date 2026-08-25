@@ -1,9 +1,0 @@
-{
-  "brief": "Review the open defect register for Pinecrest Junction (SUB-SGW-659) and re-prioritize any outstanding work according to its effect on the unit's ability to shed heat, completing work in categories 1 to 3 before the event begins wherever crew capacity allows (SOP-016). For category 4 items that cannot be completed, apply a loading restriction in accordance with MG-021 rather than accepting the exposure (SOP-016, MG-023).",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

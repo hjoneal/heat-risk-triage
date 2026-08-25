@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres to confirm that blockage does not exceed one quarter of the free area before the forecast heat event, as outlined in SOP-015. For Camden Works 230/34kV, which has an ONAN cooling type, apply ambient de-rating according to MG-021 if the average ambient exceeds 30 degrees, and apply the further 5 percent reduction from the third day onward if the event extends beyond 48 hours with overnight minima above 24 degrees. Note that MG-025 specifies continuous overnight operation of forced cooling, but as this asset has ONAN cooling, that forced-cooling instruction does not apply.",
-  "cited_doc_ids": [
-    "SOP-015",
-    "MG-021",
-    "MG-025"
-  ],
-  "status": "ok"
-}

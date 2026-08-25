@@ -1,9 +1,0 @@
-{
-  "brief": "Begin continuous operation of the cooling system through the overnight period for Kingsley Green SUB-SGW-699 per MG-025. Because the unit has ONAN cooling and the supplied documents do not cover ONAN-specific cooling de-ratings or forced-cooling failure adjustments for this type, apply only the ambient de-rating from MG-021. If temperature limits are approached or an overtemperature alarm is received, execute an emergency load transfer to an adjacent asset per ERP-032 after confirming the receiving asset's de-rated capacity.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-025",
-    "ERP-032"
-  ],
-  "status": "ok"
-}

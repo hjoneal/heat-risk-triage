@@ -1,0 +1,9 @@
+{
+  "brief": "The supplied documents do not cover the specific situation for Camden Works 230/34kV (SUB-SGW-781) as no asset-specific defect, oil sampling result, or cooling/vegetation issue has been provided in the asset facts to trigger the instructions in [MG-021], [SOP-011], or [SOP-013].",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-013"
+  ],
+  "status": "ok"
+}
