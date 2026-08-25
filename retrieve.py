@@ -267,7 +267,7 @@ def main():
                         help="read the cache only; fail loudly on a miss")
     parser.add_argument("--scores-only", action="store_true",
                         help="build queries and retrieve, but write no briefs; used to "
-                             "calibrate BM25_FLOOR before any LLM call is made")
+                             "calibrate BM25_FLOOR_PER_TERM before any LLM call is made")
     args = parser.parse_args()
 
     model = config.BRIEF_MODEL

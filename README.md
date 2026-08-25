@@ -276,7 +276,7 @@ already computed per event and were never affected. See `DECISIONS.md` D-029.
 **The notes add 0.0136 within-event AUC** (0.6468 → 0.6604). Measured pooled it looks like −0.0006,
 which is the artefact above and not a finding.
 
-**The interaction terms cost 0.039 within-event AUC** (0.6604 → 0.6213) and are kept anyway. They are
+**The interaction terms cost 0.039 within-event AUC** (0.6605 → 0.6216) and are kept anyway. They are
 not there to discriminate better; they are there so the forecast can change the ranking at all.
 Without them every hazard feature is constant within a scenario, the hazard block adds the same
 number to every asset's log-odds, and the queue is provably identical whatever the weather does —
@@ -340,7 +340,7 @@ could do, because it uses the exact hidden state that produced the outcomes:
 
 | Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
 |---|---|---|---|
-| The model (out-of-fold) | 0.8412 | 0.6213 | 0.0667 |
+| The model (out-of-fold) | 0.8432 | 0.6216 | 0.0667 |
 | True generative probability | 0.8683 | 0.7260 | 0.1077 |
 
 The model reaches **85.6%** of achievable within-event AUC and **61.9%** of achievable precision at
@@ -353,8 +353,8 @@ in `output/calibration.png`. Leakage check: highest correlation between any feat
 state is **0.7234** (degree-hours against thermal stress), under the 0.95 threshold; pooled AUC is
 under the 0.90 line that would indicate leakage.
 
-Regularisation check, recorded not searched: C=0.01 → 0.8521, C=0.1 → 0.8475, C=1.0 → 0.8412,
-C=10.0 → 0.8366. Lower C scores marginally better pooled and `C=1.0` is kept, because the sweep is a
+Regularisation check, recorded not searched: C=0.01 → 0.8494, C=0.1 → 0.8467, C=1.0 → 0.8432,
+C=10.0 → 0.8424. Lower C scores marginally better pooled and `C=1.0` is kept, because the sweep is a
 check that the default is not badly wrong rather than a search to be won.
 
 **Coefficient signs.** Degree-hours (+1.09), peak load (+0.57), time since maintenance, prior faults,
@@ -498,7 +498,7 @@ Production MLOps Architecture*, October 2025.
 - **27.9% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
   The distractors-only evaluation category rests on far fewer independent items than its note count
   suggests.
-- **Mean within-event AUC is 0.6213**, and that is the number the operational task depends on — but
+- **Mean within-event AUC is 0.6216**, and that is the number the operational task depends on — but
   the Bayes ceiling for it is 0.7260, so the headroom is small. The ranking is limited by the
   problem being mostly coin-flip at a 1% base rate, not by the model.
 - **The interaction terms cost 0.039 of within-event AUC.** They are kept because without them the

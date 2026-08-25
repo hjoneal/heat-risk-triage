@@ -237,7 +237,7 @@ FAILURE_LOAD_REFERENCE = 0.70  # chosen: mid-fleet load, so the term is centred
 # the real annual major-failure rate below 1% — 0.8% for pre-1978 units — which
 # implies roughly 0.0008 per asset-event for a heat-attributable share across
 # four events a year. At that rate 14,400 rows would carry about a dozen
-# positives, too few to fit 16 features, so this is inflated about twelvefold to
+# positives, too few to fit 15 features, so this is inflated about twelvefold to
 # roughly 144 positives. That scales predicted probabilities but preserves
 # ranking, and the system consumes a ranking. See DECISIONS.md D-012.
 TARGET_FAILURE_RATE = 0.01  # chosen
