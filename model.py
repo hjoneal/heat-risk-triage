@@ -191,24 +191,50 @@ def write_ranking_divergence(pairs, path):
     path.write_text("\n".join(lines) + "\n")
 
 
-def precision_recall_at_capacity(scores, labels, groups):
-    """Precision and recall at the crew's capacity, per event then averaged.
+def precision_recall_at_capacity(scores, labels, groups, capacity=None):
+    """Precision and recall at a crew capacity, per event then averaged.
 
     Pooling across events would let a single severe event's ranking stand in for
     the average one, and the crew is despatched per event.
+
+    `capacity` defaults to CREW_CAPACITY so the ablation table keeps reporting a
+    single comparable number. The sweep passes each value in turn; it is the same
+    computation on the same out-of-fold predictions, not a second evaluation.
     """
+    capacity = config.CREW_CAPACITY if capacity is None else capacity
     precisions = []
     recalls = []
     for event_id in pd.unique(groups):
         mask = groups == event_id
         event_scores = scores[mask]
         event_labels = labels[mask]
-        top = np.argsort(-event_scores)[:config.CREW_CAPACITY]
+        top = np.argsort(-event_scores)[:capacity]
         hits = int(event_labels[top].sum())
         total_failures = int(event_labels.sum())
-        precisions.append(hits / config.CREW_CAPACITY)
+        precisions.append(hits / capacity)
         recalls.append(hits / total_failures if total_failures else np.nan)
     return float(np.mean(precisions)), float(np.nanmean(recalls))
+
+
+def capacity_sweep(scores, labels, groups, fleet_size):
+    """Precision and recall across the plausible range of crew capacities.
+
+    Capacity is a client operating parameter, not a property of the system, and
+    the single figure the build reports it at was chosen rather than derived.
+    Reporting the curve makes the reader's own capacity the input rather than
+    asking them to accept this one. See DECISIONS.md D-036.
+    """
+    rows = []
+    for capacity in config.CAPACITY_SWEEP:
+        precision, recall = precision_recall_at_capacity(scores, labels, groups, capacity)
+        rows.append({
+            "capacity": capacity,
+            "precision": precision,
+            "recall": recall,
+            "fleet_share": capacity / fleet_size,
+            "is_default": capacity == config.CREW_CAPACITY,
+        })
+    return rows
 
 
 def within_event_auc(scores, labels, groups):
@@ -485,6 +511,28 @@ def write_metrics_markdown(metrics, path):
 
     lines += [
         "",
+        "## Crew capacity",
+        "",
+        "Capacity is a client operating parameter, not a property of the system, and",
+        f"the {config.CREW_CAPACITY} this build reports at was chosen rather than derived. A",
+        "monthly substation inspection cadence puts realistic pre-event capacity nearer 30",
+        f"(see config.py). {config.CREW_CAPACITY} is retained as the conservative case and",
+        "the range is reported here rather than folded into the headline.",
+        "",
+        "Full model, same out-of-fold predictions and the same per-event averaging as above.",
+        "",
+        "| Capacity | Precision@k | Recall@k | % of fleet |",
+        "|---|---|---|---|",
+    ]
+    for row in metrics["capacity_sweep"]:
+        marker = " (default)" if row["is_default"] else ""
+        lines.append(
+            f"| {row['capacity']}{marker} | {row['precision']:.4f} | {row['recall']:.4f} | "
+            f"{row['fleet_share'] * 100:.1f}% |"
+        )
+
+    lines += [
+        "",
         "## Calibration",
         "",
         f"| Brier score, full model | {metrics['brier']['model']:.5f} |",
@@ -627,6 +675,11 @@ def main():
         for name, value in zip(config.FEATURES, final_model["clf"].coef_[0])
     }
 
+    # Full model only: the variant table stays at k=15 so it remains readable,
+    # and the sweep answers a different question — not "which feature set" but
+    # "what does this buy at the capacity you actually have".
+    sweep = capacity_sweep(predictions, labels, groups, len(assets))
+
     fold_coefs = fold_coefficients(X, labels, groups)
 
     # The interaction features exist so that a different forecast can rank the
@@ -642,6 +695,12 @@ def main():
         "n_failures": int(labels.sum()),
         "base_rate": base_rate,
         "ablations": ablations,
+        # Kept as named top-level keys as well as inside the ablation table:
+        # downstream references expect them at k = CREW_CAPACITY.
+        "precision_at_15": full_result["precision_at_15"],
+        "recall_at_15": full_result["recall_at_15"],
+        "crew_capacity": config.CREW_CAPACITY,
+        "capacity_sweep": sweep,
         "c_sweep": c_sweep,
         "brier": brier,
         "calibration_bins": calibration_bins,
@@ -668,6 +727,12 @@ def main():
           f"{ablations['Register + interactions (no notes)']['auc']:.4f}")
     print(f"out-of-fold AUC (heuristic): {ablations['Heuristic baseline (peak temp x age)']['auc']:.4f}")
     print(f"Brier: {brier['model']:.5f} against base-rate {brier['base_rate']:.5f}")
+
+    print("\ncapacity sweep (full model):")
+    for row in sweep:
+        marker = "  <- default" if row["is_default"] else ""
+        print(f"  k={row['capacity']:3d}  precision {row['precision']:.4f}  "
+              f"recall {row['recall']:.4f}  {row['fleet_share'] * 100:4.1f}% of fleet{marker}")
 
     print("\ntop-15 assets differing between scenarios:")
     for left, right, by_priority, by_risk in divergence:

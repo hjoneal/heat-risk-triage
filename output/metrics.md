@@ -23,6 +23,25 @@ already known from the forecast — and so runs well above it.
 | Register + interactions (no notes) | 11 | 0.6104 | 0.8412 | 0.0625 | 0.0471 |
 | Full model | 16 | 0.6213 | 0.8412 | 0.0542 | 0.0627 |
 
+## Crew capacity
+
+Capacity is a client operating parameter, not a property of the system, and
+the 15 this build reports at was chosen rather than derived. A
+monthly substation inspection cadence puts realistic pre-event capacity nearer 30
+(see config.py). 15 is retained as the conservative case and
+the range is reported here rather than folded into the headline.
+
+Full model, same out-of-fold predictions and the same per-event averaging as above.
+
+| Capacity | Precision@k | Recall@k | % of fleet |
+|---|---|---|---|
+| 10 | 0.0625 | 0.0495 | 1.1% |
+| 15 (default) | 0.0542 | 0.0627 | 1.7% |
+| 20 | 0.0500 | 0.0695 | 2.2% |
+| 25 | 0.0500 | 0.1065 | 2.8% |
+| 30 | 0.0542 | 0.1344 | 3.3% |
+| 40 | 0.0516 | 0.1582 | 4.4% |
+
 ## Calibration
 
 | Brier score, full model | 0.00882 |

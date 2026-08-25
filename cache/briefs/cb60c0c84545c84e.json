@@ -1,0 +1,9 @@
+{
+  "brief": "Review the open defect register for Oakhurst Bluff SUB-SGW-553 ahead of the heat event in accordance with SOP-016. The supplied documents do not cover the specific loading restriction required for this ONAN asset given its 52-year age and an overnight minimum of 17.76 degrees, as MG-021's sustained event threshold requires overnight minima above 24 degrees.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

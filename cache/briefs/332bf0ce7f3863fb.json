@@ -1,0 +1,9 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where Briarcliff Bend 230/34kV cannot be attended before the event [MG-023]. If an outstanding vegetation or obstruction defect is identified during pre-event attention, clearance work takes precedence over other remedial activity [SOP-011]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "MG-021"
+  ],
+  "status": "ok"
+}

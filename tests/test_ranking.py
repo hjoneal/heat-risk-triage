@@ -126,3 +126,31 @@ def test_every_scenario_sits_inside_the_trained_hazard_envelope(fitted):
                 f"{scenario_id} has {name}={value:.1f}, outside the trained "
                 f"range [{low:.1f}, {high:.1f}]"
             )
+
+
+def test_the_capacity_sweep_is_reported_and_keeps_its_named_keys():
+    """The sweep is a reporting change on the same predictions, and the two
+    figures downstream references expect must survive it."""
+    path = config.OUTPUT_DIR / "metrics.json"
+    if not path.exists():
+        pytest.skip("metrics not present; run model.py first")
+    import json
+    metrics = json.loads(path.read_text())
+
+    assert "precision_at_15" in metrics and "recall_at_15" in metrics, \
+        "named top-level keys were dropped; downstream references expect them"
+    assert metrics["crew_capacity"] == config.CREW_CAPACITY
+
+    sweep = {row["capacity"]: row for row in metrics["capacity_sweep"]}
+    assert list(sweep) == config.CAPACITY_SWEEP
+
+    # The sweep at the default capacity must be the same computation the
+    # ablation table reports, not a parallel one that could drift from it.
+    default = sweep[config.CREW_CAPACITY]
+    assert default["is_default"]
+    assert abs(default["precision"] - metrics["precision_at_15"]) < 1e-9
+    assert abs(default["recall"] - metrics["recall_at_15"]) < 1e-9
+
+    # Recall must rise with capacity: visiting more assets cannot find fewer.
+    recalls = [sweep[k]["recall"] for k in config.CAPACITY_SWEEP]
+    assert recalls == sorted(recalls), f"recall is not monotone in capacity: {recalls}"

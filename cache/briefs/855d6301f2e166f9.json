@@ -1,0 +1,8 @@
+{
+  "brief": "Inspect Kingsley Green (SUB-SGW-699) for cooling defects and assess whether loading reductions are required under MG-021, as forced cooling is not applicable to its ONAN cooling type. If load must be reduced, consider emergency load transfer under ERP-032 while confirming the receiving asset's available capacity and condition. Record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "ERP-032"
+  ],
+  "status": "ok"
+}

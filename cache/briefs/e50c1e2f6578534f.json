@@ -1,0 +1,9 @@
+{
+  "brief": "Clear any intake and exhaust louvre blockage exceeding one quarter of the free area before the heat event, as outlined in SOP-015. Reduce permissible load in accordance with MG-021 if forced cooling is partially unavailable, and apply the further 5 percent reduction from the third day onward for events extending beyond 48 hours with overnight minima above 24 degrees. Run available forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, per MG-025.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

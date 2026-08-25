@@ -1,0 +1,9 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure for the Willow Ferry transformer, as the supplied documents do not cover ONAN forced-cooling configuration adjustments. Record every de-rating applied, the reason, the value, and the period pursuant to MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, as instructed in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritize Underhill Bluff 138/13kV (SUB-SGW-565) for pre-event attention because its advanced age of 54 years indicates a reduced margin against mechanical failure under thermal stress, per MG-023. If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, as outlined in MG-023. Ensure all applied de-ratings, reasons, values, and periods are recorded and that full ratings are restored only when underlying conditions are corrected and verified, in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "status": "ok"
+}

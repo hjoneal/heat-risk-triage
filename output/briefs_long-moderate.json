@@ -1554,5 +1554,918 @@
       "MG-021"
     ],
     "status": "ok"
+  },
+  "SUB-SGW-505": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "high",
+      "ambient",
+      "temperature",
+      "recurring",
+      "fault",
+      "history",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ageing",
+      "insulation",
+      "overnight",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "inspection",
+      "defect",
+      "pre-event",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.0776
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 27.3743
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 17.1884
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because this ageing unit cannot be attended before the event [MG-023]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+    "cited_doc_ids": [
+      "MG-021",
+      "MG-023"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-820": {
+    "query_terms": [
+      "ageing",
+      "insulation",
+      "overnight",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "high",
+      "ambient",
+      "temperature",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "loading",
+      "capacity",
+      "de-rating",
+      "sustained",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 34.1159
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 28.6621
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 19.2554
+      }
+    ],
+    "brief": "Prioritise Fernbank Green 230/34kV (SUB-SGW-820) for pre-event attention because units of advanced age and high loading have reduced margins against mechanical failure under thermal cycling [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-493": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "overnight",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "high",
+      "ambient",
+      "temperature",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.205
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 27.3743
+      },
+      {
+        "doc_id": "SOP-013",
+        "title": "Oil sampling and dissolved gas analysis",
+        "score": 18.8356
+      }
+    ],
+    "brief": "Prioritise Sandbourne Bend (SUB-SGW-493) for pre-event attention ahead of a younger unit in otherwise similar condition because it is a unit of advanced age with a history of high loading [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-832": {
+    "query_terms": [
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ageing",
+      "insulation",
+      "overnight",
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "high",
+      "ambient",
+      "temperature",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.7753
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 29.4048
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 20.2098
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where Briarcliff Bend 230/34kV cannot be attended before the event [MG-023]. If an outstanding vegetation or obstruction defect is identified during pre-event attention, clearance work takes precedence over other remedial activity [SOP-011]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+    "cited_doc_ids": [
+      "MG-023",
+      "SOP-011",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-408": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "overnight",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "high",
+      "ambient",
+      "temperature",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAF",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.205
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 24.587
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 17.7524
+      }
+    ],
+    "brief": "Prioritise the Kelvedon Vale unit for attention before the forecast heat event, as its advanced age and high loading history leave a reduced margin against mechanical failure. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure. Additionally, run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out.",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021",
+      "MG-025"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-192": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "ageing",
+      "insulation",
+      "overnight",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "high",
+      "ambient",
+      "temperature",
+      "recurring",
+      "fault",
+      "history",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 32.6846
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 29.4048
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 18.6534
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this unit as instructed in MG-023. This unit of advanced age with a history of high loading has a reduced margin against mechanical failure and should be prioritised for pre-event attention ahead of a younger unit in otherwise similar condition (MG-023).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-490": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "high",
+      "ambient",
+      "temperature",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 26.0249
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 15.3022
+      },
+      {
+        "doc_id": "SOP-013",
+        "title": "Oil sampling and dissolved gas analysis",
+        "score": 14.731
+      }
+    ],
+    "brief": "The supplied documents do not cover the situation.",
+    "cited_doc_ids": [],
+    "status": "ok"
+  },
+  "SUB-SGW-509": {
+    "query_terms": [
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "overnight",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "high",
+      "ambient",
+      "temperature",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "loading",
+      "capacity",
+      "de-rating",
+      "sustained",
+      "inspection",
+      "defect",
+      "pre-event",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.9885
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 28.6621
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 18.6914
+      }
+    ],
+    "brief": "Prioritise Oakhurst Point (SUB-SGW-509) for attention before the forecast heat event, as its advanced age and prior thermal exposure leave it with a reduced margin against mechanical failure (MG-023). Because the unit has an ONAN cooling type and the documents do not cover specific manual cooling configurations or alternate checks for this asset, apply the sustained event loading reduction from MG-021 if it cannot be otherwise attended. Record every de-rating applied, the reason, the value, and the period (MG-021).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-095": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "high",
+      "ambient",
+      "temperature",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "inspection",
+      "defect",
+      "pre-event",
+      "ONAF",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 21.2071
+      },
+      {
+        "doc_id": "SOP-011",
+        "title": "Vegetation and compound clearance around substation plant",
+        "score": 15.973
+      },
+      {
+        "doc_id": "SOP-015",
+        "title": "Ventilation louvre and airflow inspection",
+        "score": 15.2131
+      }
+    ],
+    "brief": "Crews must inspect all intake and exhaust louvres for blockage by wind-blown debris, leaf litter, nesting material, and accumulated dust, with obstruction above one quarter of the free area requiring clearance before the forecast heat event (SOP-015). Stiff linkages must be lubricated and re-proved, and any recirculation suspected between an exhaust and a nearby intake recorded at the intake temperature and escalated for assessment (SOP-015). Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified (MG-021).",
+    "cited_doc_ids": [
+      "SOP-015",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-839": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "overnight",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "high",
+      "ambient",
+      "temperature",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAF",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 32.6846
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 26.6176
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 18.6534
+      }
+    ],
+    "brief": "Prioritise Briarcliff Hill 138/13kV (SUB-SGW-839) for pre-event attention ahead of younger units due to its advanced age and history of high loading, as outlined in MG-023. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Additionally, run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025.",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021",
+      "MG-025"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-699": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "high",
+      "ambient",
+      "temperature",
+      "inspection",
+      "defect",
+      "pre-event",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 23.9943
+      },
+      {
+        "doc_id": "ERP-032",
+        "title": "Emergency load transfer and feeder switching",
+        "score": 13.9815
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 13.2732
+      }
+    ],
+    "brief": "Inspect Kingsley Green (SUB-SGW-699) for cooling defects and assess whether loading reductions are required under MG-021, as forced cooling is not applicable to its ONAN cooling type. If load must be reduced, consider emergency load transfer under ERP-032 while confirming the receiving asset's available capacity and condition. Record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+    "cited_doc_ids": [
+      "MG-021",
+      "ERP-032"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-325": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ageing",
+      "insulation",
+      "overnight",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "high",
+      "ambient",
+      "temperature",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ONAF",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.205
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 24.587
+      },
+      {
+        "doc_id": "SOP-013",
+        "title": "Oil sampling and dissolved gas analysis",
+        "score": 18.8356
+      }
+    ],
+    "brief": "Prioritise Stonebridge Lock 230/34kV for pre-event attention ahead of a younger unit in otherwise similar condition because it is a unit of advanced age with a history of high loading, giving it a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]). Record every de-rating applied, the reason, the value, and the period ([MG-021]).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-571": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "ageing",
+      "insulation",
+      "overnight",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "high",
+      "ambient",
+      "temperature",
+      "cooling",
+      "fan",
+      "fans",
+      "radiator",
+      "inspection",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 30.0224
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 29.4048
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 19.2174
+      }
+    ],
+    "brief": "Prioritise the Briarcliff Moor transformer for pre-event attention ahead of younger units because its advanced age and history of high loading leave a reduced margin against mechanical failure (MG-023). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+    "cited_doc_ids": [
+      "MG-023",
+      "MG-021"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-442": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "high",
+      "ambient",
+      "temperature",
+      "ageing",
+      "insulation",
+      "overnight",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "inspection",
+      "defect",
+      "pre-event",
+      "ONAN",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 29.3247
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 27.3743
+      },
+      {
+        "doc_id": "MG-025",
+        "title": "Overnight thermal recovery and sustained loading",
+        "score": 17.1884
+      }
+    ],
+    "brief": "Apply the loading reduction in MG-021 from the third day onward since the event extends beyond 48 hours with overnight minima above 24 degrees [MG-021, MG-025]. Since the unit has ONAN cooling, the forced cooling directive from MG-025 does not apply. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+    "cited_doc_ids": [
+      "MG-021",
+      "MG-025"
+    ],
+    "status": "ok"
+  },
+  "SUB-SGW-371": {
+    "query_terms": [
+      "loading",
+      "capacity",
+      "de-rating",
+      "recurring",
+      "fault",
+      "history",
+      "maintenance",
+      "overdue",
+      "schedule",
+      "sustained",
+      "overnight",
+      "thermal",
+      "loading",
+      "ageing",
+      "insulation",
+      "overnight",
+      "oil",
+      "level",
+      "seepage",
+      "sampling",
+      "ageing",
+      "insulation",
+      "end-of-life",
+      "high",
+      "ambient",
+      "temperature",
+      "work",
+      "order",
+      "outstanding",
+      "deferred",
+      "ventilation",
+      "louvre",
+      "airflow",
+      "vegetation",
+      "ONAF",
+      "de-rating",
+      "high",
+      "ambient",
+      "temperature"
+    ],
+    "retrieved": [
+      {
+        "doc_id": "MG-023",
+        "title": "Insulation ageing and end-of-life indicators",
+        "score": 33.205
+      },
+      {
+        "doc_id": "MG-021",
+        "title": "Loading and de-rating at high ambient temperature",
+        "score": 24.587
+      },
+      {
+        "doc_id": "SOP-013",
+        "title": "Oil sampling and dissolved gas analysis",
+        "score": 18.8356
+      }
+    ],
+    "brief": "Apply the loading restriction in MG-021 to Redwater Yard 138/13kV ahead of the forecast heat event, as this unit cannot be attended before the event in accordance with MG-023. Ensure all applied de-ratings, reasons, values, and periods are recorded as required by MG-021.",
+    "cited_doc_ids": [
+      "MG-021",
+      "MG-023"
+    ],
+    "status": "ok"
   }
 }

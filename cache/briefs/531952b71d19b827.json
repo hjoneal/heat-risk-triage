@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage on Oakhurst Terrace 230/34kV (SUB-SGW-241) before the forecast heat event, as obstructed ventilation must be cleared in preference to deferring it according to SOP-015. For this 42-year-old unit experiencing heavy load through sustained heat with an overnight minimum of 17.76 degrees, apply the loading restrictions in MG-021 if attention before the event is not possible, as outlined in MG-023. Record every de-rating applied, the reason, the value, and the period pursuant to MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-015"
+  ],
+  "status": "ok"
+}

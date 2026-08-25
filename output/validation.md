@@ -51,4 +51,4 @@ The model reaches **85.6%** of the achievable within-event AUC and **61.9%** of 
 
 ## Citation integrity
 
-**100.00%** of briefs cite only documents they were given (100 of 100).
+**100.00%** of briefs cite only documents they were given (160 of 160).

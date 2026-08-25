@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area and clear any obstruction before the forecast heat event (SOP-015). Because the unit is 35 years old with high loading, prioritize pre-event attention and apply the loading restriction in MG-021 if it cannot be attended (MG-023).",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise Briarcliff Hill 138/13kV (SUB-SGW-839) for pre-event attention ahead of younger units due to its advanced age and history of high loading, as outlined in MG-023. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Additionally, run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025.",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

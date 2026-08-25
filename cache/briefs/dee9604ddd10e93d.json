@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Langmere Lock 230/34kV (SUB-SGW-632) for outstanding work in categories one through three before the heat event begins, as directed by SOP-016. Because the unit is 29 years old and exposed to sustained thermal stress, apply the loading restrictions in MG-021 if any ageing-related condition cannot be attended, in accordance with MG-023. Record every de-rating applied with its reason, value, and period as specified in MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

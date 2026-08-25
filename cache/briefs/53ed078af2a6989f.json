@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect and address the oil issue on Bellview Reach before the heat event begins, as active oil leaks are prioritized in categories 1 to 3 of pre-event work orders. If this category 3 defect cannot be completed before the event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed by MG-023. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

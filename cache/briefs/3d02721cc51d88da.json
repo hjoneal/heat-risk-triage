@@ -1,0 +1,7 @@
+{
+  "brief": "Crews must apply the loading restrictions in MG-021 for Wexford Landing SUB-SGW-451, as the asset facts and procedure documents do not cover any physical pre-event intervention beyond operational de-rating. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, as required by MG-021.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "status": "ok"
+}

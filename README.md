@@ -56,7 +56,7 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    deterministically from the asset's positive feature contributions, then an LLM action brief that
    may cite only the retrieved documents.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 120 tests across four files: retrieval behaviour
+   check, and the Bayes ceiling. 123 tests across four files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
    terms are what let the forecast reorder the queue (`test_ranking.py`), and what the interface
    must not misreport (`test_interface.py`).
@@ -140,8 +140,8 @@ Each script is independently re-runnable and idempotent. `extract.py` and `retri
 | Inspection notes | 1,800 (1,298 distinct texts) |
 | Procedure documents | 25 |
 | Demo scenarios | 4 |
-| Action briefs | 100 |
-| Crew capacity | 15 |
+| Action briefs | 160 |
+| Crew capacity | 15 (sweep 10–40) |
 
 The fleet size is derived from the client brief rather than assumed: 8M residents ÷ ~2.5 per
 household ≈ 3.2M customer accounts; ÷ ~8,000 per substation ≈ 400 distribution substations; × ~2.2
@@ -163,6 +163,7 @@ weight:
 | Customers per MVA | 92 | Substations run N-1, so customers per transformer sit well below rating |
 | Cooling offset | ONAN +2, ONAF 0, OFAF −2 °C | Forced cooling sheds heat |
 | Condition weights | age .35, maintenance .30, faults .20, noise .15 | Assumed |
+| Crew capacity | 15 default, 20–50 plausible | Derived from a monthly substation inspection cadence: 400 substations ÷ 21 working days × 3 days ≈ 57 substation visits of nominal capacity, ~50% divertible to targeted pre-event work. Reported as a sweep rather than a single value |
 
 ### The failure rate is not an annual rate
 
@@ -284,6 +285,28 @@ pairwise; by risk alone 5, 6, 7, 4, 12, 13. Priority is consistently damped beca
 An earlier build measured 0 on every pair; `DECISIONS.md` D-026 records what changed and why the gate
 that was written around this was dropped rather than reinstated.
 
+**Crew capacity is a client operating parameter, not a property of the system**, and the 15 this
+build reports at was chosen rather than derived. A monthly substation inspection cadence puts
+realistic pre-event capacity nearer 30 — 400 substations ÷ 21 working days × 3 days ≈ 57 substation
+visits, roughly half divertible to targeted work. The curve is published so a reader with their own
+capacity figure can read off their own number:
+
+| Capacity | Precision@k | Recall@k | % of fleet |
+|---|---|---|---|
+| 10 | 0.0625 | 0.0495 | 1.1% |
+| 15 **(default)** | 0.0542 | 0.0627 | 1.7% |
+| 20 | 0.0500 | 0.0695 | 2.2% |
+| 25 | 0.0500 | 0.1065 | 2.8% |
+| 30 | 0.0542 | 0.1344 | 3.3% |
+| 40 | 0.0516 | 0.1582 | 4.4% |
+
+15 is retained as the conservative reported case. It was **not** raised to the derived figure:
+recall roughly doubles between 15 and 30 on identical predictions, and improving a headline metric on
+the strength of an assumption introduced in the same change is not a result worth having. Precision
+does not fall monotonically because at these capacities each event contributes a handful of failures
+and the per-event average moves on single hits — that is noise at a 1% base rate, left visible.
+`DECISIONS.md` D-036.
+
 **Against the Bayes ceiling.** Ranking by the true generative probability is the best any model
 could do, because it uses the exact hidden state that produced the outcomes:
 
@@ -326,17 +349,20 @@ Per-fold coefficient means and standard deviations, sign flips included, are in 
 
 ### Retrieval and briefs
 
-100 briefs across four scenarios. **Citation integrity 100.00% (100 of 100)** — every brief cites
+160 briefs across four scenarios. **Citation integrity 100.00% (160 of 160)** — every brief cites
 only documents it was given, against a spec expectation of ≥99%.
 
-Top BM25 score per query ranges **18.42 to 36.76**, median 28.47. `BM25_FLOOR` is 16.0, 13% below the
-observed minimum — the same margin the previous 12.0 held against its own minimum of 13.97, so the
-threshold means what it did rather than merely carrying the same number. **It does not trigger on any
-of the 100 queries**, so no real query reaches the `no_match` path; the floor was not raised into the
-main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
+Top BM25 score per query ranges **17.76 to 36.76**. `BM25_FLOOR` is 16.0, 9.9% below the observed
+minimum. That margin was 13% when briefs covered the top 25; raising coverage to 40 brought
+lower-ranked assets into the sample, and an asset with fewer positive contributions produces a
+shorter query and a lower top score. The floor was left where it is rather than lowered to restore
+the margin, because it still does not fire and moving a threshold each time the sample grows is
+churn — but the drift is one-directional and is noted in `config.py` for whoever raises coverage
+next. **It does not trigger on any of the 160 queries**, so no real query reaches the `no_match`
+path; the floor was not raised into the main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
 degenerate query instead. See `DECISIONS.md` D-018.
 
-120 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+123 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
@@ -420,7 +446,10 @@ Production MLOps Architecture*, October 2025.
   better one, and that trade is a judgement rather than a measurement.
 - **The crew reaches 1.7% of the fleet.** Capacity stayed at 15 while the fleet grew sixfold, so 15
   interventions now cover 15 of 900 rather than 15 of 150. Recall at 15 is correspondingly low in
-  absolute terms.
+  absolute terms — and is a consequence of a conservative capacity assumption rather than of the
+  ranking. The sweep above shows how it moves: 0.063 at 15, 0.134 at 30, 0.158 at 40. A derivation
+  from inspection cadence puts realistic capacity nearer 30, and that figure was deliberately not
+  adopted in the same change that measured its effect. D-036.
 - **Missed failures are the ones with no recorded defect.** The design ranks recorded condition
   against forecast stress, so an asset whose condition was never written down is invisible to it.
   Continuous telemetry is the thing that would catch those, and it is a listed exclusion.
@@ -443,7 +472,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking mechanism, interface invariants
-DECISIONS.md               35 entries, append-only
+DECISIONS.md               36 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

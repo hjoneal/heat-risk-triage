@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise Granite Hollow 230/34kV for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Note that the supplied documents do not cover the specific maintenance interval compliance procedure in ERP-031.",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

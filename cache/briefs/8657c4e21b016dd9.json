@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect the Kingsley Green 138/13kV transformer prior to the heat event, as its cooling system type is ONAN. Because the supplied documents do not cover any specific operational response for an ONAN cooling type with a warm overnight minimum of 17.76 degrees, no additional ambient de-rating or sustained event reduction should be applied based on the forecast minimum. Continue to monitor the asset in accordance with standard operating procedures.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "REG-042"
+  ],
+  "status": "ok"
+}

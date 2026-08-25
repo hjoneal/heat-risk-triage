@@ -45,6 +45,53 @@
       "recall_at_15": 0.06271947260319354
     }
   },
+  "precision_at_15": 0.05416666666666667,
+  "recall_at_15": 0.06271947260319354,
+  "crew_capacity": 15,
+  "capacity_sweep": [
+    {
+      "capacity": 10,
+      "precision": 0.0625,
+      "recall": 0.04952627045650301,
+      "fleet_share": 0.011111111111111112,
+      "is_default": false
+    },
+    {
+      "capacity": 15,
+      "precision": 0.05416666666666667,
+      "recall": 0.06271947260319354,
+      "fleet_share": 0.016666666666666666,
+      "is_default": true
+    },
+    {
+      "capacity": 20,
+      "precision": 0.049999999999999996,
+      "recall": 0.06950241833962764,
+      "fleet_share": 0.022222222222222223,
+      "is_default": false
+    },
+    {
+      "capacity": 25,
+      "precision": 0.05,
+      "recall": 0.10654773736169085,
+      "fleet_share": 0.027777777777777776,
+      "is_default": false
+    },
+    {
+      "capacity": 30,
+      "precision": 0.05416666666666667,
+      "recall": 0.13435036109454715,
+      "fleet_share": 0.03333333333333333,
+      "is_default": false
+    },
+    {
+      "capacity": 40,
+      "precision": 0.0515625,
+      "recall": 0.15823560591002453,
+      "fleet_share": 0.044444444444444446,
+      "is_default": false
+    }
+  ],
   "c_sweep": [
     {
       "C": 0.01,

@@ -478,9 +478,29 @@ LOGREG_C = 1.0  # chosen: scikit-learn default, confirmed by the sweep below
 LOGREG_MAX_ITER = 1000  # chosen: enough for convergence at this size
 C_SWEEP = [0.01, 0.1, 1.0, 10.0]  # chosen: one decade either side of the default
 
-# The crew can reach 15 assets before the event begins, which is what makes
-# precision and recall at 15 the metrics that matter operationally.
+# How many assets a crew can reach in the 72 hours before the event begins, which
+# is what makes precision and recall at that number the metrics that matter
+# operationally — and therefore the least-grounded assumption in the build to
+# leave unexamined.
+#
+# Utilities do not publish pre-event inspection capacity, so there is no figure to
+# cite. Inspection *cadence* is documented, and capacity follows from it: 400
+# substations on a monthly visual cadence over ~21 working days is ~19 substation
+# visits a day, ~57 across the 72-hour window, of which perhaps half is divertible
+# from routine walk-rounds and event-readiness staging to targeted pre-event work
+# — roughly 30 transformer interventions. Cadence basis: IEEE C57 and NFPA 70B for
+# condition assessment, NERC PRC-005 for protection intervals. The divertible
+# share is assumed. Plausible range 20 to 50, centred near 30.
+#
+# It stays at 15 regardless. Raising it to the derived figure would roughly double
+# reported recall, which is the reason not to raise it in the same change that
+# discovered the derivation. 15 is the conservative reported case and the range is
+# reported beside it as a sweep. See DECISIONS.md D-036.
 CREW_CAPACITY = 15  # chosen
+
+# Reported across a range rather than at a single value, because pre-event
+# capacity is a client operating parameter and not a property of the system.
+CAPACITY_SWEEP = [10, 15, 20, 25, 30, 40]  # chosen
 
 CALIBRATION_BINS = 10  # chosen: equal-width bins over [0, 1]
 # Contributions are coefficient x standardised value and must sum to
@@ -504,24 +524,27 @@ BM25_TOP_K = 3  # chosen: as many procedures as a supervisor will read
 # Preserves hyphenated identifiers such as sop-014, which \w+ would split.
 TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 
-# Set below the main cluster in output/bm25_scores.txt: across all 100 generated
-# queries the top score ranges 18.42 to 36.76, with no separated low tail. 16.0
-# sits 13% below the observed minimum, which is the same margin the previous
-# value of 12.0 held against its own minimum of 13.97, so the threshold means the
-# same thing it did rather than merely carrying the same number.
+# Set below the main cluster in output/bm25_scores.txt: across all 160 generated
+# queries the top score ranges 17.76 to 36.76, with no separated low tail. 16.0
+# sits 9.9% below the observed minimum.
 #
-# Re-derived because the interaction features changed every query: more positive
-# contributions means more terms, and centring them changed which contributions
-# come out positive at all. Both effects move the distribution, and a floor left
-# at 12.0 would have sat twice as far below the cluster as it was set to be.
+# That margin has narrowed and is worth watching. It was 13% when BRIEF_TOP_N was
+# 25; raising it to 40 brought ranks 26 to 40 into the sample, and a lower-ranked
+# asset has fewer positive contributions, so a shorter query and a lower top
+# score. The floor was left at 16.0 rather than lowered to restore the margin,
+# because it still does not fire and moving a threshold each time the sample
+# grows is churn — but the drift is one-directional, and a further rise in
+# BRIEF_TOP_N should be checked against this rather than assumed safe.
 #
-# It does not fire on any of the 100. That is recorded rather than engineered
-# around: build_query concatenates a term list per positive contribution, giving
-# queries of 15 to 40 terms, and against 25 topically dense procedures such a
-# query always matches something. See DECISIONS.md D-018.
+# It does not fire on any of the 160. That is recorded rather than engineered
+# around: build_query concatenates a term list per positive contribution, and
+# against 25 topically dense procedures such a query always matches something.
+# See DECISIONS.md D-018.
 BM25_FLOOR = 16.0  # measured
 
-BRIEF_TOP_N = 25  # chosen: the crew capacity of 15 plus a review margin
+# Covers the top of CAPACITY_SWEEP, so every row reachable at any reported
+# capacity carries an action brief rather than only those inside the default 15.
+BRIEF_TOP_N = 40  # chosen
 # Above this ambient peak the query picks up de-rating guidance regardless of
 # which asset-specific factors are driving the ranking.
 HIGH_AMBIENT_QUERY_C = 35.0  # chosen
@@ -594,7 +617,9 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # Web application
 # ---------------------------------------------------------------------------
 
-QUEUE_ROWS = 25  # chosen: the briefed assets, so every visible row has a brief
+# Raised from 25 with BRIEF_TOP_N, so that every capacity the sweep reports and
+# the slider offers has rows to draw a line across.
+QUEUE_ROWS = 40  # chosen: the briefed assets, so every visible row has a brief
 
 # The forecast chart. Rendered as SVG on the server, so the page still carries no
 # plotting library and no request-time computation. The left pad holds the
@@ -628,5 +653,5 @@ PERCENTILE_BANDS = [
 # and capacity decides where the line is drawn across it. Capped at QUEUE_ROWS
 # because past that the queue has no rows left to draw the line after.
 CREW_CAPACITY_MIN = 5  # chosen
-CREW_CAPACITY_MAX = 25  # chosen
+CREW_CAPACITY_MAX = 40  # chosen: the top of CAPACITY_SWEEP, and of QUEUE_ROWS
 DECISIONS_LOG = OUTPUT_DIR / "decisions.jsonl"

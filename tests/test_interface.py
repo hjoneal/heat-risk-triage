@@ -162,6 +162,31 @@ def test_multipliers_compose_to_the_score(scenario_id=None):
             f"{asset['asset_id']}: multipliers give odds {product}, score implies {actual}"
 
 
+def test_every_capacity_the_slider_offers_has_rows_and_a_brief_behind_it():
+    """The slider, the queue and the brief coverage must agree.
+
+    A capacity the slider can reach but the queue cannot show would put the line
+    nowhere, and a visible row without a brief breaks the invariant that every
+    row the crew can be sent to carries guidance.
+    """
+    assert config.CREW_CAPACITY_MAX <= config.QUEUE_ROWS <= config.BRIEF_TOP_N
+    assert max(config.CAPACITY_SWEEP) <= config.CREW_CAPACITY_MAX
+    assert config.CREW_CAPACITY in config.CAPACITY_SWEEP, \
+        "the default capacity must appear in the sweep it is reported against"
+
+    html = queue_html(f"?capacity={config.CREW_CAPACITY_MAX}")
+    rows = re.findall(r'/asset/(SUB-SGW-\d+)', html.split("<tbody>")[1])
+    assert len(set(rows)) >= config.CREW_CAPACITY_MAX
+    briefs = json.loads((config.OUTPUT_DIR / f"briefs_{SCENARIO}.json").read_text())
+    missing = [a for a in rows[:config.CREW_CAPACITY_MAX] if a not in briefs]
+    assert not missing, f"visible rows with no brief: {missing}"
+
+
+def test_a_capacity_beyond_the_range_is_clamped_not_rejected():
+    for value in ("99", "0", "-4"):
+        assert client.get(f"/scenario/{SCENARIO}?capacity={value}").status_code == 200
+
+
 def test_the_baseline_row_is_shown_as_a_probability():
     """`-5.827 log-odds` is the model's unit and means nothing on its own."""
     asset_id = top_asset_id(SCENARIO)

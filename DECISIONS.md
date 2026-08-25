@@ -1151,3 +1151,54 @@ identical — descending magnitude and descending value are the same thing when
 every value is positive. Verified rather than assumed: all 100 briefs are
 byte-identical after the change, so no cache was invalidated and no retrieval
 result moved.
+
+## D-036 — Crew capacity is derived, reported as a sweep, and deliberately not raised
+
+**Decision:** `CREW_CAPACITY` stays at 15. A derivation putting realistic capacity
+nearer 30 is recorded in `config.py`, and `output/metrics.md` reports precision
+and recall across `CAPACITY_SWEEP = [10, 15, 20, 25, 30, 40]` rather than at 15
+alone. `BRIEF_TOP_N` and `QUEUE_ROWS` rise from 25 to 40 and the capacity slider's
+range from 5–25 to 5–40, so every capacity the sweep reports has rows and briefs
+behind it.
+
+**What was wrong with 15.** It was chosen, not derived, and it was the least
+grounded assumption in the build — while determining precision@15, recall@15, the
+queue's capacity line and the whole business case. A number that load-bearing
+should not rest on nothing.
+
+**The derivation.** Utilities do not publish pre-event inspection capacity, so
+there is nothing to cite directly. Cadence is documented and capacity follows
+from it: 400 substations on a monthly visual inspection cadence over roughly 21
+working days is about 19 substation visits a day, about 57 across the 72-hour
+window, of which perhaps half is divertible from routine walk-rounds and
+event-readiness staging to targeted pre-event work — roughly 30 transformer
+interventions. Cadence basis: IEEE C57 and NFPA 70B for condition assessment,
+NERC PRC-005 for protection intervals. The divertible share is an assumption, and
+the weakest link in the chain: pre-event targeted work takes longer than a routine
+walk-round and competes with work already scheduled. Plausible range 20 to 50.
+
+**Why it was not raised to 30.** Because it would have worked. Measured, recall
+goes from 0.0627 at 15 to 0.1344 at 30 — roughly double — on identical
+predictions. Nothing about the model would have improved; the reported number
+would have, on the strength of an assumption introduced in the same change that
+reported the improvement. That is the shape of a result nobody should trust,
+including when it is your own. 15 is retained as the conservative case and the
+curve is published beside it, so a reader with their own capacity figure can read
+off their own number instead of accepting this one.
+
+**What the sweep shows.** Recall rises steadily with capacity, as it must.
+Precision does not fall monotonically — 0.0625 at 10, 0.0500 at 20 and 25, back to
+0.0542 at 30 — because at these capacities each event contributes a handful of
+failures and the per-event average moves on single hits. The non-monotonicity is
+noise at a 1% base rate, and is left visible rather than smoothed.
+
+**Not a new evaluation.** The same out-of-fold predictions, the same `GroupKFold`
+protocol, the same per-event-then-averaged computation as the existing
+precision@15 — `precision_recall_at_capacity` gained a parameter rather than a
+sibling. The ablation table stays at k=15 so the variant comparison remains
+readable; the sweep answers a different question, and runs for the full model
+only.
+
+**What would change it.** A capacity figure from the client, at which point the
+sweep becomes a sanity check rather than the headline and `CREW_CAPACITY` moves to
+match. Until then the honest form of the answer is a curve.
