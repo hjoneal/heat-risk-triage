@@ -1,9 +1,0 @@
-{
-  "brief": "Clear the obstructed ventilation before the forecast heat event as low-cost, immediate action that restores the cooling margin (SOP-015, SOP-011). Because the Northcott Bend unit has an ONAN cooling type, the de-rating rule for reduced forced cooling capacity does not apply (MG-021). Record the clearance work against the originating defect and close it out upon completion (SOP-011).",
-  "cited_doc_ids": [
-    "SOP-015",
-    "SOP-011",
-    "MG-021"
-  ],
-  "status": "ok"
-}

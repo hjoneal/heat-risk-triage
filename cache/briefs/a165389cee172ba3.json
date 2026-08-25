@@ -1,8 +1,0 @@
-{
-  "brief": "Clear the obstructed ventilation on asset SUB-SGW-131 before the forecast heat event, as clearance work takes precedence over other remedial activity [SOP-015, SOP-011]. Record the clearance work against the originating defect and close it out at the time of completion [SOP-011].",
-  "cited_doc_ids": [
-    "SOP-015",
-    "SOP-011"
-  ],
-  "status": "ok"
-}

@@ -1,0 +1,9 @@
+{
+  "brief": "Clear any vegetation and compound obstructions around the radiator banks and ventilation openings of Glenmoor Reach 115/12kV (SUB-SGW-794), as clearance work takes precedence over other remedial activity before a heat event [SOP-011]. Because this asset has an ONAN cooling type and is 40 years old with a high peak load and time since last maintenance, apply the loading restriction in MG-021 if it cannot be attended before the event rather than accepting the exposure [MG-023]. Record every de-rating applied with its reason, value, and period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-011"
+  ],
+  "status": "ok"
+}

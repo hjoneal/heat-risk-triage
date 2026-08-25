@@ -1,0 +1,9 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure on this ageing unit, as outlined in MG-023. Additionally, for this ONAN cooling type, the supplied documents do not cover the specific forced-cooling instructions referenced for units with forced cooling. Document MG-025 further notes operational responses for events running beyond 48 hours with warm overnight minima.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

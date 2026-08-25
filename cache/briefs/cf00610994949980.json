@@ -1,9 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure until the oil has been reconditioned or replaced and a retest has returned within specification, as outlined in SOP-013. Alternatively, where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in accordance with MG-023. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-013"
-  ],
-  "status": "ok"
-}

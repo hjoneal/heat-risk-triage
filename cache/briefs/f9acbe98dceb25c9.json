@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Underhill Point 230/34kV (SUB-SGW-387) and prioritize it for pre-event attention because its advanced age of 28 years and history of high loading reduce its margin against mechanical failure during sustained thermal exposure, as outlined in MG-023. As specified in MG-021 and MG-025, apply the required ambient de-rating of 1.5 percent per degree above 30 degrees based on the 24-hour average ambient, and enforce the further 5 percent reduction from the third day onward since the overnight minimum of 17.76 degrees does not trigger the sustained-event threshold of 24 degrees. Record every de-rating applied, the reason, the value, and the period.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

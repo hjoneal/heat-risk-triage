@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise Ivybridge Crossing (SUB-SGW-172) for pre-event attention, as an ageing unit with a history of high loading has a reduced margin against mechanical failure under the thermal cycling of a multi-day heat event [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

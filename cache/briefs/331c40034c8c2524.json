@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect the asset and verify its cooling system before the forecast heat event, as outlined in REG-042. Apply any required ambient and cooling de-ratings according to MG-021. Review and address any outstanding work orders prioritised by their effect on heat shedding pursuant to SOP-016.",
-  "cited_doc_ids": [
-    "REG-042",
-    "MG-021",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

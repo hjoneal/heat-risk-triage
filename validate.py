@@ -195,11 +195,7 @@ def bayes_ceiling(assets, hazard_table, flags, outcomes):
     def summarise(scores):
         return {
             "pooled_auc": float(roc_auc_score(labels, scores)),
-            "within_event_auc": float(np.mean([
-                roc_auc_score(labels[groups == e], scores[groups == e])
-                for e in pd.unique(groups)
-                if 0 < labels[groups == e].sum() < (groups == e).sum()
-            ])),
+            "within_event_auc": model.within_event_auc(scores, labels, groups)[0],
             "precision_at_capacity": float(np.mean([
                 labels[groups == e][np.argsort(-scores[groups == e])[:config.CREW_CAPACITY]].sum()
                 / config.CREW_CAPACITY
@@ -305,7 +301,12 @@ def write_validation(correlations, worst, ceiling, citations, path):
         f"Feature matrix columns equal `FEATURES` exactly, in order: {len(config.FEATURES)} columns.",
         "",
         "Hazard features derive from ambient temperature alone. `theta`, `tau`,",
-        "`load_rise`, `condition` and `thermal_stress` never enter the matrix.",
+        "the hourly load rise, `condition` and `thermal_stress` never enter the",
+        "matrix. The three interaction columns are products of features already",
+        "in it, so they cross no boundary the components did not already sit on:",
+        "`peak_load_pct` and `age_years` come from the asset register, the",
+        "condition flag count from the extracted notes, and the hazard terms from",
+        "ambient temperature.",
         "The correlations below are computed against the hidden state that",
         "generated the outcomes, which only this module may read.",
         "",

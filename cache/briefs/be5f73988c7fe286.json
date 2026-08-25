@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of the free area, and clear any obstruction in preference to deferring it, as outlined in SOP-015. For Camden Works 230/34kV (SUB-SGW-781), which has an ONAN cooling type, note that the supplied documents do not cover specific de-rating calculations for ONAN units where forced cooling is absent. The supplied documents also do not cover any specific operational response for an overnight minimum of 17.76 degrees, as the threshold for sustained multi-day events is above 24 degrees according to MG-021 and MG-025.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-021",
+    "MG-025"
+  ],
+  "status": "ok"
+}

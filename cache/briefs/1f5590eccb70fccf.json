@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect and address the oil issue on Penrose Park 230/34kV (SUB-SGW-337) prior to the heat event, as active oil defects fall into priority category 3 under SOP-016. Because the unit is ONAN cooled with an oil issue and has an advanced age of 54 years, apply the loading restrictions in MG-021 if the defect cannot be resolved beforehand in accordance with MG-023. Record every de-rating applied including the reason, value, and period as required by MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

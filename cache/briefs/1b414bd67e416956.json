@@ -1,0 +1,9 @@
+{
+  "brief": "Reduce permissible load in accordance with MG-021 if ambient conditions require it, and evaluate emergency load transfer under ERP-032 if the unit approaches its temperature limit. Ensure any transferred load is assessed against the receiving asset's available capacity at prevailing ambient temperatures, accounting for de-rating under MG-021. Because the asset utilizes ONAN cooling, the specific provisions regarding forced cooling in MG-021 and MG-025 do not apply.",
+  "cited_doc_ids": [
+    "MG-021",
+    "ERP-032",
+    "MG-025"
+  ],
+  "status": "ok"
+}

@@ -53,6 +53,144 @@ def out_of_fold_predictions(X, y, groups, regularisation_c=config.LOGREG_C):
     return predictions
 
 
+def assert_interaction_centres(X_frame):
+    """The stored interaction centres must still be the training means.
+
+    They are constants because a scenario matrix cannot supply them (one event,
+    so its own degree-hours mean is that event's value). Constants go stale when
+    the generator changes, and a stale centre does not fail — it quietly shifts
+    what the interaction term represents. Checked here, where the training matrix
+    is in scope, rather than in features.py, which cannot tell training from
+    scenario.
+    """
+    flag_count = X_frame[[f"flag_{flag}" for flag in config.CONDITION_FLAGS]].sum(axis=1)
+    for name, measured, stored in [
+        ("peak_load_pct", X_frame["peak_load_pct"].mean(), config.INTERACTION_CENTRE_PEAK_LOAD_PCT),
+        ("degree_hours_above_30", X_frame["degree_hours_above_30"].mean(),
+         config.INTERACTION_CENTRE_DEGREE_HOURS),
+        ("condition flag count", flag_count.mean(), config.INTERACTION_CENTRE_CONDITION_FLAGS),
+        ("age_years", X_frame["age_years"].mean(), config.INTERACTION_CENTRE_AGE_YEARS),
+        ("consecutive_warm_nights", X_frame["consecutive_warm_nights"].mean(),
+         config.INTERACTION_CENTRE_WARM_NIGHTS),
+    ]:
+        drift = abs(measured - stored) / abs(stored)
+        assert drift <= config.INTERACTION_CENTRE_TOLERANCE, (
+            f"interaction centre for {name} is stale: stored {stored}, training "
+            f"mean is now {measured:.4f} ({drift:.1%} drift). Update config."
+        )
+
+
+def fold_coefficients(X, y, groups):
+    """Each feature's coefficient in every cross-validation fold.
+
+    Interaction terms are correlated with the features they are built from, so a
+    coefficient can be large and unstable while the pair's joint effect is
+    steady. Reporting the spread across folds makes that visible instead of
+    letting a single refit-on-everything number imply a precision the data does
+    not support. A sign that flips between folds is information about the model,
+    not a defect to suppress.
+    """
+    per_fold = []
+    splitter = GroupKFold(n_splits=config.CV_FOLDS)
+    for train_index, _ in splitter.split(X, y, groups=groups):
+        model = build_model()
+        model.fit(X[train_index], y[train_index])
+        per_fold.append(model["clf"].coef_[0])
+    matrix = np.array(per_fold)
+    return {
+        name: {
+            "mean": float(matrix[:, i].mean()),
+            "sd": float(matrix[:, i].std(ddof=1)),
+            "sign_flips": bool(matrix[:, i].min() < 0 < matrix[:, i].max()),
+        }
+        for i, name in enumerate(config.FEATURES)
+    }
+
+
+def top_n_by_scenario(model, assets, hazard_table, flags, scenario_id, feature_names):
+    """The top CREW_CAPACITY assets under one forecast, by risk and by priority.
+
+    Both are returned because they answer different questions. Risk is what the
+    model predicts and what the interaction features act on; priority is
+    risk x customers_served, the order the crew actually works down. They diverge
+    sharply, which is the finding recorded in D-026.
+
+    `feature_names` selects the columns to fit and score on, so the same function
+    serves the reported measurement and the tests that compare the ranking with
+    and without the interaction terms.
+    """
+    pairs = features.scenario_pairs(assets, scenario_id)
+    X = features.build_feature_matrix(assets, hazard_table, flags, pairs)[feature_names].to_numpy()
+    risk = model.predict_proba(X)[:, 1]
+    customers = assets.set_index("asset_id").loc[pairs["asset_id"], "customers_served"].to_numpy()
+    asset_ids = pairs["asset_id"].to_numpy()
+    return {
+        "risk": set(asset_ids[np.argsort(-risk)[:config.CREW_CAPACITY]]),
+        "priority": set(asset_ids[np.argsort(-(risk * customers))[:config.CREW_CAPACITY]]),
+    }
+
+
+def ranking_divergence(model, assets, hazard_table, flags, feature_names):
+    """How far the top-15 moves between each pair of demo scenarios.
+
+    Reported on both rankings rather than one, because the difference between
+    them is the whole finding: the model does respond to the forecast, and is
+    then overwhelmed by a static term in the ranking built on top of it.
+    """
+    tops = {
+        scenario_id: top_n_by_scenario(
+            model, assets, hazard_table, flags, scenario_id, feature_names)
+        for scenario_id, *_ in config.SCENARIOS
+    }
+    ids = list(tops)
+    rows = []
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            rows.append((
+                ids[i], ids[j],
+                config.CREW_CAPACITY - len(tops[ids[i]]["priority"] & tops[ids[j]]["priority"]),
+                config.CREW_CAPACITY - len(tops[ids[i]]["risk"] & tops[ids[j]]["risk"]),
+            ))
+    return rows
+
+
+def write_ranking_divergence(pairs, path):
+    """How far the queue moves between forecasts. A measurement, not a gate.
+
+    A gate was specified here — at least three of the top fifteen must differ
+    between any two scenarios — and dropped once it was measured as unreachable.
+    Across five scenario configurations spanning the whole historical envelope,
+    and with customers_served removed from the ranking entirely, the pairwise
+    maximum was two. Setting a threshold the system cannot meet, or lowering one
+    until it passes, would both be worse than recording what happens. See D-026.
+    """
+    lines = [
+        "Ranking divergence across forecast scenarios",
+        "",
+        f"Top {config.CREW_CAPACITY} assets, compared pairwise across the "
+        f"{len(config.SCENARIOS)} demo scenarios.",
+        "By priority is the crew's queue order (risk x customers_served); by risk",
+        "is the model's own ranking, which is what the interaction features act on.",
+        "",
+    ]
+    for left, right, by_priority, by_risk in pairs:
+        lines.append(f"  {left} vs {right}: {by_priority} of "
+                     f"{config.CREW_CAPACITY} differ by priority, "
+                     f"{by_risk} by risk alone")
+    by_priority = [row[2] for row in pairs]
+    by_risk = [row[3] for row in pairs]
+    lines += [
+        "",
+        f"Priority divergence runs {min(by_priority)} to {max(by_priority)} against "
+        f"{min(by_risk)} to {max(by_risk)} by risk. Priority is damped because",
+        "customers_served spans 45x across the fleet, far more than the forecast",
+        "re-weights any asset's risk, so the queue is stabler than the ranking",
+        "underneath it. It is no longer frozen: an earlier build measured 0 here,",
+        "with three scenarios and uncentred interaction products. See D-026, D-031.",
+    ]
+    path.write_text("\n".join(lines) + "\n")
+
+
 def precision_recall_at_capacity(scores, labels, groups):
     """Precision and recall at the crew's capacity, per event then averaged.
 
@@ -73,10 +211,40 @@ def precision_recall_at_capacity(scores, labels, groups):
     return float(np.mean(precisions)), float(np.nanmean(recalls))
 
 
+def within_event_auc(scores, labels, groups):
+    """AUC computed inside each event, then averaged over events.
+
+    The pooled figure answers a question the crew never asks. Pooling puts a mild
+    event's rows beside a severe event's, so a model scores well partly by
+    telling those apart — which the hazard features make trivial and which the
+    supervisor already knows from the forecast sitting on their desk. Within an
+    event the hazard block is constant for every asset, so this measures only
+    what the tool is for: ranking 900 assets against one another under one
+    forecast. It runs about 0.20 below the pooled number.
+
+    Pooling also interacts badly with GroupKFold: each fold's intercept is fitted
+    to the events *not* held out, so a low-risk event held out is scored by a
+    model calibrated on higher-risk ones. A feature set with no hazard features
+    cannot correct for that, which is how four genuinely informative condition
+    flags score 0.4374 pooled and 0.6171 here.
+    """
+    values = []
+    for event in np.unique(groups):
+        mask = groups == event
+        if 0 < labels[mask].sum() < mask.sum():
+            values.append(roc_auc_score(labels[mask], scores[mask]))
+    assert values, "no event contained both a failure and a survival"
+    return float(np.mean(values)), len(values)
+
+
 def evaluate(scores, labels, groups):
+    """AUC pooled and within-event, plus precision and recall at crew capacity."""
     precision, recall = precision_recall_at_capacity(scores, labels, groups)
+    within, n_events = within_event_auc(scores, labels, groups)
     return {
         "auc": float(roc_auc_score(labels, scores)),
+        "within_event_auc": within,
+        "n_events_scored": n_events,
         "precision_at_15": precision,
         "recall_at_15": recall,
     }
@@ -223,14 +391,22 @@ def write_metrics_markdown(metrics, path):
         "",
         "## Ablations",
         "",
-        "All three variants go through the same grouped cross-validation loop.",
+        "Every variant goes through the same grouped cross-validation loop. The two",
+        "middle rows differ from the full model in one respect each, so the notes",
+        "and the interaction terms can be credited separately rather than jointly.",
         "",
-        "| Variant | Features | AUC | Precision@15 | Recall@15 |",
-        "|---|---|---|---|---|",
+        "Within-event AUC ranks assets against each other under one forecast, which",
+        "is the only comparison the crew makes. The pooled figure also rewards",
+        "telling a severe event from a mild one — easy from the hazard features and",
+        "already known from the forecast — and so runs well above it.",
+        "",
+        "| Variant | Features | Within-event AUC | Pooled AUC | Precision@15 | Recall@15 |",
+        "|---|---|---|---|---|---|",
     ]
     for name, result in metrics["ablations"].items():
         lines.append(
-            f"| {name} | {result['n_features']} | {result['auc']:.4f} | "
+            f"| {name} | {result['n_features']} | {result['within_event_auc']:.4f} | "
+            f"{result['auc']:.4f} | "
             f"{result['precision_at_15']:.4f} | {result['recall_at_15']:.4f} |"
         )
 
@@ -256,14 +432,34 @@ def write_metrics_markdown(metrics, path):
         "## Coefficients",
         "",
         "Fitted on all events, on standardised features. Sign is the direction of",
-        "the effect on the log-odds of failure.",
+        "the effect on the log-odds of failure. The fold mean and standard",
+        "deviation come from the same GroupKFold split used above: interaction",
+        "terms are correlated with the features they are built from, so a wide",
+        "spread there is expected and is reported rather than smoothed away.",
         "",
-        "| Feature | Coefficient |",
-        "|---|---|",
+        "| Feature | Coefficient | Fold mean | Fold SD | Sign flips |",
+        "|---|---|---|---|---|",
     ]
     for name, value in metrics["coefficients"].items():
-        lines.append(f"| {config.FEATURE_LABELS[name]} | {value:+.4f} |")
-    lines.append(f"| _intercept_ | {metrics['intercept']:+.4f} |")
+        fold = metrics["fold_coefficients"][name]
+        lines.append(
+            f"| {config.FEATURE_LABELS[name]} | {value:+.4f} | {fold['mean']:+.4f} | "
+            f"{fold['sd']:.4f} | {'yes' if fold['sign_flips'] else 'no'} |"
+        )
+    lines.append(f"| _intercept_ | {metrics['intercept']:+.4f} | | | |")
+
+    lines += [
+        "",
+        "## Ranking divergence across scenarios",
+        "",
+        f"Assets differing in the top {config.CREW_CAPACITY}, pairwise. Priority is",
+        "the crew's queue order; risk is the model's own ranking. Measured, not gated.",
+        "",
+        "| Scenario | Scenario | Differing by priority | Differing by risk |",
+        "|---|---|---|---|",
+    ]
+    for left, right, by_priority, by_risk in metrics["ranking_divergence"]:
+        lines.append(f"| {left} | {right} | {by_priority} | {by_risk} |")
 
     path.write_text("\n".join(lines) + "\n")
 
@@ -294,6 +490,8 @@ def main():
     X_frame = features.build_feature_matrix(assets, hazard_table, flags, pairs)
     X = X_frame.to_numpy()
 
+    assert_interaction_centres(X_frame)
+
     predictions = out_of_fold_predictions(X, labels, groups)
     full_result = evaluate(predictions, labels, groups)
 
@@ -308,10 +506,24 @@ def main():
     no_notes_predictions = out_of_fold_predictions(X[:, no_notes_index], labels, groups)
     heuristic = heuristic_scores(X)
 
+    # A ladder rather than a pair, so the notes and the interaction terms can be
+    # credited separately. The two middle rungs differ from the full model in
+    # exactly one respect each, which is the only way to say what either bought.
+    plain = [f for f in config.FEATURES if f not in config.INTERACTION_FEATURES]
+    register_only = [f for f in plain if not f.startswith("flag_")]
+
+    def variant(feature_names):
+        index = [config.FEATURES.index(name) for name in feature_names]
+        return {"n_features": len(feature_names),
+                **evaluate(out_of_fold_predictions(X[:, index], labels, groups),
+                           labels, groups)}
+
     ablations = {
         "Heuristic baseline (peak temp x age)": {
             "n_features": 2, **evaluate(heuristic, labels, groups)},
-        "Without notes": {
+        "Register only": variant(register_only),
+        "Register + notes": variant(plain),
+        "Register + interactions (no notes)": {
             "n_features": len(config.NO_NOTES_FEATURES),
             **evaluate(no_notes_predictions, labels, groups)},
         "Full model": {"n_features": len(config.FEATURES), **full_result},
@@ -342,6 +554,15 @@ def main():
         for name, value in zip(config.FEATURES, final_model["clf"].coef_[0])
     }
 
+    fold_coefs = fold_coefficients(X, labels, groups)
+
+    # The interaction features exist so that a different forecast can rank the
+    # assets differently; without them every hazard feature is constant within a
+    # scenario and the ranking cannot move at all. tests/test_ranking.py holds
+    # that comparison. Recorded here as a measurement rather than gated.
+    divergence = ranking_divergence(final_model, assets, hazard_table, flags, config.FEATURES)
+    write_ranking_divergence(divergence, config.OUTPUT_DIR / "ranking_divergence.txt")
+
     metrics = {
         "extraction_model": extraction_model,
         "n_rows": int(len(labels)),
@@ -352,6 +573,8 @@ def main():
         "brier": brier,
         "calibration_bins": calibration_bins,
         "coefficients": coefficients,
+        "fold_coefficients": fold_coefs,
+        "ranking_divergence": divergence,
         "intercept": float(final_model["clf"].intercept_[0]),
     }
     (config.OUTPUT_DIR / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
@@ -366,9 +589,14 @@ def main():
               f"risk {scored['assets'][0]['risk']:.4f}")
 
     print(f"\nout-of-fold AUC (full model): {full_result['auc']:.4f}")
-    print(f"out-of-fold AUC (without notes): {ablations['Without notes']['auc']:.4f}")
+    print(f"out-of-fold AUC (no notes):     "
+          f"{ablations['Register + interactions (no notes)']['auc']:.4f}")
     print(f"out-of-fold AUC (heuristic): {ablations['Heuristic baseline (peak temp x age)']['auc']:.4f}")
     print(f"Brier: {brier['model']:.5f} against base-rate {brier['base_rate']:.5f}")
+
+    print("\ntop-15 assets differing between scenarios:")
+    for left, right, by_priority, by_risk in divergence:
+        print(f"  {left} vs {right}: {by_priority} by priority, {by_risk} by risk alone")
 
 
 if __name__ == "__main__":

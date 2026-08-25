@@ -1,0 +1,8 @@
+{
+  "brief": "The supplied documents do not cover the specific asset circumstances for Granite Works 138/13kV (SUB-SGW-765) as no work order or defect details were provided. Crews should review the open defect register before the heat event and prioritise work according to SOP-016. Clearance work takes precedence over other remedial activity where an obstruction defect is outstanding [SOP-011].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "status": "ok"
+}

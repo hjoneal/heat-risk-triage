@@ -1,82 +1,232 @@
 {
   "extraction_model": "gemini-3.5-flash-lite",
   "n_rows": 14400,
-  "n_failures": 163,
-  "base_rate": 0.011319444444444444,
+  "n_failures": 138,
+  "base_rate": 0.009583333333333333,
   "ablations": {
     "Heuristic baseline (peak temp x age)": {
       "n_features": 2,
-      "auc": 0.5830103967412312,
-      "precision_at_15": 0.0,
-      "recall_at_15": 0.0
+      "auc": 0.6038578750871374,
+      "within_event_auc": 0.5486527914958497,
+      "n_events_scored": 13,
+      "precision_at_15": 0.004166666666666667,
+      "recall_at_15": 0.0017889087656529517
     },
-    "Without notes": {
+    "Register only": {
       "n_features": 9,
-      "auc": 0.8222914371134403,
+      "auc": 0.8466605289418115,
+      "within_event_auc": 0.646818249375817,
+      "n_events_scored": 13,
+      "precision_at_15": 0.06666666666666667,
+      "recall_at_15": 0.059887033724243026
+    },
+    "Register + notes": {
+      "n_features": 13,
+      "auc": 0.8472123144710072,
+      "within_event_auc": 0.6604484977951077,
+      "n_events_scored": 13,
       "precision_at_15": 0.04583333333333334,
-      "recall_at_15": 0.0377281746031746
+      "recall_at_15": 0.027463062346783272
+    },
+    "Register + interactions (no notes)": {
+      "n_features": 11,
+      "auc": 0.8412153304920953,
+      "within_event_auc": 0.6103556740078357,
+      "n_events_scored": 13,
+      "precision_at_15": 0.0625,
+      "recall_at_15": 0.0470665209037302
     },
     "Full model": {
-      "n_features": 13,
-      "auc": 0.8260998840401598,
-      "precision_at_15": 0.07916666666666666,
-      "recall_at_15": 0.06086309523809524
+      "n_features": 16,
+      "auc": 0.84118382892413,
+      "within_event_auc": 0.621343685993238,
+      "n_events_scored": 13,
+      "precision_at_15": 0.05416666666666667,
+      "recall_at_15": 0.06271947260319354
     }
   },
   "c_sweep": [
     {
       "C": 0.01,
-      "auc": 0.8135033100910916
+      "auc": 0.8521214781755105
     },
     {
       "C": 0.1,
-      "auc": 0.826396355129273
+      "auc": 0.8475446052040588
     },
     {
       "C": 1.0,
-      "auc": 0.8260998840401598
+      "auc": 0.84118382892413
     },
     {
       "C": 10.0,
-      "auc": 0.8219458414543286
+      "auc": 0.8365718977560721
     }
   ],
   "brier": {
-    "model": 0.010485500107156851,
-    "base_rate": 0.01119131462191358,
-    "improvement": 0.0007058145147567293
+    "model": 0.008815558523163307,
+    "base_rate": 0.009491493055555557,
+    "improvement": 0.0006759345323922496
   },
   "calibration_bins": [
     {
-      "mean_predicted": 0.009319226499125808,
-      "observed": 0.00878981787497363,
-      "count": 14221
+      "mean_predicted": 0.006923266329754834,
+      "observed": 0.006299546998867497,
+      "count": 14128
     },
     {
-      "mean_predicted": 0.13127268742314407,
-      "observed": 0.17365269461077845,
-      "count": 167
+      "mean_predicted": 0.13906911356714544,
+      "observed": 0.15246636771300448,
+      "count": 223
     },
     {
-      "mean_predicted": 0.22366486992716894,
-      "observed": 0.75,
-      "count": 12
+      "mean_predicted": 0.2347980270498718,
+      "observed": 0.3,
+      "count": 40
+    },
+    {
+      "mean_predicted": 0.34969285205651757,
+      "observed": 0.3333333333333333,
+      "count": 9
     }
   ],
   "coefficients": {
-    "peak_temp_c": 0.10604042134859806,
-    "degree_hours_above_30": 1.1381337055147893,
-    "max_overnight_min_c": -0.30087388848788355,
-    "consecutive_warm_nights": 0.13242337898635634,
-    "age_years": 0.05332904210217771,
-    "cooling_type_ordinal": -0.8437380570192892,
-    "peak_load_pct": 0.5425973776391572,
-    "days_since_maintenance": 0.19807360754850675,
-    "prior_heat_faults": 0.11439774426798284,
-    "flag_cooling_degraded": 0.19801449209566171,
-    "flag_ventilation_obstructed": 0.21965073246180322,
-    "flag_oil_issue": 0.27122670601469784,
-    "flag_overdue_remedial": 0.009179834910608163
+    "peak_temp_c": -0.24384189867939993,
+    "degree_hours_above_30": 1.0918919355103203,
+    "max_overnight_min_c": -0.3060490289393921,
+    "consecutive_warm_nights": 0.3153894012252227,
+    "age_years": 0.11504485788986903,
+    "cooling_type_ordinal": -0.5695766215017359,
+    "peak_load_pct": 0.573777450601827,
+    "days_since_maintenance": 0.250666525794307,
+    "prior_heat_faults": 0.2179102669154358,
+    "flag_cooling_degraded": 0.037367447203013576,
+    "flag_ventilation_obstructed": 0.016094910145959075,
+    "flag_oil_issue": 0.15635279378644168,
+    "flag_overdue_remedial": 0.03573407197285892,
+    "load_x_degree_hours": 0.3868276087936758,
+    "condition_x_degree_hours": 0.0387154488730473,
+    "age_x_warm_nights": 0.1904763652689708
   },
-  "intercept": -5.596722346280685
+  "fold_coefficients": {
+    "peak_temp_c": {
+      "mean": -0.2336040195176728,
+      "sd": 0.32668144053895615,
+      "sign_flips": true
+    },
+    "degree_hours_above_30": {
+      "mean": 1.0244302011578417,
+      "sd": 0.2472125817670738,
+      "sign_flips": false
+    },
+    "max_overnight_min_c": {
+      "mean": -0.23627716291644302,
+      "sd": 0.2728256181189901,
+      "sign_flips": true
+    },
+    "consecutive_warm_nights": {
+      "mean": 0.3303691369408018,
+      "sd": 0.08779309655043342,
+      "sign_flips": false
+    },
+    "age_years": {
+      "mean": 0.11658521878343978,
+      "sd": 0.08648908196670312,
+      "sign_flips": true
+    },
+    "cooling_type_ordinal": {
+      "mean": -0.5494572528318346,
+      "sd": 0.16963300791870597,
+      "sign_flips": false
+    },
+    "peak_load_pct": {
+      "mean": 0.5674020294140267,
+      "sd": 0.0503635513781026,
+      "sign_flips": false
+    },
+    "days_since_maintenance": {
+      "mean": 0.25403872197066285,
+      "sd": 0.05720089417084501,
+      "sign_flips": false
+    },
+    "prior_heat_faults": {
+      "mean": 0.220636630382824,
+      "sd": 0.03013746395826388,
+      "sign_flips": false
+    },
+    "flag_cooling_degraded": {
+      "mean": 0.045274951936484564,
+      "sd": 0.05632483151727601,
+      "sign_flips": false
+    },
+    "flag_ventilation_obstructed": {
+      "mean": 0.014121849170749726,
+      "sd": 0.00965100594507695,
+      "sign_flips": false
+    },
+    "flag_oil_issue": {
+      "mean": 0.1524381759995304,
+      "sd": 0.027977637251682244,
+      "sign_flips": false
+    },
+    "flag_overdue_remedial": {
+      "mean": 0.0314977419286591,
+      "sd": 0.07043265360185114,
+      "sign_flips": true
+    },
+    "load_x_degree_hours": {
+      "mean": 0.38268411355338644,
+      "sd": 0.07960313610432052,
+      "sign_flips": false
+    },
+    "condition_x_degree_hours": {
+      "mean": 0.02601387658031809,
+      "sd": 0.061276539492430886,
+      "sign_flips": true
+    },
+    "age_x_warm_nights": {
+      "mean": 0.19631895696908905,
+      "sd": 0.12066047617018606,
+      "sign_flips": false
+    }
+  },
+  "ranking_divergence": [
+    [
+      "short-severe",
+      "long-moderate",
+      3,
+      5
+    ],
+    [
+      "short-severe",
+      "long-severe",
+      4,
+      6
+    ],
+    [
+      "short-severe",
+      "baseline-mild",
+      4,
+      7
+    ],
+    [
+      "long-moderate",
+      "long-severe",
+      3,
+      4
+    ],
+    [
+      "long-moderate",
+      "baseline-mild",
+      7,
+      12
+    ],
+    [
+      "long-severe",
+      "baseline-mild",
+      8,
+      13
+    ]
+  ],
+  "intercept": -5.827351088334045
 }

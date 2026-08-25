@@ -4,8 +4,8 @@ prompt version: v1
 notes processed: 1800
 served from cache: 1800
 API calls made: 0
-extractions retried: 0
+extractions retried: 1
 extractions failed after retry: 0
 outputs wrapped in markdown fences: 0
-input tokens this run: 1380764
-output tokens this run: 182123
+input tokens this run: 1382833
+output tokens this run: 184879

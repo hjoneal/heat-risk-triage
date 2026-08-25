@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-023 in preference to accepting the exposure before the forecast heat event. The asset has an ONAN cooling type, is 34 years of age, and has an oil issue from inspection notes. The supplied documents do not cover the specific oil issue mentioned in the asset facts.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

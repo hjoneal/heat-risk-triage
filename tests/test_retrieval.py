@@ -143,7 +143,7 @@ def generated_queries():
 
 
 def test_no_generated_query_returns_a_cold_weather_document():
-    """The assertion across all 75 generated queries, not just the fixed set."""
+    """The assertion across every generated query, not just the fixed set."""
     offenders = []
     for scenario_id, asset_id, record in generated_queries():
         returned = {hit["doc_id"] for hit in record["retrieved"]}
@@ -171,7 +171,7 @@ def test_no_match_branch_fires_on_a_degenerate_query():
     """Exercise the floor's branch directly, since no real query reaches it.
 
     `BM25_FLOOR` is set below the whole observed distribution and never fires on
-    the 75 generated queries (DECISIONS.md D-018), so without this the branch and
+    any generated query (DECISIONS.md D-018), so without this the branch and
     its fixed text would be unexecuted code. A one-term query against vocabulary
     the corpus barely contains is the cheap way to reach it without moving the
     production threshold to manufacture a trigger.

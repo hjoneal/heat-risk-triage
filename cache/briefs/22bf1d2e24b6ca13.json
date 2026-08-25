@@ -1,0 +1,7 @@
+{
+  "brief": "Inspect Langmere Common transformer SUB-SGW-331 to address its accumulated heat and ONAN cooling type, applying ambient and sustained event loading reductions as prescribed in MG-021. Because the supplied documents do not cover the specific criticality ranking or cooling system type values for this asset, follow standard operating procedures for thermal exposure. Record every de-rating applied according to the requirements in MG-021.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "status": "ok"
+}

@@ -1,8 +1,0 @@
-{
-  "brief": "Apply the loading restriction in MG-021 to Westmarch Park 230/34kV ahead of the heat event. The asset features an oil issue and advanced age, but the supplied documents do not cover the specific oil issue reported in the inspection notes. Consequently, crews should rely on the loading restriction to manage thermal stress during the event [MG-021, MG-023].",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
-  ],
-  "status": "ok"
-}

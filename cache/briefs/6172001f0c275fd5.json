@@ -1,9 +1,0 @@
-{
-  "brief": "Crews should inspect Willow Vale 230/34kV (SUB-SGW-709) before the heat event, as the supplied documents do not cover asset-specific actions for an ONAN cooling type with a warm overnight minimum of 17.71 degrees. The provided procedures for sustained events require overnight minima above 24 degrees, and instructions for reduced forced cooling do not apply since ONAN relies on natural cooling. The supplied texts therefore do not provide specific loading or maintenance directives for this asset's configuration.",
-  "cited_doc_ids": [
-    "MG-021",
-    "REG-042",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

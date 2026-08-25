@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": "Cooling fans failed to start on manual test at the control cabinet",
+      "present": true
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": null,
+      "present": false
+    },
+    "ventilation_obstructed": {
+      "evidence": "Bird nesting material found packed into the upper ventilation grille",
+      "present": true
+    }
+  },
+  "input_tokens": 772,
+  "inspection_id": "INS-152-2",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 130,
+  "prompt_version": "v1"
+}

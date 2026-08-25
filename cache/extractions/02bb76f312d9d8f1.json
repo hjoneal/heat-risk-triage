@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": null,
+      "present": false
+    },
+    "ventilation_obstructed": {
+      "evidence": "Louvre dampers stiff and not opening fully on the thermostat call",
+      "present": true
+    }
+  },
+  "input_tokens": 767,
+  "inspection_id": "INS-345-1",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 118,
+  "prompt_version": "v1"
+}

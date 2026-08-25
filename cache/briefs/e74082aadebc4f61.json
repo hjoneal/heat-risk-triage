@@ -1,0 +1,8 @@
+{
+  "brief": "Prioritise Willow Common 230/34kV (SUB-SGW-165) for pre-event attention ahead of a younger unit in otherwise similar condition, as specified in MG-023. Because this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023.",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "status": "ok"
+}

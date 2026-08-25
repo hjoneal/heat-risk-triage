@@ -1,8 +1,9 @@
-"""Build the 13-column feature matrix from the asset register, the weather and
+"""Build the 16-column feature matrix from the asset register, the weather and
 the extracted condition flags.
 
 The leakage boundary lives here. Hazard features derive from ambient temperature
-alone; `theta`, `tau`, `load_rise` and `condition` are never read by this module.
+alone; `theta`, `tau`, the hourly load rise and `condition` are never read by
+this module.
 Nothing in this file opens a file whose name begins with `hidden_`.
 """
 
@@ -162,6 +163,28 @@ def build_feature_matrix(assets, hazard_table, flags, pairs):
     for flag in config.CONDITION_FLAGS:
         matrix[f"flag_{flag}"] = merged[f"flag_{flag}"]
 
+    # Interactions. Every one is asset value x event value, which is what lets an
+    # additive model in the log-odds represent a hazard that lands unevenly on the
+    # fleet: without them the hazard block contributes the same number to every
+    # asset in a scenario and the forecast cannot reorder the queue at all.
+    #
+    # Both sides are centred on a fixed training mean before multiplying. A raw
+    # product is collinear enough with its own components to drive their
+    # coefficients negative, which makes the asset page claim that heat lowered
+    # an asset's risk; see config.INTERACTION_CENTRE_* and DECISIONS.md D-031.
+    # The centres are constants rather than column means because a scenario
+    # matrix holds a single event, whose own mean degree-hours is that event's
+    # value — self-centring would zero the term for every asset.
+    n_condition_flags = sum(merged[f"flag_{flag}"] for flag in config.CONDITION_FLAGS)
+    degree_hours = merged["degree_hours_above_30"] - config.INTERACTION_CENTRE_DEGREE_HOURS
+    matrix["load_x_degree_hours"] = (
+        merged["peak_load_pct"] - config.INTERACTION_CENTRE_PEAK_LOAD_PCT) * degree_hours
+    matrix["condition_x_degree_hours"] = (
+        n_condition_flags - config.INTERACTION_CENTRE_CONDITION_FLAGS) * degree_hours
+    matrix["age_x_warm_nights"] = (
+        (matrix["age_years"] - config.INTERACTION_CENTRE_AGE_YEARS)
+        * (merged["consecutive_warm_nights"] - config.INTERACTION_CENTRE_WARM_NIGHTS))
+
     # The leakage assertion. Columns equal FEATURES exactly, in order, no nulls.
     assert list(matrix.columns) == config.FEATURES, \
         f"feature matrix columns are {list(matrix.columns)}, expected {config.FEATURES}"
@@ -173,7 +196,7 @@ def build_feature_matrix(assets, hazard_table, flags, pairs):
 
 
 def training_pairs(outcomes):
-    """The 2,400 asset-event rows, with their labels, in a fixed order."""
+    """Every asset-event row, with its labels, in a fixed order."""
     pairs = outcomes[["asset_id", "event_id"]].copy()
     labels = outcomes["failed"].to_numpy()
     groups = outcomes["event_id"].to_numpy()

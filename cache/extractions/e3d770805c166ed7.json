@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": "Cooling fans failed to start on manual test at the control cabinet",
+      "present": true
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": "Work order WO-3182 for the cooling controller remains open from last season",
+      "present": true
+    },
+    "ventilation_obstructed": {
+      "evidence": "Vegetation encroaching on the compound fence within a metre of the radiators",
+      "present": true
+    }
+  },
+  "input_tokens": 794,
+  "inspection_id": "INS-128-1",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 152,
+  "prompt_version": "v1"
+}

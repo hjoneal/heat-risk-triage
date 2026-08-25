@@ -2,20 +2,20 @@ Hard gates on generated data
 ageing reference temperature in force: 38.0 C
 
 [PASS] 1. realised failure rate
-         measured: 0.0113
+         measured: 0.0096
          required in [0.008, 0.013]
 [PASS] 2. long-moderate stress exceeds short-severe
-         measured: long-moderate 0.95 vs short-severe 0.71 equivalent days
+         measured: long-moderate 2.56 vs short-severe 1.57 equivalent days
          long-moderate must be strictly greater (equivalent days at reference)
 [PASS] 3. non-zero stress share on heat events
-         measured: 0.9877
+         measured: 0.9962
          required >= 0.8
 [PASS] 4. mild event failure rate
-         measured: 0.0019
+         measured: 0.0015
          required < 0.002
 [PASS] 5. degree-hours vs peak temperature correlation
          measured: 0.4961
          required < 0.85
 [PASS] 6. failures in below-median condition assets
-         measured: 0.2086 (34 of 163 failures)
+         measured: 0.2609 (36 of 138 failures)
          required >= 0.2

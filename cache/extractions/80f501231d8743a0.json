@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": "Active seepage at the lower gasket face",
+      "present": true
+    },
+    "overdue_remedial": {
+      "evidence": "Outstanding defect notice from the last inspection round is still current",
+      "present": true
+    },
+    "ventilation_obstructed": {
+      "evidence": null,
+      "present": false
+    }
+  },
+  "input_tokens": 776,
+  "inspection_id": "INS-041-2",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 125,
+  "prompt_version": "v1"
+}

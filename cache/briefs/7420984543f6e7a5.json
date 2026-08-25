@@ -1,8 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area and clear any obstruction before the forecast heat event as outlined in SOP-015. Additionally, apply the ambient de-rating prescribed in MG-021 if the 24-hour average ambient exceeds 30 degrees, recording every de-rating applied, its reason, value, and period. Note that the supplied documents do not provide specific guidance for ONAN cooling type adjustments beyond ambient and sustained event rules.",
-  "cited_doc_ids": [
-    "SOP-015",
-    "MG-021"
-  ],
-  "status": "ok"
-}

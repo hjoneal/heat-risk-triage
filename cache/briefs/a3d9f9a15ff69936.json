@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect the unit and address outstanding defects in descending order of priority, focusing particularly on any oil level issues or active leaks which rank above oil condition defects before a heat event [SOP-016]. Ensure all vegetation and obstructions around radiator banks are cleared as clearance work takes precedence where a defect is outstanding [SOP-011]. For insulation ageing and end-of-life indicators, the supplied documents do not cover specific remedial actions for the cited oil issue beyond noting age and general indicators [MG-023].",
-  "cited_doc_ids": [
-    "SOP-016",
-    "SOP-011",
-    "MG-023"
-  ],
-  "status": "ok"
-}

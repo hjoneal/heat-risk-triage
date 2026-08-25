@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": "Conservator level low",
+      "present": true
+    },
+    "overdue_remedial": {
+      "evidence": null,
+      "present": false
+    },
+    "ventilation_obstructed": {
+      "evidence": null,
+      "present": false
+    }
+  },
+  "input_tokens": 774,
+  "inspection_id": "INS-717-2",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 110,
+  "prompt_version": "v1"
+}

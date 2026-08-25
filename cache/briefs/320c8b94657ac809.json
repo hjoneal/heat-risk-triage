@@ -1,0 +1,9 @@
+{
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because the unit cannot be attended before the event, per MG-023. Additionally, assess the exposure using accumulated hours above the reference ambient, the event duration, and consecutive warm nights rather than peak ambient alone, as outlined in MG-025. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

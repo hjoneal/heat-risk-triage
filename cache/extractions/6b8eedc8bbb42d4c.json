@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": null,
+      "present": false
+    },
+    "oil_issue": {
+      "evidence": "Dissolved gas result flagged for review following the annual sample",
+      "present": true
+    },
+    "overdue_remedial": {
+      "evidence": "Remedial actions from the prior report carried forward again, no work done",
+      "present": true
+    },
+    "ventilation_obstructed": {
+      "evidence": "Intake louvres on the north wall partially blocked by wind-blown debris",
+      "present": true
+    }
+  },
+  "input_tokens": 808,
+  "inspection_id": "INS-804-1",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 107,
+  "prompt_version": "v1"
+}

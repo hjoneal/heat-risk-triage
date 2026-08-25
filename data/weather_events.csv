@@ -17,4 +17,5 @@ EVT-15,long-moderate 2025-08-08,long-moderate,2025-08-08,5,35.71,4.47,False
 EVT-16,mild 2025-09-09,mild,2025-09-09,3,31.9,6.33,False
 short-severe,2-day severe spike,short-severe,2026-08-25,2,41.0,8.0,True
 long-moderate,5-day moderate,long-moderate,2026-08-25,5,36.0,4.0,True
+long-severe,5-day severe,long-severe,2026-08-25,5,39.8,4.1,True
 baseline-mild,3-day mild baseline,mild,2026-08-25,3,30.5,6.5,True

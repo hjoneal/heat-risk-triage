@@ -1,8 +1,0 @@
-{
-  "brief": "Prioritise outstanding work orders against this unit's ability to shed heat in accordance with SOP-016, addressing any active oil leak or oil level below minimum before the forecast heat event. Where oil condition defects awaiting reconditioning cannot be completed prior to the event, apply a loading restriction as specified in SOP-016. Because the unit has an oil issue and is of advanced age, note from MG-023 that a unit of advanced age with a history of high loading has a reduced margin against mechanical failure under thermal cycling.",
-  "cited_doc_ids": [
-    "SOP-016",
-    "MG-023"
-  ],
-  "status": "ok"
-}

@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect intake and exhaust louvres for blockage before the heat event, clearing any obstruction exceeding one quarter of the free area as required by SOP-015. Apply the loading restrictions specified in MG-021 if the unit cannot be attended beforehand, per MG-023. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-015"
+  ],
+  "status": "ok"
+}

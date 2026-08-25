@@ -1,8 +1,0 @@
-{
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, as outlined in SOP-015, and clear any obstruction before the forecast heat event. For this ONAN cooling type unit, apply the loading and de-rating rules set out in MG-021 if ambient or operating conditions require it. The supplied documents do not cover the specific oil issue noted in the asset facts, so no procedure for that condition is provided here.",
-  "cited_doc_ids": [
-    "SOP-015",
-    "MG-021"
-  ],
-  "status": "ok"
-}

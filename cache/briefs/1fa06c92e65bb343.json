@@ -1,0 +1,9 @@
+{
+  "brief": "The supplied documents do not cover the situation for asset SUB-SGW-781, as the asset uses ONAN cooling with no forced cooling, oil sampling, or vegetation defects mentioned in the input facts. Refer to MG-021 for ambient de-rating calculations based on accumulated heat. Review SOP-011 and SOP-013 only if applicable clearance or sampling defects are subsequently identified.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-013"
+  ],
+  "status": "ok"
+}

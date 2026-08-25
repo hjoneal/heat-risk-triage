@@ -1,9 +1,0 @@
-{
-  "brief": "Inspect and address the active oil leak on Ivybridge Creek 138/13kV before the heat event begins, as active leaks rank third in pre-event priority for heat-affected assets under SOP-016. Because this unit is 45 years old with an oil issue and lacks forced cooling (ONAN), apply the loading restrictions in MG-021 if the defect cannot be corrected prior to the event, in accordance with MG-023. Record any applied de-rating with its reason, value, and period as specified in MG-021.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-016"
-  ],
-  "status": "ok"
-}

@@ -2,7 +2,7 @@
 
 Everything downstream is built from what this script writes. The failure process
 here is the ground truth the risk model has to recover: the model never sees
-`condition`, `theta`, `tau`, `load_rise` or `thermal_stress`.
+`condition`, `theta`, `tau`, the hourly load rise or `thermal_stress`.
 
 Two files are diagnostic only and must be read by `validate.py` alone:
 `hidden_asset_state.csv` and `inspection_truth.csv`.
@@ -227,7 +227,7 @@ def generate_assets(rng, most_recent_event_date):
 # ---------------------------------------------------------------------------
 
 def generate_events(rng):
-    """Sixteen historical heat events plus the three demo scenarios."""
+    """Sixteen historical heat events plus the demo scenarios."""
     historical = []
     for event_type, count, days_min, days_max, peak_min, peak_max, amp_min, amp_max in config.EVENT_TYPES:
         for _ in range(count):
@@ -329,26 +329,52 @@ def generate_hidden_state(assets, rng, most_recent_event_date):
         0.0, 1.0,
     )
 
-    cooling_offset = assets["cooling_type"].map(config.COOLING_OFFSET_C).to_numpy()
-    load_rise = (
-        config.LOAD_RISE_BASE_C
-        + config.LOAD_RISE_SLOPE_C * (assets["peak_load_pct"].to_numpy() - config.LOAD_RISE_REFERENCE_LOAD)
-        + cooling_offset
-    )
     tau = np.clip(
         rng.normal(config.TAU_MEAN_HOURS, config.TAU_SD_HOURS, size=len(assets)),
         config.TAU_MIN_HOURS, config.TAU_MAX_HOURS,
     )
 
+    # `load_rise` used to be computed here, once per asset. It is now a function
+    # of ambient temperature and so belongs in compute_thermal_stress, where the
+    # hourly series is in scope. It consumed no random draw, so moving it leaves
+    # the generator's RNG stream — and therefore the inspection notes and their
+    # cached extractions — untouched.
     return pd.DataFrame({
         "asset_id": assets["asset_id"],
         "condition": condition.round(4),
         "tau_hours": tau.round(3),
-        "load_rise": load_rise.round(3),
     })
 
 
-def compute_thermal_stress(hourly, hidden, theta_reference):
+def effective_load(peak_load_pct, ambient_c):
+    """Loading every asset actually carries at one ambient temperature.
+
+    Air-conditioning demand climbs with the weather, so an asset carries its
+    heaviest load in the same hours its cooling works least well. Capped because
+    protection operates before a transformer runs indefinitely beyond its rating.
+    """
+    demand_multiplier = 1.0 + config.AC_DEMAND_SLOPE * max(
+        0.0, ambient_c - config.AC_DEMAND_BASE_C)
+    return np.minimum(peak_load_pct * demand_multiplier, config.LOAD_CAP)
+
+
+def hourly_load_rise(peak_load_pct, cooling_offset, ambient_c):
+    """Winding rise above ambient for every asset at one ambient temperature.
+
+    Resistive loss goes as the square of current, so the rise scales with the
+    square of load against the reference. That exponent is physics rather than a
+    fitted parameter, and it is what makes the gap between a heavily and a lightly
+    loaded asset widen as the day gets hotter instead of staying constant.
+    """
+    return (
+        config.LOAD_RISE_AT_REFERENCE_C
+        * (effective_load(peak_load_pct, ambient_c) / config.LOAD_RISE_REFERENCE_LOAD)
+        ** config.LOAD_RISE_EXPONENT
+        + cooling_offset
+    )
+
+
+def compute_thermal_stress(hourly, hidden, assets, theta_reference):
     """Accumulated accelerated insulation ageing per asset per event.
 
     Oil temperature lags ambient with a time constant of a few hours, so the unit
@@ -367,28 +393,45 @@ def compute_thermal_stress(hourly, hidden, theta_reference):
     taking a plain integral of degrees above a line would flatten the difference
     between a damaging hour and a harmless one.
 
+    The load rise is recomputed every hour rather than held fixed per asset, so
+    the heat response differs by asset: a unit at 91% load reaches a far higher
+    core temperature in a severe event than one at 60%, and the gap widens with
+    temperature because of the square. Measured across the fleet, the ratio of
+    mean stress between the top and bottom load quintiles rises from 2.97 under a
+    static load rise to 7.11. That differential is what a forecast can act on.
+
     Units: equivalent days at the reference temperature.
     """
-    load_rise = hidden["load_rise"].to_numpy()
     tau = hidden["tau_hours"].to_numpy()
+    peak_load_pct = assets["peak_load_pct"].to_numpy()
+    cooling_offset = assets["cooling_type"].map(config.COOLING_OFFSET_C).to_numpy()
+    assert list(assets["asset_id"]) == list(hidden["asset_id"]), \
+        "asset register and hidden state are not in the same order"
 
     rows = []
+    mean_effective_load = {}
     for event_id, group in hourly.groupby("event_id", sort=False):
         temps = group.sort_values("hour_index")["temp_c"].to_numpy()
 
-        theta = temps[0] + load_rise
+        theta = temps[0] + hourly_load_rise(peak_load_pct, cooling_offset, temps[0])
         stress = np.zeros(len(hidden))
+        load_total = np.zeros(len(hidden))
         for hour in range(1, len(temps)):
+            load_rise = hourly_load_rise(peak_load_pct, cooling_offset, temps[hour])
             theta = theta + (1.0 / tau) * (temps[hour] + load_rise - theta)
             ageing_rate = 2.0 ** ((theta - theta_reference) / config.MONTSINGER_HALVING_C)
             # Only the acceleration above the nominal rate accumulates, so an
             # event spent below the reference contributes nothing.
             stress += np.maximum(0.0, ageing_rate - 1.0)
+            load_total += effective_load(peak_load_pct, temps[hour])
         stress = stress / config.HOURS_PER_DAY
+        mean_effective_load[event_id] = load_total / (len(temps) - 1)
 
-        for asset_id, value in zip(hidden["asset_id"], stress):
+        for index, (asset_id, value) in enumerate(zip(hidden["asset_id"], stress)):
             rows.append({"asset_id": asset_id, "event_id": event_id,
-                         "thermal_stress": round(float(value), 4)})
+                         "thermal_stress": round(float(value), 4),
+                         "mean_effective_load": round(
+                             float(mean_effective_load[event_id][index]), 4)})
 
     return pd.DataFrame(rows)
 
@@ -682,7 +725,7 @@ def main():
     # left for a human to apply by hand.
     theta_reference = config.THETA_REFERENCE_C
     while True:
-        stress = compute_thermal_stress(hourly, hidden, theta_reference)
+        stress = compute_thermal_stress(hourly, hidden, assets, theta_reference)
         merged = stress.merge(events[["event_id", "event_type"]], on="event_id")
         long_moderate = merged.loc[merged["event_type"] == "long-moderate", "thermal_stress"].mean()
         short_severe = merged.loc[merged["event_type"] == "short-severe", "thermal_stress"].mean()
@@ -723,7 +766,9 @@ def main():
     hidden.to_csv(config.DATA_DIR / "hidden_asset_state.csv", index=False)
     truth.to_csv(config.DATA_DIR / "inspection_truth.csv", index=False)
     # Per asset-event rather than per asset, so it cannot live in
-    # hidden_asset_state.csv. Diagnostic only; read by validate.py alone.
+    # hidden_asset_state.csv. Carries the per-event mean effective load, which
+    # moved here when load rise stopped being a static per-asset figure.
+    # Diagnostic only; read by validate.py alone.
     stress.to_csv(config.DATA_DIR / "hidden_thermal_stress.csv", index=False)
 
     run_hard_gates(events, hourly, stress, outcomes, hidden, theta_reference)

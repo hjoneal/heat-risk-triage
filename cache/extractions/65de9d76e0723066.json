@@ -1,0 +1,29 @@
+{
+  "attempts": 1,
+  "extraction_status": "ok",
+  "failure_reason": null,
+  "fenced_output": 0,
+  "flags": {
+    "cooling_degraded": {
+      "evidence": "Fan contactor chattering under load; cooling stage cycling intermittently",
+      "present": true
+    },
+    "oil_issue": {
+      "evidence": null,
+      "present": false
+    },
+    "overdue_remedial": {
+      "evidence": "Work order WO-3182 for the cooling controller remains open from last season",
+      "present": true
+    },
+    "ventilation_obstructed": {
+      "evidence": null,
+      "present": false
+    }
+  },
+  "input_tokens": 786,
+  "inspection_id": "INS-458-2",
+  "model": "gemini-3.5-flash-lite",
+  "output_tokens": 136,
+  "prompt_version": "v1"
+}

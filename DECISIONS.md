@@ -669,6 +669,15 @@ the ceiling would have to be estimated rather than computed.
 
 ## D-022 — Crew capacity is adjustable; forecast values are not
 
+> **Superseded in part by D-024 and D-031.** The invariance recorded below was
+> real and was measured correctly, but it was a property of a model with no
+> interaction terms rather than a property of the problem. Adding them, and
+> centring them, makes the forecast reorder the queue by 3 to 9 of the top 15.
+> The conclusion that capacity is the more decisive control still holds — the
+> forecast's effect on the ranking remains smaller than capacity's — but "the
+> ranking is invariant to hazard" is no longer true and should not be quoted.
+
+
 **Decision:** The queue carries a crew-capacity control, range 5 to 25, applied
 as a query parameter with a plain form and a submit button. No JavaScript. The
 hazard values stay fixed at the three precomputed scenarios.
@@ -710,3 +719,323 @@ sensitivity view without re-ranking remains viable and is not built.
 forecast values the hazard term would stop being uniform and the ranking would
 genuinely reorder, which is what would make a forecast control meaningful — and
 which is the extension already recorded in D-015.
+
+## D-023 — Air-conditioning demand is coupled to temperature, and the load rise goes as the square
+
+**Decision:** `load_rise` is computed per asset per hour inside
+`compute_thermal_stress` rather than once per asset in `generate_hidden_state`.
+Effective load rises 2% per degree above 25 °C, caps at 1.15 of rating, and the
+winding rise scales with the square of effective load against the reference.
+
+**Why.** A static per-asset load rise makes a mild day and a severe day impose
+identical loading, which contradicts the mechanism the project exists to model:
+air-conditioning demand peaks at the same hours cooling capacity is worst, so an
+asset is carrying its heaviest load exactly when it can least afford to.
+
+The exponent is physics rather than a fitted parameter. Resistive loss goes as
+I²R, so a 20% load increase produces about 44% more heat from that source. That
+is what makes the gap between a heavily and a lightly loaded asset *widen* as the
+day gets hotter, instead of staying constant as it did under an additive form.
+
+**Measured effect.** The ratio of mean thermal stress between the top and bottom
+load quintiles rises from 2.97 to 7.11 on a long-moderate event, and from 1.99 to
+4.07 on a short-severe one. Fleet-mean stress rises from 1.11 to 2.58 equivalent
+days, which is what forced the `HAZARD_SCALE` re-derivation in D-027.
+
+**Alternatives considered.** A linear rise in load with temperature was rejected
+because it has no physical justification and understates the differential at the
+top of the range. Raising `AC_DEMAND_BASE_C` to 28 or 30 °C, so mild events stay
+demand-free, was measured and rejected: it did not change any gate outcome and
+would have been a parameter chosen for its effect on a gate rather than on
+physical grounds.
+
+**What would change it.** Real loading telemetry. The 2% per degree slope is
+assumed; a utility with metered feeder data would fit it, and the cap would come
+from the protection settings rather than from a round number.
+
+**Risk accepted.** The cap binds on only 5.5% of asset-hours during a severe
+event, so it is close to inert. Left in because a transformer that runs
+indefinitely past its rating is not a model of anything real.
+
+## D-024 — Three interaction features, because an additive model cannot reorder under a uniform hazard
+
+**Decision:** `FEATURES` gains `load_x_degree_hours`,
+`condition_x_degree_hours` and `age_x_warm_nights`, taking it to 16. Raw
+products, standardised like any other column.
+
+**Why.** Every hazard feature is constant within an event: all 900 assets share
+one `degree_hours_above_30`. Logistic regression is additive in the log-odds, so
+the hazard block adds the *same number* to every asset's logit, and adding a
+constant cannot change an ordering. The consequence is not subtle — before this
+change the top 15 was byte-identical across all three forecasts, and no amount of
+weather variation could move it. D-022 documented that invariance as a property;
+this entry removes its cause.
+
+An interaction term is asset value × event value. Standardised, its contribution
+is `(b·DH(e)/σ)·load_i + constant`, so the *coefficient on the asset's own load*
+depends on the forecast. That is the only way an additive model in the log-odds
+can express "a heavily loaded asset suffers disproportionately in a severe
+event".
+
+**Measured.** `load_x_degree_hours` fits at the largest coefficient in the model.
+Risk ranking now moves between scenarios; without the three terms it is provably
+identical, which `tests/test_ranking.py` asserts in both directions.
+
+**Alternatives considered.** Per-event models were rejected: 900 rows and roughly
+nine failures per event will not support 13 features. A tree model would capture
+the interaction without being told to, and is on the flagged list for exactly the
+reason it is refused here — the contribution table on the asset page is the
+product, and `coefficient × standardised value` summing to `logit(p) − intercept`
+is what makes it honest.
+
+**Cost accepted.** 16 features against about 138 positives is roughly nine events
+per variable, at the conventional lower limit, and interaction terms are
+correlated with their components by construction. `LOGREG_PENALTY = "l2"` matters
+for that reason: L1 would zero one member of each correlated pair arbitrarily and
+make the on-screen explanation unstable between runs. Per-fold coefficient means
+and standard deviations are reported in `output/metrics.md`, sign flips included.
+
+## D-025 — The no-notes ablation excludes the interaction built from the notes
+
+**Decision:** `NO_NOTES_FEATURES` is a comprehension excluding both
+`flag_*` and `condition_x_degree_hours`, giving 11 features rather than the
+previous positional slice `FEATURES[:9]`.
+
+**Why.** `condition_x_degree_hours` is built from the count of extracted
+condition flags. Leaving it in the no-notes arm would feed note-derived
+information into the variant that is supposed to have none, and would understate
+the uplift the extraction layer is credited with — the arm would quietly get
+most of the notes' signal while being labelled as having none.
+
+The positional slice was also fragile in a way the comprehension is not: it
+depended on the flag features staying contiguous at index 9, which the
+interaction block broke.
+
+**What would change it.** Nothing about the split. If further interaction terms
+are added, each has to be classified as note-derived or not, and the
+comprehension makes that a one-line decision rather than an index arithmetic
+problem.
+
+## D-026 — Gate 7 was specified, measured as unreachable, and left dropped after it became reachable
+
+**Decision:** There is no gate 7. The specified form — at least three of the top
+fifteen must differ between any two demo scenarios — was dropped when measured as
+unreachable. Two later changes made it reachable, and it was still left out. The
+measurement lives in `output/ranking_divergence.txt`.
+
+**Why it failed at first.** The diagnosis behind the gate analysed `logit(p)`,
+but the crew's queue is ordered by `priority = risk × customers_served`, and that
+is where it broke. Measured across five scenario configurations spanning the
+whole historical envelope:
+
+| Scenario set | Degree-hour ratio | Differ by priority | By risk |
+|---|---|---|---|
+| Original three | 1.4× | 0, 0, 0 | 2, 2, 4 |
+| Envelope edges | 1.8× | 1, 0, 1 | 2, 2, 4 |
+| long-severe substituted | 3.5× | 1, 0, 1 | 3, 2, 5 |
+| Both combined | 3.5× | 2, 0, 2 | 4, 2, 6 |
+
+Then the decisive control: removing `customers_served` from the ranking
+*entirely* still gave 4, 2, 6, because the short-severe against baseline-mild
+pair capped at 2 on pure risk. `customers_served` spans 45× across the fleet,
+3.81 natural-log units, against a between-scenario re-weighting of log-risk with
+a range near 0.5 — roughly seven times smaller.
+
+**What made it reachable.** A fourth scenario (D-028) widened the forecasts on
+offer, and centring the interaction products (D-031) stopped the model putting
+negative coefficients on its own hazard features, which had been suppressing the
+forecast's effect on the ranking. Divergence is now 3 to 9 assets by priority and
+5 to 13 by risk. The dropped gate would pass.
+
+**Why it stays dropped.** The threshold of three was chosen before anyone knew
+what the system could reach. Reinstating it now, having seen that the measured
+minimum is exactly three, would be picking a threshold that fits the data — the
+same move as lowering it to two would have been when the measurement was two. The
+number would carry no information either way. What is worth keeping is the
+comparison that has a right answer independent of any threshold: with the
+interaction terms the ranking responds to the forecast, without them it is
+provably identical. `tests/test_ranking.py` asserts both directions.
+
+**What still stands.** Priority divergence is consistently below risk divergence,
+so `customers_served` does damp the forecast's effect even though it no longer
+erases it. The finding is pinned by a test.
+
+## D-027 — HAZARD_SCALE re-derived, and the sweep that got it wrong first
+
+**Decision:** `HAZARD_SCALE` moves from 2.4 to **1.14**. The bracketing procedure
+from D-014 was repeated against gates 1, 4 and 6 and the out-of-fold AUC ceiling.
+Measured on the final configuration, gate 4 fails at 0.95 (six mild failures) and
+the AUC ceiling at 1.40 (0.9092 against a 0.90 limit), leaving a feasible band of
+**[0.98, 1.35]**; 1.14 is its centre. Gate 6 has margin throughout the band and
+only binds outside it, at 1.50.
+
+**Why it had to move.** Demand coupling (D-023) raised fleet-mean thermal stress
+from 1.11 to 2.58 equivalent days. The scale multiplies two coefficients that act
+on that quantity, so leaving it alone would have roughly doubled the hazard's
+contribution to the log-odds. Gate 6 failed outright at 2.4, at 0.0677 against a
+0.20 threshold.
+
+**The error worth recording.** The first sweep drew failures from a fresh
+`default_rng(SEED)` rather than continuing the generator's own stream. Both
+binding gates turn on single-figure failure counts, so the draw's position in the
+stream is not a detail: the faulty sweep reported gate 6 at 0.16 where the true
+value was 0.24, and concluded that *no* scale satisfied both gates. The band it
+described did not exist. Repeating the sweep with the pipeline's exact stream
+found a feasible band immediately.
+
+The band was re-measured twice more, because it moves with the stream: adding a
+fourth scenario (D-028) shifted every draw and widened it from [1.02, 1.12] to
+[0.98, 1.35]. The value recorded here is from the final configuration, not from
+the first sweep that produced a passing number.
+
+The general lesson: when a gate turns on a handful of Bernoulli draws, any
+harness that reproduces the pipeline approximately is measuring a different
+system.
+
+**What would change it.** A higher `TARGET_FAILURE_RATE`. Both bounds are
+counting statistics on very few events, and the band is narrow by construction
+rather than by choice. More positives would widen it and make the centre mean
+something.
+
+## D-028 — A fourth scenario, because three did not span what the model was trained on
+
+**Decision:** `long-severe` joins the demo scenarios, at 5 days, peak 40 °C,
+amplitude 3.5.
+
+**Why.** The three original scenarios spanned 2.8 to 283.6 degree-hours. The
+model is trained on events spanning 0 to 787. `long-severe` is three of the
+sixteen training events — the most damaging type in the bank — and had no
+scenario at all, so the demo silently omitted the case the tool most needs to
+handle. Every scenario now sits inside the historical envelope for its type,
+which `tests/test_ranking.py` asserts; a forecast outside it would ask a linear
+model to extrapolate, and nothing in a linear model warns when it does.
+
+**Cost accepted.** Adding a scenario adds hourly weather draws, which shifts the
+generator's random stream and therefore changes every inspection note. All 1,800
+extractions were re-run. That was the known price and it was paid deliberately:
+the alternative was a demo that misrepresented the model's training range in
+order to protect a cache.
+
+**Alternatives considered.** Substituting `long-severe` for `long-moderate` would
+have been stream-neutral and free, but `long-moderate` is the scenario that
+demonstrates the project's premise — a long moderate event outranking a short
+severe one — and dropping it to save an API bill was the wrong trade.
+
+## D-029 — Within-event AUC leads the reporting; pooled AUC was flattering the model
+
+**Decision:** `evaluate()` returns both `within_event_auc` and pooled `auc`, and
+`output/metrics.md` leads with the within-event figure. The pooled number is kept
+for continuity with the build spec and because the leakage assertion is set
+against it.
+
+**Why.** Pooled AUC puts a mild event's rows beside a severe event's, so a model
+scores partly by telling those apart. The hazard features make that trivial, and
+the supervisor already knows which one they are in — the forecast is why they
+opened the tool. Within an event the hazard block is constant for every asset, so
+within-event AUC measures only the thing the system is for: ranking 900 assets
+against one another under one forecast. It runs about 0.20 below the pooled
+figure, and that gap is the part of the pooled score that answers a question
+nobody asked.
+
+**How it surfaced, and the mistake it corrected.** The interaction features and
+demand coupling appeared to have destroyed the extraction layer's value: pooled
+AUC without notes came out *above* the full model. Measured within event, the
+notes were still clearly positive. The pooled comparison was the artefact.
+
+**The mechanism.** With `GroupKFold` each fold's intercept is fitted to the events
+*not* held out. Hold out the mild events and the model scoring them was
+calibrated on hotter ones, so it over-predicts them; hold out severe events and
+it under-predicts. Pooling those predictions makes fold membership — which
+anti-correlates with true event risk — a component of the ranking. A feature set
+with hazard features can partly correct for it; one without cannot. That is how
+four condition flags with a clean monotone 3.3× lift in failure rate (0.59% at
+zero flags rising to 1.94% at three) score **0.4374** pooled, below random, and
+**0.6171** within event.
+
+Precision and recall at crew capacity were already computed per event and were
+never affected. Only AUC was.
+
+**Alternatives considered.** Centring predictions per fold before pooling would
+remove the distortion, but it adds a correction step to the metric rather than
+reporting a metric that does not need one. Reporting only within-event AUC was
+rejected because the build spec asks for pooled and because the two together are
+more informative than either.
+
+**What would change it.** Stratifying folds so each contains a similar mix of
+event severities would shrink the effect without removing it. The clean fix is
+per-event evaluation, which is what leading with within-event AUC amounts to.
+
+## D-030 — The ablation is a ladder, not a pair
+
+**Decision:** `output/metrics.md` reports five variants: heuristic, register
+only, register plus notes, register plus interactions, and the full model.
+
+**Why.** Two changes landed at once — the note flags were already there, and the
+interaction terms were added on top. With only a with-notes and without-notes
+pair, each variant differed from the full model in two respects, and neither the
+notes nor the interactions could be credited separately. The middle two rungs
+each differ from the full model in exactly one respect, which is the only
+arrangement that answers "what did this buy".
+
+**What it showed.** The interaction terms do not improve either AUC on their own —
+they were added to make the ranking respond to the forecast at all (D-024), not
+to improve discrimination, and the measurement says plainly that they did not.
+Recording that is the point of running the ladder.
+
+## D-031 — Interaction terms multiply centred components, not raw ones
+
+**Decision:** Each interaction is a product of components centred on a fixed
+training mean, not a raw product. The five centres are measured constants in
+`config.py` and `model.py` asserts they still match the training data.
+
+**Why, and it is not a statistical nicety.** A raw product is collinear with the
+features it is built from. Fitted that way, the product term takes the shared
+signal and leaves the residual behind on the components, which came out negative
+on degree-hours, peak temperature, warmest overnight minimum, warm nights and
+age — five of the model's own hazard and ageing features.
+
+The consequence is visible on screen. The asset page for the highest-risk asset
+in the most severe scenario reported that 40.7 °C contributed −0.191 and a 33 °C
+overnight minimum −0.805: the interface told a crew supervisor that the heat had
+*lowered* the asset's risk. It also broke retrieval, because `build_query` reads
+only positive contributions, so every heat-related term was dropped from the
+query for exactly the assets a heat procedure applies to.
+
+Golden rule 1 puts explainability above performance, and this was not even a
+trade against performance.
+
+**Measured, raw against centred.**
+
+| | Raw products | Centred |
+|---|---|---|
+| Wrong-signed hazard/age coefficients | 5 | 2 |
+| Degree-hours coefficient | −0.2388 | +1.0920 |
+| Within-event AUC | 0.6348 | 0.6213 |
+| Pooled AUC | 0.8398 | 0.8412 |
+| Top-15 divergence by priority | 2 to 5 | 3 to 9 |
+
+Centring costs 0.014 of within-event AUC and buys back the explanation, the
+retrieval query and more forecast sensitivity. The two coefficients still
+negative — peak temperature and warmest overnight minimum — are the pre-existing
+collinear pair already documented in the README, correlated at r=0.93 with
+degree-hours, and were negative before any interaction term existed.
+
+**Why the centres are constants.** They cannot be column means. A scenario matrix
+holds one event, so its own mean degree-hours is that event's value, and a
+self-centred term would collapse to zero for all 900 assets — the term would
+silently stop working at exactly the moment it is used. Constants go stale
+instead, which is the failure mode that can be checked, so `model.py` asserts the
+training means still match within 1%.
+
+**Alternatives considered.** Dropping the interaction terms restores the cleanest
+coefficients and the best within-event AUC (0.6604) but takes the forecast's
+effect on the ranking back to zero, which is what D-024 exists to fix. Centring
+only `load_x_degree_hours`, the worst offender, was rejected as arbitrary.
+Residualising each product against its components would decorrelate them fully
+but makes the feature a fitted quantity rather than an arithmetic one, and the
+contribution table would no longer be readable as a product of things a
+supervisor can see.
+
+**What would change it.** More positives. The collinearity is tolerable at 138
+failures because L2 keeps the coefficients stable across folds; at a tenth of
+that it would not be.

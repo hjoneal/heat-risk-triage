@@ -1,0 +1,9 @@
+{
+  "brief": "Apply the loading reduction in MG-021 from the third day of the event, as outlined in MG-023 and MG-025. Because this unit has a history of high loading and advanced age, it carries a reduced margin against mechanical failure under sustained thermal exposure, as noted in MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "status": "ok"
+}

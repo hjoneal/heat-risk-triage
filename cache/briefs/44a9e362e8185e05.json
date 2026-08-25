@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect Camden Works 230/34kV (SUB-SGW-781) for any vegetation or obstruction defects, as clearance work takes precedence over other remedial activity when a unit is identified for pre-event attention (SOP-011). Because the unit has an ONAN cooling type and is unassisted by forced cooling, apply the relevant ambient and cooling de-rating rules if ambient thresholds are exceeded (MG-021). The supplied documents do not cover any specific oil sampling defects for this asset. Record every applied de-rating and completed clearance work against the asset as required (MG-021, SOP-011).",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011",
+    "SOP-013"
+  ],
+  "status": "ok"
+}

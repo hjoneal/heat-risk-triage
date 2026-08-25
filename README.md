@@ -38,9 +38,12 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    condition flags, each with a verbatim evidence quote. Two rules do the work: a defect the note
    records as *fixed* is false, and a defect the note records as *absent* is false. A ~20-line
    keyword baseline exists only as an evaluation comparator.
-2. **Risk model** (`features.py`, `model.py`) — 13 features, `StandardScaler` → `LogisticRegression`,
-   `GroupKFold(5)` grouped on `event_id`, evaluated on pooled out-of-fold predictions and refit on
-   all 16 events to score the three demo scenarios.
+2. **Risk model** (`features.py`, `model.py`) — 16 features (4 hazard, 3 asset static, 6 condition,
+   3 interaction), `StandardScaler` → `LogisticRegression`, `GroupKFold(5)` grouped on `event_id`,
+   evaluated within event and pooled out-of-fold, then refit on all 16 events to score the four demo
+   scenarios. The interaction terms exist because every hazard feature is constant within an event:
+   without them the forecast adds the same number to every asset's log-odds and cannot reorder
+   anything at all.
 3. **Retrieval** (`retrieve.py`) — BM25 over 25 procedure documents, with the query built
    deterministically from the asset's positive feature contributions, then an LLM action brief that
    may cite only the retrieved documents.
@@ -105,11 +108,11 @@ Each script is independently re-runnable and idempotent. `extract.py` and `retri
 | Assets | 900 |
 | Historical heat events | 16 |
 | Training rows | 14,400 |
-| Failures | 163 (1.13%) |
-| Inspection notes | 1,800 (1,253 distinct texts) |
+| Failures | 138 (0.96%) |
+| Inspection notes | 1,800 (1,298 distinct texts) |
 | Procedure documents | 25 |
-| Demo scenarios | 3 |
-| Action briefs | 75 |
+| Demo scenarios | 4 |
+| Action briefs | 100 |
 | Crew capacity | 15 |
 
 The fleet size is derived from the client brief rather than assumed: 8M residents ÷ ~2.5 per
@@ -128,7 +131,7 @@ weight:
 | Montsinger halving interval | 6 °C | Ageing rate doubles per 6 °C; literature range 6–8 |
 | Oil thermal time constant | 3–8 h | Bulk oil, not winding (which responds in minutes) |
 | Warm-night threshold | 24.0 °C | Overnight minimum above which recovery is materially reduced |
-| Hazard coefficient scale | 2.4 | Measured; the centre of the band both gates leave |
+| Hazard coefficient scale | 1.14 | Measured; the centre of the band gate 4 and the AUC ceiling leave |
 | Customers per MVA | 92 | Substations run N-1, so customers per transformer sit well below rating |
 | Cooling offset | ONAN +2, ONAF 0, OFAF −2 °C | Forced cooling sheds heat |
 | Condition weights | age .35, maintenance .30, faults .20, noise .15 | Assumed |
@@ -143,7 +146,7 @@ skews old, so 0.8% applies.
 **CIGRE supports the annual figure only.** It says nothing about a per-event rate. Deriving one — 900
 assets × 0.8% annual × ~40% heat-attributable ÷ ~4 events a year — gives roughly **0.08% per
 asset-event**. The generator uses **1%**, about twelve times that, because at the real rate 14,400
-rows would carry about a dozen positives, too few to fit 13 features.
+rows would carry about a dozen positives, too few to fit 16 features.
 
 This scales predicted probabilities and preserves ranking, and the system consumes a ranking.
 Calibration is to the synthetic base rate; a production deployment would recalibrate against observed
@@ -157,34 +160,45 @@ All six pass. `output/data_checks.txt`.
 
 | Gate | Measured | Required |
 |---|---|---|
-| 1. Realised failure rate | 0.0113 | 0.008–0.013 |
-| 2. Long-moderate stress > short-severe | 0.95 vs 0.71 equivalent days | strictly greater |
-| 3. Non-zero stress on heat events | 0.9877 | ≥ 0.80 |
-| 4. Mild-event failure rate | 0.0019 | < 0.002 |
+| 1. Realised failure rate | 0.0096 | 0.008–0.013 |
+| 2. Long-moderate stress > short-severe | 2.56 vs 1.57 equivalent days | strictly greater |
+| 3. Non-zero stress on heat events | 0.9962 | ≥ 0.80 |
+| 4. Mild-event failure rate | 0.0015 | < 0.002 |
 | 5. Degree-hours vs peak correlation | 0.4961 | < 0.85 |
-| 6. Failures in better-maintained half | 0.2086 (34 of 163) | ≥ 0.20 |
+| 6. Failures in better-maintained half | 0.2609 (36 of 138) | ≥ 0.20 |
 
-Gates 4 and 6 pull in opposite directions and leave a feasible band of [2.30, 2.50] for the hazard
-scale; 2.4 is its centre. Both turn on single-figure failure counts, so the band is narrow by
-construction. Details in `DECISIONS.md` D-014.
+Gate 4 and the leakage ceiling on out-of-fold AUC bound the hazard scale from opposite sides and
+leave a feasible band of [0.98, 1.35]; 1.14 is its centre. Gate 4 fails at 0.95, the AUC ceiling at
+1.40. Both lower-bound checks turn on single-figure failure counts, so the band is narrow by
+construction and moves with the generator's random stream — an early sweep that drew failures from a
+fresh stream rather than continuing the pipeline's own reported a band that does not exist and
+concluded, wrongly, that no value satisfied every gate. Details in `DECISIONS.md` D-027.
 
-Failures by event type: mild 5, short-severe 19, long-moderate 37, long-severe 102. All 16 events
-carry at least one failure.
+A seventh gate was specified — the top 15 must differ by at least three assets between any two
+scenarios — and is not present. It was measured as unreachable, then became reachable after two later
+changes, and was left out rather than reinstated at a threshold now known to be exactly met.
+`DECISIONS.md` D-026.
+
+Failures by event type: mild 4, short-severe 8, long-moderate 32, long-severe 94. 13 of the 16 events
+carry at least one failure; the three that do not are mild events, which is the intended behaviour of
+gate 4 rather than a sampling accident.
 
 ### Extraction
 
-1,800 notes, `gemini-3.5-flash-lite`, temperature 0. 1,253 API calls (duplicate note texts hit the
-cache), 1,380,764 input and 182,123 output tokens.
+1,800 notes, `gemini-3.5-flash-lite`, temperature 0. 1,049 API calls on the build run — 751 of the
+1,800 notes hit the cache, because 1,298 of the texts are distinct and the run began with a partially
+warm cache. 1,382,833 input and 184,879 output tokens. A re-run makes zero calls.
 
-**Zero extractions failed, zero were retried, zero came back wrapped in markdown fences. Zero of
-1,708 evidence quotes were not found verbatim in their note** (spec expectation: under 2%).
+**Zero extractions failed and zero came back wrapped in markdown fences. One was retried and
+succeeded on the second attempt. Zero of 1,798 evidence quotes were not found verbatim in their
+note** (spec expectation: under 2%).
 
 | Flag | Actual positives | LLM P | LLM R | Keyword P | Keyword R |
 |---|---|---|---|---|---|
-| Cooling degraded | 380 | 0.922 | 0.958 | 0.652 | 1.000 |
-| Ventilation obstructed | 374 | 0.895 | 0.979 | 0.744 | 1.000 |
-| Oil issue | 407 | 0.875 | 0.963 | 0.702 | 0.725 |
-| Outstanding remedial work | 390 | 0.855 | 1.000 | 0.826 | 0.826 |
+| Cooling degraded | 412 | 0.957 | 0.976 | 0.695 | 1.000 |
+| Ventilation obstructed | 410 | 0.856 | 0.985 | 0.722 | 1.000 |
+| Oil issue | 422 | 0.913 | 0.964 | 0.718 | 0.737 |
+| Outstanding remedial work | 385 | 0.837 | 1.000 | 0.818 | 0.855 |
 
 The keyword baseline reaches recall 1.000 on two flags precisely because it cannot tell a fixed
 defect from an outstanding one — it flags everything the words appear in. The cost shows up in
@@ -202,72 +216,103 @@ the extraction layer and is not hidden here.
 
 ### Model
 
-Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`.
+Out-of-fold across 14,400 rows, `GroupKFold(5)` on `event_id`. 138 failures, base rate 1.13% → 0.96%.
 
-| Variant | Features | AUC | Precision@15 | Recall@15 | Failures per 15 visits | Lift |
-|---|---|---|---|---|---|---|
-| Heuristic (peak × age) | 2 | 0.5830 | 0.0000 | 0.0000 | 0.00 | 0.0× |
-| Without notes | 9 | 0.8223 | 0.0458 | 0.0377 | 0.69 | 4.0× |
-| Full model | 13 | 0.8261 | 0.0792 | 0.0609 | 1.19 | 7.0× |
+| Variant | Features | Within-event AUC | Pooled AUC | Precision@15 | Recall@15 |
+|---|---|---|---|---|---|
+| Heuristic (peak × age) | 2 | 0.5487 | 0.6039 | 0.0042 | 0.0018 |
+| Register only | 9 | 0.6468 | 0.8467 | 0.0667 | 0.0599 |
+| Register + notes | 13 | **0.6604** | 0.8472 | 0.0458 | 0.0275 |
+| Register + interactions, no notes | 11 | 0.6104 | 0.8412 | 0.0625 | 0.0471 |
+| Full model | 16 | 0.6213 | 0.8412 | 0.0542 | 0.0627 |
 
-Random selection of 15 assets would find 0.17 failures at the 1.13% base rate.
+**Read the within-event column, not the pooled one.** Pooling puts a mild event's rows beside a
+severe event's, so a model scores partly by telling those apart — which the hazard features make
+trivial and which the supervisor already knows, because the forecast is why they opened the tool.
+Within an event every asset shares identical hazard features, so within-event AUC measures only what
+the system is for: ranking 900 assets against each other under one forecast. The 0.22 gap between the
+columns is the part of the pooled score that answers a question nobody asked.
 
-**AUC 0.8261 is above the 0.70–0.82 range the specification expected.** It is recorded as measured
-and no parameter was adjusted to move it. It sits below the 0.90 line that would indicate leakage,
-and `validate.py` confirms the highest correlation between any feature and the hidden state is
-0.7695 (degree-hours against thermal stress), well under the 0.95 threshold.
+Pooling also interacts badly with `GroupKFold`. Each fold's intercept is fitted to the events *not*
+held out, so a low-risk event held out is scored by a model calibrated on higher-risk ones. A feature
+set without hazard features cannot correct for it, which is how the four condition flags alone score
+**0.4374 pooled — below random — and 0.6171 within event**, while showing a clean monotone lift in
+failure rate from 0.59% at zero flags to 1.94% at three. Precision and recall at capacity were
+already computed per event and were never affected. See `DECISIONS.md` D-029.
 
-**The notes move AUC by 0.0038 and precision@15 from 0.69 to 1.19 failures per 15 visits.** Those two
-readings disagree because AUC integrates over every threshold and the crew only ever sees the top 15
-of 900. A feature that sharpens the head of the ranking barely registers in AUC and matters entirely
-in practice. Both are reported; neither alone is the honest summary.
+**The notes add 0.0136 within-event AUC** (0.6468 → 0.6604). Measured pooled it looks like −0.0006,
+which is the artefact above and not a finding.
 
-Mean within-event AUC is **0.6219** — the operational question is "given *this* forecast, which
-assets", and pooled AUC flatters it by including pairs that straddle two different events.
+**The interaction terms cost 0.039 within-event AUC** (0.6604 → 0.6213) and are kept anyway. They are
+not there to discriminate better; they are there so the forecast can change the ranking at all.
+Without them every hazard feature is constant within a scenario, the hazard block adds the same
+number to every asset's log-odds, and the queue is provably identical whatever the weather does —
+`tests/test_ranking.py` asserts that in both directions. That is the trade, recorded rather than
+argued away.
 
-**Against the Bayes ceiling.** Ranking by the true generative probability is the best any model could
-do, because it uses the exact hidden state that produced the outcomes:
+**Ranking divergence across the four scenarios**, top 15 by priority: 3, 4, 4, 3, 7, 8 assets differ
+pairwise; by risk alone 5, 6, 7, 4, 12, 13. Priority is consistently damped because
+`customers_served` spans 45× across the fleet, far more than a forecast re-weights any asset's risk.
+An earlier build measured 0 on every pair; `DECISIONS.md` D-026 records what changed and why the gate
+that was written around this was dropped rather than reinstated.
+
+**Against the Bayes ceiling.** Ranking by the true generative probability is the best any model
+could do, because it uses the exact hidden state that produced the outcomes:
 
 | Ranked by | Pooled AUC | Within-event AUC | Precision@15 |
 |---|---|---|---|
-| The model (out-of-fold) | 0.8261 | 0.6219 | 0.0792 |
-| True generative probability | 0.8483 | 0.7192 | 0.0833 |
+| The model (out-of-fold) | 0.8412 | 0.6213 | 0.0667 |
+| True generative probability | 0.8683 | 0.7260 | 0.1077 |
 
-The model reaches **86.5%** of achievable within-event AUC and **95.0%** of achievable precision at
-the crew's capacity. A perfect oracle with full knowledge of the hidden state would find 1.25
-failures per 15 visits against the model's 1.19. The absolute numbers are low because outcomes are
-Bernoulli draws at a 1% rate — most of the variation is irreducible — not because the model is
-leaving much on the table. Recomputed on every run by `validate.py`.
+The model reaches **85.6%** of achievable within-event AUC and **61.9%** of achievable precision at
+the crew's capacity. The absolute numbers are low because outcomes are Bernoulli draws at a 1% rate —
+most of the variation is irreducible — not because the model is leaving that much on the table.
+Recomputed on every run by `validate.py`.
 
-Calibration: Brier **0.01049** against **0.01119** for a base-rate-only baseline. Reliability diagram
-in `output/calibration.png`.
+Calibration: Brier **0.00882** against **0.00949** for a base-rate-only baseline. Reliability diagram
+in `output/calibration.png`. Leakage check: highest correlation between any feature and the hidden
+state is **0.7234** (degree-hours against thermal stress), under the 0.95 threshold; pooled AUC is
+under the 0.90 line that would indicate leakage.
 
-Regularisation check, recorded not searched: C=0.01 → 0.8135, C=0.1 → 0.8264, C=1.0 → 0.8261,
-C=10.0 → 0.8219.
+Regularisation check, recorded not searched: C=0.01 → 0.8521, C=0.1 → 0.8475, C=1.0 → 0.8412,
+C=10.0 → 0.8366. Lower C scores marginally better pooled and `C=1.0` is kept, because the sweep is a
+check that the default is not badly wrong rather than a search to be won.
 
-**Coefficient signs.** Degree-hours (+1.14), peak load (+0.54), time since maintenance (+0.20),
-prior faults (+0.11), age (+0.05) and all four condition flags (+0.01 to +0.27) are positive, as
-expected. Cooling type is −0.84, which is also correct: the ordinal runs ONAN→ONAF→OFAF, so a higher
-value means better cooling.
+**Coefficient signs.** Degree-hours (+1.09), peak load (+0.57), time since maintenance, prior faults,
+age and all four condition flags are positive, as expected. Cooling type is negative, which is also
+correct: the ordinal runs ONAN→ONAF→OFAF, so a higher value means better cooling.
 
-`max_overnight_min_c` comes out at **−0.30**, which looks wrong and is not. Univariately it
-correlates **+0.094** with failure — the expected direction — but **+0.933** with degree-hours, which
-takes the shared signal and the +1.14 coefficient. The negative value is the residual. A coefficient
-on a feature collinear at r=0.93 with another is not interpretable on its own.
+`peak_temp_c` (−0.24) and `max_overnight_min_c` (−0.31) are negative and are not interpretable alone.
+Both are collinear with degree-hours at r≈0.93, which takes the shared signal; the negatives are the
+residual. This pair predates the interaction terms.
+
+It is worth recording how much worse this was. Built with **raw** interaction products rather than
+centred ones, five features came out wrong-signed, and the asset page for the highest-risk asset in
+the most severe scenario reported that 40.7 °C and a 33 °C overnight minimum had *lowered* its risk.
+It also silently broke retrieval, because `build_query` reads only positive contributions and so
+dropped every heat term from the query. Centring the components before multiplying fixed the
+explanation, the query, and the forecast sensitivity, at a cost of 0.014 within-event AUC. See
+`DECISIONS.md` D-031.
+
+Per-fold coefficient means and standard deviations, sign flips included, are in `output/metrics.md`.
 
 ### Retrieval and briefs
 
-75 briefs across three scenarios. **Citation integrity 100.00% (75 of 75)** — every brief cites only
-documents it was given, against a spec expectation of ≥99%.
+100 briefs across four scenarios. **Citation integrity 100.00% (100 of 100)** — every brief cites
+only documents it was given, against a spec expectation of ≥99%.
 
-Top BM25 score per query ranges **13.97 to 25.59**, median 23.08. `BM25_FLOOR` is 12.0, below the
-observed minimum. **It does not trigger on any of the 75 queries**, so no real query reaches the
-`no_match` path; the floor was not raised into the main cluster to make it fire. The branch is
-covered by two unit tests that reach it with a synthetic degenerate query instead. See
-`DECISIONS.md` D-018.
+Top BM25 score per query ranges **18.42 to 36.76**, median 28.47. `BM25_FLOOR` is 16.0, 13% below the
+observed minimum — the same margin the previous 12.0 held against its own minimum of 13.97, so the
+threshold means what it did rather than merely carrying the same number. **It does not trigger on any
+of the 100 queries**, so no real query reaches the `no_match` path; the floor was not raised into the
+main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
+degenerate query instead. See `DECISIONS.md` D-018.
 
-81 tests pass. The cold-weather negative control is asserted exhaustively over the 39-term vocabulary
-`build_query` can emit, not only over hand-written queries.
+87 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+`build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
+asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
+that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
+above the trained maximum of 32.45 °C.
 
 ## Scope exclusions
 
@@ -286,6 +331,21 @@ Out of scope by decision, not oversight.
 | LLM-as-judge evaluation of brief quality | Deterministic checks cover the failure modes that change decisions. A judge model would itself need validating. | A labelled set of good and bad briefs, plus human agreement measurement |
 | Map view | Would require external tile services, breaking the offline property. `lat`/`lon` are stored as integration stubs only. | Local tile server or an accepted external dependency |
 
+## Roadmap
+
+Capabilities a production system would carry that this one does not, each gated on data rather than
+on modelling effort. Reference: Nebulaworks, *Predictive Maintenance for Substation Equipment — A
+Production MLOps Architecture*, October 2025.
+
+| Capability | What it adds | Data dependency |
+|---|---|---|
+| Multi-horizon prediction (7 / 14 / 30 day) | Different horizons serve different decisions: a 30-day signal supports spare procurement, a 7-day signal triggers crew dispatch. Not achievable here because no feature in the current set varies on a weekly cadence. | Continuous telemetry; per-asset-day labelled failure history |
+| Dissolved gas analysis | Reliable early indicator of internal faults. Classical interpretation methods (Rogers Ratio, Duval Triangle) encode decades of diagnostic standards as features. | Online DGA monitors, or periodic oil sampling records |
+| Continuous thermal telemetry | Replaces the inferred thermal model with measured top-oil and winding temperature. | Fibre-optic probes or RTDs via the SCADA historian |
+| Vibration and acoustic monitoring | Detects mechanical faults that do not appear in gas analysis until late stage. | Sensor installation on large power transformers |
+| Drift-triggered retraining | Retraining driven by feature distribution drift rather than a calendar schedule. Grid topology changes and asset replacements shift feature distributions in ways a schedule does not anticipate. | Serving-time feature distribution monitoring |
+| Sensor availability handling | When an input is unavailable the model should adjust confidence rather than treat an imputed value as observed. Parallel to the existing rule that a failed extraction is not a clean asset. | Applies once telemetry exists |
+
 ## Limitations
 
 - **All data is synthetic.** The failure process is invented, and the model recovers a signal that
@@ -294,7 +354,24 @@ Out of scope by decision, not oversight.
   calibrated to the synthetic world, not the real one. Ranking is unaffected.
 - **Hazard is uniform across the fleet.** One hourly temperature series applies to all 900 assets. A
   real deployment would apply a forecast grid; `district`, `lat` and `lon` are carried for exactly
-  that extension. This is why the scenarios carry no regional names.
+  that extension. This is why the scenarios carry no regional names. It is also the deeper reason
+  the queue's membership barely moves between forecasts: with identical weather everywhere, the only
+  thing a forecast can reweight is each asset's own susceptibility, and that is a smaller effect
+  than the spread in how many customers sit behind each asset.
+- **Core temperature is inferred, not measured.** The thermal model drives an oil temperature from
+  ambient through a first-order lag and a load-dependent rise, then accumulates Arrhenius ageing
+  above a reference. A production system derives the same quantity — an accumulated equivalent-ageing
+  index — from measured top-oil and winding telemetry rather than inferring it. The functional form
+  is the same; the input is not, and every parameter of the inference is assumed.
+- **The measurement window is defined by construction.** `degree_hours_above_30` and
+  `consecutive_warm_nights` are accumulated over an event, and events exist here because they were
+  manufactured with start dates and durations. Real weather is continuous and has no event
+  boundaries, so on real data these features need an explicit window. Forward-looking that window is
+  well defined — it is the forecast horizon — but constructing them from history needs a fixed
+  trailing window with a rolling origin, and heat events defined from meteorology (a percentile
+  against local climatology) rather than from where failures clustered, which would be circular. In
+  this build the confound is measurable: `consecutive_warm_nights` correlates r=+0.86 with event
+  duration and `degree_hours_above_30` r=+0.66, so both partly encode how long rather than how hot.
 - **Only one of the two heat pathways is modelled.** Ambient heating the coolant is represented;
   ambient driving electrical demand upward, which heats the windings further, is not. That is half of
   the "capacity falls while demand rises" argument, and the prototype does not make it.
@@ -306,12 +383,15 @@ Out of scope by decision, not oversight.
 - **The BM25 floor never fires** on the current corpus and query construction. Suppressing the
   weakest query would mean discarding three correctly retrieved documents, so the `no_match` path is
   reached only by unit tests, never by real traffic.
-- **30.4% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
+- **27.9% of notes are duplicate texts**, concentrated entirely in notes with no outstanding defect.
   The distractors-only evaluation category rests on far fewer independent items than its note count
   suggests.
-- **Mean within-event AUC is 0.6219**, and that is the number the operational task depends on — but
-  the Bayes ceiling for it is 0.7192, so the headroom is small. The ranking is limited by the
+- **Mean within-event AUC is 0.6213**, and that is the number the operational task depends on — but
+  the Bayes ceiling for it is 0.7260, so the headroom is small. The ranking is limited by the
   problem being mostly coin-flip at a 1% base rate, not by the model.
+- **The interaction terms cost 0.039 of within-event AUC.** They are kept because without them the
+  forecast cannot change the ranking at all, but on discrimination alone the 13-feature model is the
+  better one, and that trade is a judgement rather than a measurement.
 - **The crew reaches 1.7% of the fleet.** Capacity stayed at 15 while the fleet grew sixfold, so 15
   interventions now cover 15 of 900 rather than 15 of 150. Recall at 15 is correspondingly low in
   absolute terms.

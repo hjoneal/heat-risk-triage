@@ -6,7 +6,7 @@ selected the documents. Nothing is embedded and nothing is learned; BM25 over 25
 documents is enough at this corpus size and can be read off in full.
 
 The brief may cite only the documents that were actually retrieved. That is
-checked in tests/test_citations.py across all 75 briefs.
+checked in tests/test_citations.py across every brief.
 
 Writes: output/briefs_*.json, output/bm25_scores.txt
 """

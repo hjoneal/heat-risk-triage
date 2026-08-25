@@ -1,9 +1,0 @@
-{
-  "brief": "Prior to the forecast heat event, crews should apply the loading restriction in MG-021 for the Oakhurst Bluff 230/34kV unit in preference to accepting the exposure, as the supplied documents do not cover pre-event cooling system inspection for ONAN cooling types without forced cooling fans. Record every de-rating applied, the reason, the value, and the period, restoring the full rating only when the underlying condition has been corrected and verified.",
-  "cited_doc_ids": [
-    "MG-021",
-    "MG-023",
-    "SOP-014"
-  ],
-  "status": "ok"
-}

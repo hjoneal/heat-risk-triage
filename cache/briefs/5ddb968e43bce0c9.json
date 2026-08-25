@@ -1,8 +1,0 @@
-{
-  "brief": "Review open work orders against the Pinecrest Hill unit and re-prioritise outstanding tasks against their effect on heat shedding in accordance with SOP-016. Because the unit has ONAN cooling and an overnight minimum of 17.71, determine whether any category 1 to 3 defects exist and complete them before the event begins where crew capacity allows, noting that the supplied documents do not cover asset age or criticality weightings. If category 4 items cannot be completed, apply a loading restriction as required by SOP-016 and MG-021.",
-  "cited_doc_ids": [
-    "SOP-016",
-    "MG-021"
-  ],
-  "status": "ok"
-}

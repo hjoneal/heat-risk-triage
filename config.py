@@ -110,19 +110,33 @@ FIRST_EVENT_YEAR = 2021  # chosen
 EVENT_SEASON_START_MONTH = 6  # chosen: events fall between June and September
 EVENT_SEASON_END_MONTH = 9  # chosen
 
-# The three demo scenarios are the forecast the tool is used against: 72 hours
+# The demo scenarios are the forecast the tool is used against: 72 hours
 # ahead of the event, hence a fixed near-future date.
 FORECAST_DATE = "2026-08-25"  # chosen
 
+# One of each shape the model was trained on, so the ranking can be compared
+# across them. long-severe was added after the first three were found to span
+# only 2.8 to 283.6 degree-hours against a training range of 0 to 787 — the demo
+# omitted the most damaging event type in the bank, which is three of the sixteen
+# training events. Every scenario sits inside the historical envelope for its
+# type, asserted in tests/test_ranking.py; a forecast outside it would ask a
+# linear model to extrapolate, and nothing in one warns when it does. That test
+# earned its place immediately: long-severe was first set at amplitude 3.5, below
+# every historical event of its type, which pushed the overnight minimum to
+# 33.3 C against a trained maximum of 32.45. The amplitude here is mid-range of
+# the three historical long-severe events rather than at an edge.
+#
 # One hourly temperature series applies to all 900 assets, so the scenario names
 # carry no geography: a single series covering both coastal and inland areas
-# would not be coherent. Hazard uniform across the fleet is a stated limitation.
+# would not be coherent. Hazard uniform across the fleet is a stated limitation,
+# and it is why the forecast cannot reorder the queue by district. See D-026.
 SCENARIOS = [
     # (scenario_id, label, event_type, days, peak_temp_c, amplitude_c)
     ("short-severe", "2-day severe spike", "short-severe", 2, 41.0, 8.0),
     ("long-moderate", "5-day moderate", "long-moderate", 5, 36.0, 4.0),
+    ("long-severe", "5-day severe", "long-severe", 5, 39.8, 4.1),
     ("baseline-mild", "3-day mild baseline", "mild", 3, 30.5, 6.5),
-]  # chosen: one of each shape, so the ranking can be compared across them
+]  # chosen
 
 # ---------------------------------------------------------------------------
 # Hidden failure process
@@ -141,9 +155,20 @@ CONDITION_WEIGHT_NOISE = 0.15  # assumed: condition the register does not captur
 # Forced cooling sheds heat, natural cooling does not.
 COOLING_OFFSET_C = {"ONAN": 2.0, "ONAF": 0.0, "OFAF": -2.0}  # assumed
 
-# Winding temperature rise above ambient at peak load.
-LOAD_RISE_BASE_C = 4.0  # assumed
-LOAD_RISE_SLOPE_C = 8.0  # assumed: degrees per unit of load above the reference
+# Air-conditioning demand rises with ambient temperature, so an asset carries its
+# heaviest loading at the same hours its cooling capacity is worst. Applying one
+# static load figure to every hour of every event would make a mild day and a
+# severe day impose identical loading, which contradicts the mechanism this
+# project exists to model. Slope is per degree above the base.
+AC_DEMAND_BASE_C = 25.0  # assumed: below this, cooling load is negligible
+AC_DEMAND_SLOPE = 0.02  # assumed: +2% load per degree above the base
+LOAD_CAP = 1.15  # assumed: protection operates beyond this
+
+# Winding temperature rise above ambient. Resistive losses scale with the square
+# of current, so a 20% load increase produces about 44% more heat from that
+# source. The exponent is physics, not a fitted parameter.
+LOAD_RISE_EXPONENT = 2.0  # chosen: I squared R
+LOAD_RISE_AT_REFERENCE_C = 3.0  # assumed: rise at the reference load
 LOAD_RISE_REFERENCE_LOAD = 0.55  # chosen: the lightest loaded asset in the fleet
 
 # Thermal time constant of the bulk oil, not the winding: the winding responds in
@@ -179,16 +204,28 @@ THETA_REFERENCE_DECREMENT_C = 1.0  # chosen
 SPEC_COEF_THERMAL_STRESS = 0.15  # build spec section 2.5
 SPEC_COEF_INTERACTION = 0.30  # build spec section 2.5
 
-# Re-derived at 900 assets and a 1% base rate; the previous value of 3.5 was
-# measured against a 5% rate and does not carry over. Gate 4 needs mild events
-# near failure-free, which wants a steep hazard response; gate 6 needs failures
-# to reach the better-maintained half of the fleet, which wants a shallow one.
-# Measured across the bracket 1.0 to 10.0, they leave a feasible band of
-# [2.30, 2.50] and this is its centre. Gate 4 fails at 2.25 (mild rate 0.00222)
-# and gate 6 fails at 2.55 (share 0.190). Both bounds turn on single-figure
-# failure counts, so the band is narrow by construction rather than by choice.
-# See DECISIONS.md D-014.
-HAZARD_SCALE = 2.4  # measured
+# Re-derived after demand coupling, which raised fleet-mean thermal stress from
+# 1.11 to 2.58 equivalent days and so required roughly a halving of this scale.
+# The previous value of 2.4 was measured against a static per-asset load rise and
+# does not carry over; nor did the 3.5 before it, measured at a 5% base rate.
+#
+# The bounds pull opposite ways. Gate 4 needs mild events near failure-free,
+# which wants a steep hazard response — demand coupling makes heavily loaded
+# assets accumulate real stress even at 30 C, so this binds harder than it did.
+# The leakage ceiling on out-of-fold AUC caps the other end: a steeper response
+# makes the outcomes too easy to predict from the hazard features alone.
+#
+# Measured across the bracket 0.20 to 3.00 on the final configuration: gate 4
+# fails at 0.95 (six mild failures, rate 0.0022) and the AUC ceiling fails at
+# 1.40 (0.9092 against a 0.90 limit), leaving a feasible band of [0.98, 1.35].
+# This is its centre. Gate 6 has margin throughout the band and only binds
+# outside it, at 1.50.
+#
+# Both lower-bound checks turn on single-figure failure counts, so the band moves
+# with the generator's random stream: an earlier sweep that drew failures from a
+# fresh stream rather than continuing the pipeline's own reported a band that did
+# not exist, and concluded no value satisfied every gate. See DECISIONS.md D-027.
+HAZARD_SCALE = 1.14  # measured
 
 FAILURE_COEF_THERMAL_STRESS = SPEC_COEF_THERMAL_STRESS * HAZARD_SCALE
 FAILURE_COEF_CONDITION = 1.60  # assumed
@@ -200,7 +237,7 @@ FAILURE_LOAD_REFERENCE = 0.70  # chosen: mid-fleet load, so the term is centred
 # the real annual major-failure rate below 1% — 0.8% for pre-1978 units — which
 # implies roughly 0.0008 per asset-event for a heat-attributable share across
 # four events a year. At that rate 14,400 rows would carry about a dozen
-# positives, too few to fit 13 features, so this is inflated about twelvefold to
+# positives, too few to fit 16 features, so this is inflated about twelvefold to
 # roughly 144 positives. That scales predicted probabilities but preserves
 # ranking, and the system consumes a ranking. See DECISIONS.md D-012.
 TARGET_FAILURE_RATE = 0.01  # chosen
@@ -246,6 +283,20 @@ MILD_FAILURE_RATE_MAX = 0.002  # chosen: gate 4
 DEGREE_HOURS_PEAK_CORR_MAX = 0.85  # chosen: gate 5
 LOW_CONDITION_FAILURE_SHARE_MIN = 0.20  # chosen: gate 6
 
+# There is no gate 7. One was specified — the top 15 must differ by at least
+# three assets between any two scenarios — and it was dropped after being
+# measured as unreachable: with raw interaction products and three scenarios the
+# pairwise maximum was 2, even with customers_served removed from the ranking
+# entirely. Two later changes reversed that. A fourth scenario widened the range
+# of forecasts on offer, and centring the interaction products stopped the model
+# putting negative coefficients on its own hazard features. The divergence is now
+# 3 to 9 assets, which the dropped gate would have passed.
+#
+# It is left dropped rather than reinstated at a threshold the system now happens
+# to clear, because the reachable value was not known when the number was chosen
+# and picking one afterwards is choosing a threshold to fit the data. The
+# measurement is reported in output/ranking_divergence.txt. See D-026.
+
 # ---------------------------------------------------------------------------
 # Features
 # ---------------------------------------------------------------------------
@@ -267,11 +318,64 @@ FEATURES = [
     "flag_ventilation_obstructed",
     "flag_oil_issue",
     "flag_overdue_remedial",
+    # interactions (3)
+    "load_x_degree_hours",
+    "condition_x_degree_hours",
+    "age_x_warm_nights",
 ]
-assert len(FEATURES) == 13
+assert len(FEATURES) == 16
+
+# Logistic regression is additive in the log-odds, so with hazard features that
+# are constant within an event the hazard block adds the same number to every
+# asset's logit and the forecast cannot reorder the queue however much the
+# weather differs. An interaction term is asset value x event value, which
+# rescales each asset's logit rather than offsetting all of them equally, and is
+# the only way an additive model can represent "heavily loaded assets suffer more
+# in a severe event". Each of the three corresponds to a mechanism now present in
+# the generator. See DECISIONS.md D-024.
+INTERACTION_FEATURES = [
+    "load_x_degree_hours",
+    "condition_x_degree_hours",
+    "age_x_warm_nights",
+]
+assert set(INTERACTION_FEATURES) <= set(FEATURES)
+
+# Each interaction is a product of *centred* components, not of raw values.
+#
+# Raw products are collinear with the features they are built from, and the
+# consequence is not cosmetic: fitted on raw products the model puts a negative
+# coefficient on degree-hours, peak temperature, warm nights and age, because the
+# product term takes the shared signal and leaves the residual. The asset page
+# then tells a supervisor that 40.7 C and a 33 C night *lowered* an asset's risk,
+# and build_query — which reads only positive contributions — drops every
+# heat-related term from the retrieval query. Golden rule 1 outranks the
+# convenience of a raw product. Measured: centring takes the count of
+# wrong-signed hazard and age coefficients from 5 to 2, moves degree-hours from
+# -0.2388 to +1.0920, costs 0.014 of within-event AUC, and *increases* the
+# forecast's effect on the ranking. See DECISIONS.md D-031.
+#
+# The centres are fixed rather than recomputed per call. A scenario matrix holds
+# one event, so its own degree-hours mean is that event's value and a
+# self-centred term would collapse to zero for every asset. Measured on the
+# 14,400 training rows; model.py asserts they still match.
+INTERACTION_CENTRE_PEAK_LOAD_PCT = 0.7546  # measured
+INTERACTION_CENTRE_DEGREE_HOURS = 303.4492  # measured
+INTERACTION_CENTRE_CONDITION_FLAGS = 1.6944  # measured
+INTERACTION_CENTRE_AGE_YEARS = 32.5039  # measured
+INTERACTION_CENTRE_WARM_NIGHTS = 3.0625  # measured
+# The training means may drift if the generator changes; past this the stored
+# centres are stale and the interaction terms no longer mean what they say.
+INTERACTION_CENTRE_TOLERANCE = 0.01  # chosen: relative
 
 # The ablation variant: everything the register knows, nothing the notes add.
-NO_NOTES_FEATURES = FEATURES[:9]
+# `condition_x_degree_hours` is built from the extracted flags, so leaving it in
+# would leak note-derived information into the no-notes arm and understate the
+# uplift the extraction layer is credited with.
+NO_NOTES_FEATURES = [
+    name for name in FEATURES
+    if not name.startswith("flag_") and name != "condition_x_degree_hours"
+]
+assert len(NO_NOTES_FEATURES) == 11
 
 # The only path from a feature name to anything a human reads.
 FEATURE_LABELS = {
@@ -288,6 +392,9 @@ FEATURE_LABELS = {
     "flag_ventilation_obstructed": "Ventilation obstructed (from inspection notes)",
     "flag_oil_issue": "Oil issue (from inspection notes)",
     "flag_overdue_remedial": "Outstanding remedial work (from inspection notes)",
+    "load_x_degree_hours": "Heavy load through sustained heat",
+    "condition_x_degree_hours": "Known defects through sustained heat",
+    "age_x_warm_nights": "Ageing asset with warm nights",
 }
 assert set(FEATURE_LABELS) == set(FEATURES)
 
@@ -349,16 +456,22 @@ BM25_TOP_K = 3  # chosen: as many procedures as a supervisor will read
 # Preserves hyphenated identifiers such as sop-014, which \w+ would split.
 TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 
-# Set below the main cluster in output/bm25_scores.txt: across all 75 generated
-# queries the top score ranges 13.97 to 25.59, with no separated low tail. 12.0
-# sits below the observed minimum with a margin, so it fires only on a query
-# degenerate enough to fall outside anything this system currently produces.
+# Set below the main cluster in output/bm25_scores.txt: across all 100 generated
+# queries the top score ranges 18.42 to 36.76, with no separated low tail. 16.0
+# sits 13% below the observed minimum, which is the same margin the previous
+# value of 12.0 held against its own minimum of 13.97, so the threshold means the
+# same thing it did rather than merely carrying the same number.
 #
-# It does not fire on any of the 75. That is recorded rather than engineered
+# Re-derived because the interaction features changed every query: more positive
+# contributions means more terms, and centring them changed which contributions
+# come out positive at all. Both effects move the distribution, and a floor left
+# at 12.0 would have sat twice as far below the cluster as it was set to be.
+#
+# It does not fire on any of the 100. That is recorded rather than engineered
 # around: build_query concatenates a term list per positive contribution, giving
 # queries of 15 to 40 terms, and against 25 topically dense procedures such a
 # query always matches something. See DECISIONS.md D-018.
-BM25_FLOOR = 12.0  # measured
+BM25_FLOOR = 16.0  # measured
 
 BRIEF_TOP_N = 25  # chosen: the crew capacity of 15 plus a review margin
 # Above this ambient peak the query picks up de-rating guidance regardless of
@@ -379,6 +492,9 @@ QUERY_TERMS = {
     "cooling_type_ordinal": [],
     "days_since_maintenance": ["maintenance", "overdue", "schedule"],
     "prior_heat_faults": ["recurring", "fault", "history"],
+    "load_x_degree_hours": ["loading", "capacity", "de-rating", "sustained"],
+    "condition_x_degree_hours": ["inspection", "defect", "pre-event"],
+    "age_x_warm_nights": ["ageing", "insulation", "overnight"],
 }
 assert set(QUERY_TERMS) == set(FEATURES)
 
