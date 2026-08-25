@@ -1042,6 +1042,10 @@ that it would not be.
 
 ## D-032 — The contribution table speaks in odds, not log-odds
 
+> **Amended by D-035.** The log-odds column described below as "demoted, not
+> deleted" was subsequently deleted. The rest of this entry stands.
+
+
 **Decision:** The asset page leads with **effect on odds** — the exponential of
 each contribution — with the reading in its own units beside it and the log-odds
 figure kept underneath in small type. The intercept row is labelled as the
@@ -1118,3 +1122,32 @@ interface. Without scripting the form and its button still work exactly as
 before; the script's last act is to hide the control it has made redundant, so
 the page is never left with a button that does nothing or a slider that does
 nothing. `tests/test_interface.py` asserts the button is still in the markup.
+
+## D-035 — The log-odds column is deleted, and factors are ordered by their effect
+
+**Decision:** The contribution table shows effect on odds only. The log-odds
+figure D-032 kept in small type is gone from the screen. Rows are ordered by
+signed contribution — largest raiser at the top, largest reducer at the bottom.
+
+**Why the column went.** D-032 kept it so the table stayed auditable on screen.
+That reasoning does not survive contact with the page: two columns expressing the
+same quantity in different units is one column too many, and the one a supervisor
+cannot read was earning its place on the strength of an audience that would be
+reading `metrics.md` instead. The auditing did not depend on it. The contributions
+still sum to `logit(p) − intercept` and `assert_contributions_sum` still holds
+that to 1e-6 at score time; the raw figure is still in every scored JSON record;
+and `tests/test_interface.py` now checks that the displayed multipliers and the
+baseline compose back to the risk on the page. What was removed is a duplicate
+display, not a guarantee.
+
+**Why the order changed.** Sorting by absolute contribution put the largest
+effects first but interleaved directions, so a strong reducer landed between two
+weak raisers for no reason visible to a reader. Signed order reads straight down:
+what made this asset worse, in descending order, then what made it better.
+
+**Deliberately unaffected.** `build_query` and `build_brief_prompt` both take the
+leading *positive* contributions, and among positives the two orderings are
+identical — descending magnitude and descending value are the same thing when
+every value is positive. Verified rather than assumed: all 100 briefs are
+byte-identical after the change, so no cache was invalidated and no retrieval
+result moved.

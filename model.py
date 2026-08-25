@@ -262,11 +262,19 @@ def explain(model, x_row):
 
     Eight lines, exact, and the same arithmetic the model itself does. A linear
     model does not need SHAP to say what it did.
+
+    Ordered by signed contribution rather than by magnitude, so the table reads
+    straight down from the factor that raised this asset's odds most to the one
+    that lowered them most. Sorting by magnitude interleaved the two, putting a
+    strong reducer between two weak raisers for no reason a reader could see.
+    Among the positive contributions the two orderings are identical, which is
+    why `build_query` and `build_brief_prompt` — both of which take the leading
+    positives — are unaffected.
     """
     z = model["scale"].transform(x_row.reshape(1, -1))[0]
     b = model["clf"].coef_[0]
     contributions = b * z
-    order = np.argsort(-np.abs(contributions))
+    order = np.argsort(-contributions)
     return [(config.FEATURES[i], float(x_row[i]), float(contributions[i])) for i in order]
 
 

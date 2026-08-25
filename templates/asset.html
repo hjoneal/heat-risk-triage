@@ -19,11 +19,11 @@
 <div class="columns">
   <section class="contributions">
     <h3>What drove this score</h3>
-    <p class="note">Every factor the model weighed, largest effect first. <strong>Effect on
-      odds</strong> is how much that factor multiplied this asset's odds of failing: above
-      1.0 raised the risk, below 1.0 lowered it. Multiply them all together with the
-      baseline and you get the score at the top of the page — nothing is hidden and nothing
-      is approximated.</p>
+    <p class="note">Every factor the model weighed, from the one that raised this asset's
+      odds of failing most to the one that lowered them most. <strong>Effect on odds</strong>
+      is the multiplier: above 1.0 raised the risk, below 1.0 lowered it. Multiply them all
+      together with the baseline and you get the score at the top of the page — nothing is
+      hidden and nothing is approximated.</p>
     <table class="contrib">
       <thead>
         <tr>
@@ -35,10 +35,7 @@
       <tbody>
       {% for c in asset.contributions %}
         <tr class="{{ 'up' if c.contribution > 0 else 'down' }}">
-          <td class="factor">
-            {{ c.label }}
-            <span class="logodds" title="Contribution to the log-odds of failure: the fitted coefficient times the standardised value.">{{ "%+.3f"|format(c.contribution) }} log-odds</span>
-          </td>
+          <td class="factor">{{ c.label }}</td>
           <td class="reading">
             {{ c.reading }}
             {# Where this reading sits against everything the model was trained on.
@@ -57,9 +54,7 @@
         </tr>
       {% endfor %}
         <tr class="intercept">
-          <td class="factor">Baseline for any asset in any event
-            <span class="logodds">{{ "%+.3f"|format(intercept) }} log-odds</span>
-          </td>
+          <td class="factor">Baseline for any asset in any event</td>
           <td class="reading">{{ "%.2f"|format(baseline_pct) }}% — the failure rate the model
             starts every asset at, before anything above is taken into account</td>
           <td class="num effect"><span class="multiplier">—</span></td>

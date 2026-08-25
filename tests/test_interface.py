@@ -119,6 +119,49 @@ def test_the_odds_multiplier_matches_the_log_odds_contribution(scenario_id=None)
             f"{c['feature']}: x{c['odds_multiplier']} != exp({c['contribution']})"
 
 
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_contributions_are_ordered_by_effect_on_odds(scenario_id):
+    """The table reads straight down from the largest raiser to the largest
+    reducer. Ordering by magnitude interleaved the two."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    for asset in scored["assets"][:20]:
+        multipliers = [c["odds_multiplier"] for c in asset["contributions"]]
+        assert multipliers == sorted(multipliers, reverse=True), \
+            f"{asset['asset_id']} contributions are not in descending order of effect"
+
+
+def test_the_log_odds_figure_is_not_shown_to_the_reader():
+    """Two columns saying the same thing in different units is one too many.
+
+    The arithmetic is still checked — assert_contributions_sum holds it to 1e-6
+    at score time and the raw contribution stays in the scored JSON — but the
+    screen carries the readable unit only.
+    """
+    asset_id = top_asset_id(SCENARIO)
+    html = client.get(f"/scenario/{SCENARIO}/asset/{asset_id}").text
+    assert "log-odds" not in html
+    assert "logodds" not in html
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
+    asset = next(a for a in scored["assets"] if a["asset_id"] == asset_id)
+    assert all("contribution" in c for c in asset["contributions"]), \
+        "the raw contribution must survive in the record even though it is not displayed"
+
+
+def test_multipliers_compose_to_the_score(scenario_id=None):
+    """The property that makes the table trustworthy: the multipliers and the
+    baseline reproduce the risk shown at the top of the page."""
+    scenario_id = scenario_id or SCENARIO
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    baseline_odds = math.exp(scored["intercept"])
+    for asset in scored["assets"][:10]:
+        product = baseline_odds
+        for c in asset["contributions"]:
+            product *= c["odds_multiplier"]
+        actual = asset["risk"] / (1 - asset["risk"])
+        assert math.isclose(product, actual, rel_tol=1e-3), \
+            f"{asset['asset_id']}: multipliers give odds {product}, score implies {actual}"
+
+
 def test_the_baseline_row_is_shown_as_a_probability():
     """`-5.827 log-odds` is the model's unit and means nothing on its own."""
     asset_id = top_asset_id(SCENARIO)

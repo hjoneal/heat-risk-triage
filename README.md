@@ -52,8 +52,10 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
 
 The asset page reports each factor's **effect on the odds** of failure — the exponential of its
 log-odds contribution, which is exact rather than a simplification — with the reading in its own
-units, a marker showing where that reading sits across the training range, and the log-odds figure
-retained in small type so the table stays auditable. See `DECISIONS.md` D-032.
+units and a marker showing where that reading sits across the training range. Factors run from the
+one that raised this asset's odds most to the one that lowered them most. The log-odds figures stay
+in the scored JSON and in `metrics.md`; the screen carries the readable unit only, and a test checks
+that the displayed multipliers and the baseline compose back to the risk shown. D-032, D-035.
 
 Queue columns sort on click. The crew-capacity line is drawn only when the queue is in dispatch
 order, because in any other order it would assert that the rows above it get visited. D-033.
@@ -319,7 +321,7 @@ of the 100 queries**, so no real query reaches the `no_match` path; the floor wa
 main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
 degenerate query instead. See `DECISIONS.md` D-018.
 
-114 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+120 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
