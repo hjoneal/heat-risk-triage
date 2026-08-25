@@ -349,7 +349,14 @@ most of the variation is irreducible — not because the model is leaving that m
 Recomputed on every run by `validate.py`.
 
 Calibration: Brier **0.00883** against **0.00949** for a base-rate-only baseline. Reliability diagram
-in `output/calibration.png`. Leakage check: highest correlation between any feature and the hidden
+in `output/calibration.png`, over **equal-frequency** bins with a 95% Wilson interval on each. Equal
+width is the conventional choice and the wrong one at a 1% base rate: it put 98.3% of rows in the
+first bin and left a single asset-event — one transformer given 41% that did not fail — drawn as a
+line collapsing to zero, which read as the model breaking down at high probability. The top two bins
+now sit on the diagonal (predicted 0.0138 against observed 0.0146, and 0.0629 against 0.0611); the
+eight below carry about four failures each and have intervals wide enough to cross the diagonal
+several times. Calibration is good where there is signal and unmeasurable where there is not.
+`DECISIONS.md` D-042. Leakage check: highest correlation between any feature and the hidden
 state is **0.7234** (degree-hours against thermal stress), under the 0.95 threshold; pooled AUC is
 under the 0.90 line that would indicate leakage.
 
@@ -539,7 +546,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking mechanism, interface invariants
-DECISIONS.md               39 entries, append-only
+DECISIONS.md               42 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

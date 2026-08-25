@@ -508,7 +508,14 @@ CREW_CAPACITY = 15  # chosen
 # capacity is a client operating parameter and not a property of the system.
 CAPACITY_SWEEP = [10, 15, 20, 25, 30, 40]  # chosen
 
-CALIBRATION_BINS = 10  # chosen: equal-width bins over [0, 1]
+# Equal-frequency, not equal-width. At a 1% base rate equal-width bins put 98.3%
+# of the rows in the first tenth of the axis and left a single asset-event
+# plotted as its own point, which read as the model collapsing at high
+# probability and was one coin flip. Equal frequency puts the same number of rows
+# behind every point. See DECISIONS.md D-042.
+CALIBRATION_BINS = 10  # chosen: equal-frequency bins over the predictions
+WILSON_Z = 1.96  # chosen: 95% interval on each bin's observed rate
+CALIBRATION_AXIS_MARGIN = 1.15  # chosen: headroom above the largest value plotted
 # Contributions are coefficient x standardised value and must sum to
 # logit(p) - intercept. Anything looser than this would hide a real error.
 CONTRIBUTION_SUM_TOLERANCE = 1e-6  # chosen

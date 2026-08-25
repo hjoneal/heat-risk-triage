@@ -1399,3 +1399,43 @@ median 0.845. 0.45 sits 24% below the observed minimum and, unlike the total,
 does not move when query construction changes. A test asserts that the same terms
 repeated three times receive the same verdict as the terms once — identical match
 quality, identical decision, whatever the length.
+
+## D-042 — The reliability diagram uses equal-frequency bins and Wilson intervals
+
+**Decision:** `calibration_plot` bins predictions by equal frequency rather than
+equal width, plots on logarithmic axes, and draws a 95% Wilson interval on each
+bin's observed rate. `CALIBRATION_BINS` keeps its value and changes meaning.
+
+**What was wrong.** Equal-width bins over [0, 1] are the conventional choice and
+the wrong one at a 1% base rate. Measured on the previous run they placed 14,152
+of 14,400 rows — **98.3%** — into the first bin, and spread the remaining 1.7%
+across four points holding 209, 31, 7 and **1** row respectively.
+
+That last bin was one asset-event: a transformer the model gave 41%, which did
+not fail. Joined to its neighbour by a line, it drew a near-vertical collapse to
+zero at the right-hand edge of the chart, which reads as the model breaking down
+at high probability. It was one coin flip landing tails, plotted at the same
+visual weight as a point summarising fourteen thousand rows. The chart invited a
+reviewer to ask a question whose honest answer was "that is one transformer and
+the chart should not have drawn a line to it".
+
+**Why the counts are no longer annotated.** They were, briefly. With equal
+frequency every bin holds 1,440 rows, so per-point counts became ten copies of
+the same number and marker-area scaling became uniform — decoration that looked
+like information. The constant is stated once in the subtitle. What varies is how
+far a bin's observed rate can be trusted, so that is what the chart now draws.
+
+**Wilson rather than normal.** The rates are near zero and the counts small: a
+normal-approximation interval on 1 failure in 1,440 extends below zero, which is
+not a value a failure rate can take.
+
+**What it now shows.** The top two bins sit on the diagonal with tight intervals —
+predicted 0.0138 against observed 0.0146, and 0.0629 against 0.0611. The eight
+below them have intervals wide enough to cross the diagonal several times over,
+because at 1,440 rows and a rate near 0.3% each holds about four failures. The
+honest reading is that calibration is good where there is signal and unmeasurable
+where there is not, which the previous chart could not express.
+
+**Log axes.** Predictions span three orders of magnitude, 0.00017 to 0.063. On a
+linear scale eight of the ten points overlapped in the corner. The diagonal stays
+a straight line under log-log, so the reference is unaffected.

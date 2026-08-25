@@ -364,34 +364,85 @@ def assert_contributions_sum(model, X, probabilities):
             f"row {row_index}: contributions {contributions} != logit-intercept {logit - intercept}"
 
 
-def calibration_plot(labels, predictions, path):
-    """Reliability diagram: mean predicted against observed, ten equal bins."""
-    edges = np.linspace(0.0, 1.0, config.CALIBRATION_BINS + 1)
-    mean_predicted = []
-    observed = []
-    counts = []
-    for lower, upper in zip(edges[:-1], edges[1:]):
-        mask = (predictions >= lower) & (predictions < upper)
-        if not mask.any():
-            continue
-        mean_predicted.append(float(predictions[mask].mean()))
-        observed.append(float(labels[mask].mean()))
-        counts.append(int(mask.sum()))
+def wilson_interval(successes, n):
+    """95% Wilson score interval for a proportion.
 
-    figure, axes = plt.subplots(figsize=(5, 5))
-    axes.plot([0, 1], [0, 1], linestyle="--", color="grey", label="perfect calibration")
-    axes.plot(mean_predicted, observed, marker="o", color="black", label="out-of-fold")
+    Wilson rather than the normal approximation because the rates here are near
+    zero and the counts small: a normal interval on 1 failure in 1,440 runs
+    below zero, which is not a thing a failure rate can do.
+    """
+    if n == 0:
+        return 0.0, 0.0
+    z = config.WILSON_Z
+    p = successes / n
+    denominator = 1 + z ** 2 / n
+    centre = (p + z ** 2 / (2 * n)) / denominator
+    spread = z * np.sqrt(p * (1 - p) / n + z ** 2 / (4 * n ** 2)) / denominator
+    return float(max(0.0, centre - spread)), float(min(1.0, centre + spread))
+
+
+def calibration_plot(labels, predictions, path):
+    """Reliability diagram over equal-frequency bins, with binomial intervals.
+
+    Equal-width bins are wrong at a 1% base rate. They put 98.3% of the rows into
+    the first tenth of the axis and spread the remaining 1.7% across four points,
+    the last of which held a single asset-event: one transformer the model gave
+    41% and which did not fail, plotted as a line collapsing to zero. That reads
+    as the model breaking down at high probability. It was one coin flip.
+
+    Equal frequency puts the same number of rows behind every point, which makes
+    the per-point count constant and therefore not worth annotating — it is
+    stated once in the subtitle instead. What varies is how much a bin's observed
+    rate can be trusted, so each point carries a Wilson interval: at 1,440 rows
+    and a rate near 0.3% the interval is wide, and a point sitting off the
+    diagonal inside its own interval is noise. Predictions span three orders of
+    magnitude, so the axes are logarithmic; the diagonal stays a straight line.
+    See DECISIONS.md D-042.
+    """
+    order = np.argsort(predictions)
+    mean_predicted, observed, counts, lows, highs = [], [], [], [], []
+    for chunk in np.array_split(order, config.CALIBRATION_BINS):
+        if len(chunk) == 0:
+            continue
+        n = len(chunk)
+        hits = float(labels[chunk].sum())
+        mean_predicted.append(float(predictions[chunk].mean()))
+        observed.append(hits / n)
+        counts.append(n)
+        low, high = wilson_interval(hits, n)
+        lows.append(low)
+        highs.append(high)
+
+    figure, axes = plt.subplots(figsize=(6.5, 6))
+    floor = min(min(m for m in mean_predicted), min(o for o in observed if o > 0))
+    limit = max(max(mean_predicted), max(highs)) * config.CALIBRATION_AXIS_MARGIN
+    edge = floor / config.CALIBRATION_AXIS_MARGIN
+
+    axes.plot([edge, limit], [edge, limit], linestyle="--", color="grey",
+              label="perfect calibration", zorder=1)
+    axes.errorbar(mean_predicted, observed,
+                  yerr=[np.array(observed) - np.array(lows),
+                        np.array(highs) - np.array(observed)],
+                  fmt="o", color="black", markersize=5, linewidth=1,
+                  capsize=3, label="out-of-fold, 95% Wilson", zorder=2)
+
+    axes.set_xscale("log")
+    axes.set_yscale("log")
+    axes.set_xlim(edge, limit)
+    axes.set_ylim(edge, limit)
     axes.set_xlabel("mean predicted probability")
     axes.set_ylabel("observed failure rate")
-    axes.set_title("Reliability, pooled out-of-fold predictions")
-    axes.legend()
+    axes.set_title("Reliability, pooled out-of-fold predictions\n"
+                   f"{len(counts)} equal-frequency bins of {counts[0]:,} rows, log axes")
+    axes.legend(loc="upper left")
     figure.tight_layout()
     figure.savefig(path, dpi=150)
     plt.close(figure)
 
     return [
-        {"mean_predicted": m, "observed": o, "count": c}
-        for m, o, c in zip(mean_predicted, observed, counts)
+        {"mean_predicted": m, "observed": o, "count": c,
+         "observed_low": lo, "observed_high": hi}
+        for m, o, c, lo, hi in zip(mean_predicted, observed, counts, lows, highs)
     ]
 
 
