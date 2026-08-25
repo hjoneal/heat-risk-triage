@@ -652,6 +652,12 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # the slider offers has rows to draw a line across.
 QUEUE_ROWS = 40  # chosen: the briefed assets, so every visible row has a brief
 
+# The notebook is committed with its outputs, so a plot that failed to render is
+# invisible in review and looks like a clean diff. It has happened once, when
+# matplotlib.use("Agg") at import time in model.py hijacked the backend for
+# anything importing it. tests/test_notebook.py asserts at least this many.
+NOTEBOOK_MIN_PLOTS = 6  # measured
+
 # The forecast chart. Rendered as SVG on the server, so the page still carries no
 # plotting library and no request-time computation. The left pad holds the
 # temperature scale and the bottom pad the hour-of-day labels.

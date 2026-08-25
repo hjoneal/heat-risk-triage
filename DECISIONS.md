@@ -1439,3 +1439,37 @@ where there is not, which the previous chart could not express.
 **Log axes.** Predictions span three orders of magnitude, 0.00017 to 0.063. On a
 linear scale eight of the ten points overlapped in the corner. The diagonal stays
 a straight line under log-log, so the reference is unaffected.
+
+## D-043 — The notebook's freshness is asserted, not remembered
+
+**Decision:** `tests/test_notebook.py` compares the figures the committed
+notebook displays against `output/metrics.json`, and asserts it was committed
+with outputs, ran without errors, rendered its plots, and imports from the
+modules rather than reimplementing them.
+
+**Why.** The notebook stores its outputs inline, so re-running the pipeline
+invalidates every number in it while leaving a clean-looking file. It went stale
+twice during this build and was caught by eye both times — once still showing a
+pooled AUC from a previous model and a 16-column feature matrix, well after both
+had changed. Vigilance had been the only control, and vigilance had already
+failed at the rate of once per few commits.
+
+**Why it does not execute the notebook.** Executing takes about a minute and
+needs jupyter in the test environment. Reading the stored outputs catches the
+same drift for the cost of parsing a JSON file. The trade is stated in the
+module docstring rather than left for a reader to discover.
+
+**What it cannot catch, verified rather than assumed.** The figure check asks
+whether the current value appears anywhere in the notebook's output, so a
+notebook where some cells were re-run interactively and others were not can pass
+while displaying a mixture. Tampering with only the stream outputs while leaving
+the DataFrame reprs current does pass, which is how that limitation was found.
+It is not the realistic failure mode: `nbconvert` re-executes everything or
+nothing, and genuine staleness is total. Checked against the actual stale
+artefact — the notebook committed before `max_overnight_min_c` was dropped — the
+tests fail on four counts.
+
+**The plot check earns its place separately.** A notebook whose figures failed to
+render looks fine in a diff and is useless. That has happened here once, when
+`matplotlib.use("Agg")` at import time in `model.py` hijacked the backend for
+anything importing it and the notebook committed with every plot missing.

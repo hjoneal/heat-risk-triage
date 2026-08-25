@@ -26,7 +26,9 @@ five days of elevated temperature does five days of damage that the weather brea
 back.
 
 That is why thermal stress here is accumulated *equivalent ageing* rather than a peak, and why
-`max_overnight_min_c` and `consecutive_warm_nights` are features alongside degree-hours.
+`consecutive_warm_nights` is a feature alongside degree-hours. `max_overnight_min_c` was one too and
+was later dropped for collinearity — 98% predictable from the rest — though it is still computed and
+still shown on the forecast strip. See `DECISIONS.md` D-040.
 
 The second mechanism is that heat raises demand at the same time it degrades cooling. Air
 conditioning load climbs with ambient temperature, and resistive loss goes as the square of current,
@@ -60,10 +62,11 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    action brief that may reference only the documents it was given — checked in its citation array
    *and* in its prose. D-037, D-038.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 291 tests across four files: retrieval behaviour
+   check, and the Bayes ceiling. 303 tests across five files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
-   terms are what let the forecast reorder the queue (`test_ranking.py`), and what the interface
-   must not misreport (`test_interface.py`).
+   terms are what let the forecast reorder the queue (`test_ranking.py`), what the interface must not
+   misreport (`test_interface.py`), and whether the committed notebook still matches the pipeline
+   (`test_notebook.py`).
 
 The asset page reports each factor's **effect on the odds** of failure — the exponential of its
 log-odds contribution, which is exact rather than a simplification — with the reading in its own
@@ -429,7 +432,11 @@ below the observed minimum and does not move when query construction does. A tes
 same terms repeated three times get the same verdict as the terms once. **It does not trigger on any
 of the 160 queries**, so no real query reaches the `no_match` path. `DECISIONS.md` D-041.
 
-291 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+303 tests pass, including a freshness check on the notebook: it is committed with its outputs, so
+re-running the pipeline silently invalidates every figure in it. The check compares its displayed
+numbers against `output/metrics.json` without executing it, and also asserts it ran clean, rendered
+its plots, and imports from the modules rather than reimplementing them. It went stale twice during
+the build and was caught by eye both times. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
@@ -545,8 +552,8 @@ data/                      generated artefacts and the procedure corpus
 cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
-tests/                     retrieval, citations, ranking mechanism, interface invariants
-DECISIONS.md               42 entries, append-only
+tests/                     retrieval, citations, ranking, interface, notebook freshness
+DECISIONS.md               43 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the
