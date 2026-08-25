@@ -154,3 +154,47 @@ def test_the_capacity_sweep_is_reported_and_keeps_its_named_keys():
     # Recall must rise with capacity: visiting more assets cannot find fewer.
     recalls = [sweep[k]["recall"] for k in config.CAPACITY_SWEEP]
     assert recalls == sorted(recalls), f"recall is not monotone in capacity: {recalls}"
+
+
+def test_the_per_variant_sweep_agrees_with_the_ablation_table():
+    """The sweep must be the same numbers the ablation table reports, at k=15.
+
+    Both come from one set of out-of-fold predictions per variant. If they were
+    computed from separate cross-validation runs they could drift apart, and a
+    reader comparing the two tables would have no way to tell.
+    """
+    path = config.OUTPUT_DIR / "metrics.json"
+    if not path.exists():
+        pytest.skip("metrics not present; run model.py first")
+    import json
+    metrics = json.loads(path.read_text())
+    by_variant = metrics["capacity_sweep_by_variant"]
+
+    assert set(by_variant) == set(metrics["ablations"]), \
+        "the sweep and the ablation table cover different variants"
+
+    for name, rows in by_variant.items():
+        assert [r["capacity"] for r in rows] == config.CAPACITY_SWEEP
+        at_default = next(r for r in rows if r["capacity"] == config.CREW_CAPACITY)
+        ablation = metrics["ablations"][name]
+        assert abs(at_default["precision"] - ablation["precision_at_15"]) < 1e-9, name
+        assert abs(at_default["recall"] - ablation["recall_at_15"]) < 1e-9, name
+
+    # The full model's row must be the standalone sweep, not a second computation.
+    assert by_variant["Full model"] == metrics["capacity_sweep"]
+
+
+def test_hits_are_consistent_with_the_precision_they_are_reported_beside():
+    """The count is what makes the rate readable; it must not drift from it."""
+    path = config.OUTPUT_DIR / "metrics.json"
+    if not path.exists():
+        pytest.skip("metrics not present; run model.py first")
+    import json
+    metrics = json.loads(path.read_text())
+    n_events = metrics["ablations"]["Full model"]["n_events_scored"]
+    for name, rows in metrics["capacity_sweep_by_variant"].items():
+        for r in rows:
+            # n_events_scored counts events with both classes; precision is
+            # averaged over every event, so recover the divisor from the data.
+            implied = r["precision"] * r["capacity"] * 16
+            assert abs(implied - r["hits"]) <= 0.5, (name, r["capacity"], implied, r["hits"])

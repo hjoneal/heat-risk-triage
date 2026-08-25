@@ -231,6 +231,10 @@ def capacity_sweep(scores, labels, groups, fleet_size):
             "capacity": capacity,
             "precision": precision,
             "recall": recall,
+            # The count behind the rate. A precision of 0.05 at k=15 is 12 hits
+            # across 16 events, and a reader who cannot see that will read more
+            # into the fourth decimal place than it can carry.
+            "hits": int(round(precision * capacity * len(np.unique(groups)))),
             "fleet_share": capacity / fleet_size,
             "is_default": capacity == config.CREW_CAPACITY,
         })
@@ -533,6 +537,54 @@ def write_metrics_markdown(metrics, path):
 
     lines += [
         "",
+        "### By variant",
+        "",
+        "The k=15 column is the ablation table above. The rest answers what a single",
+        "capacity cannot: whether a feature set that looks worse at one capacity is",
+        "worse across the range, or whether the ordering just moves around.",
+        "",
+        "Read these as counts, not as rates. Each figure rests on the failures found",
+        "in the top k of 900, summed over the 16 events, and those totals run from",
+        "about 10 to 35 out of 138. One or two hits move a rate in the third decimal",
+        "place, so a variant leading one column and trailing the next is noise rather",
+        "than a finding, and none of the gaps here is large enough to rank the middle",
+        "three variants against each other. Three of the sixteen events contain no",
+        "failures at all and contribute a guaranteed zero to every precision figure.",
+        "",
+        "**Precision@k**",
+        "",
+        "| Variant | " + " | ".join(f"k={k}" for k in config.CAPACITY_SWEEP) + " |",
+        "|---" * (len(config.CAPACITY_SWEEP) + 1) + "|",
+    ]
+    for name, rows in metrics["capacity_sweep_by_variant"].items():
+        cells = " | ".join(f"{r['precision']:.4f}" for r in rows)
+        lines.append(f"| {name} | {cells} |")
+
+    lines += [
+        "",
+        "**Recall@k**",
+        "",
+        "| Variant | " + " | ".join(f"k={k}" for k in config.CAPACITY_SWEEP) + " |",
+        "|---" * (len(config.CAPACITY_SWEEP) + 1) + "|",
+    ]
+    for name, rows in metrics["capacity_sweep_by_variant"].items():
+        cells = " | ".join(f"{r['recall']:.4f}" for r in rows)
+        lines.append(f"| {name} | {cells} |")
+
+    lines += [
+        "",
+        "**Failures found in the top k, summed over the 16 events (of "
+        f"{metrics['n_failures']})**",
+        "",
+        "| Variant | " + " | ".join(f"k={k}" for k in config.CAPACITY_SWEEP) + " |",
+        "|---" * (len(config.CAPACITY_SWEEP) + 1) + "|",
+    ]
+    for name, rows in metrics["capacity_sweep_by_variant"].items():
+        cells = " | ".join(str(r["hits"]) for r in rows)
+        lines.append(f"| {name} | {cells} |")
+
+    lines += [
+        "",
         "## Calibration",
         "",
         f"| Brier score, full model | {metrics['brier']['model']:.5f} |",
@@ -635,19 +687,23 @@ def main():
 
     def variant(feature_names):
         index = [config.FEATURES.index(name) for name in feature_names]
-        return {"n_features": len(feature_names),
-                **evaluate(out_of_fold_predictions(X[:, index], labels, groups),
-                           labels, groups)}
+        return out_of_fold_predictions(X[:, index], labels, groups)
 
+    # Predictions are kept rather than discarded into evaluate(), because the
+    # capacity sweep needs the same scores the ablation table was built from.
+    # Recomputing them would be a second cross-validation whose results could
+    # drift from the first for no reason a reader could see.
+    variant_predictions = {
+        "Heuristic baseline (peak temp x age)": (2, heuristic),
+        "Register only": (len(register_only), variant(register_only)),
+        "Register + notes": (len(plain), variant(plain)),
+        "Register + interactions (no notes)": (
+            len(config.NO_NOTES_FEATURES), no_notes_predictions),
+        "Full model": (len(config.FEATURES), predictions),
+    }
     ablations = {
-        "Heuristic baseline (peak temp x age)": {
-            "n_features": 2, **evaluate(heuristic, labels, groups)},
-        "Register only": variant(register_only),
-        "Register + notes": variant(plain),
-        "Register + interactions (no notes)": {
-            "n_features": len(config.NO_NOTES_FEATURES),
-            **evaluate(no_notes_predictions, labels, groups)},
-        "Full model": {"n_features": len(config.FEATURES), **full_result},
+        name: {"n_features": n, **evaluate(scores, labels, groups)}
+        for name, (n, scores) in variant_predictions.items()
     }
 
     c_sweep = [
@@ -675,10 +731,16 @@ def main():
         for name, value in zip(config.FEATURES, final_model["clf"].coef_[0])
     }
 
-    # Full model only: the variant table stays at k=15 so it remains readable,
-    # and the sweep answers a different question — not "which feature set" but
-    # "what does this buy at the capacity you actually have".
+    # Reported for the full model, and for every variant. The full-model sweep
+    # answers "what does this buy at the capacity you actually have"; the
+    # per-variant sweep answers a question the k=15 ablation table cannot, which
+    # is whether a feature set that looks worse at one capacity is worse at all
+    # of them. It is not free of noise — see the caveat written into metrics.md.
     sweep = capacity_sweep(predictions, labels, groups, len(assets))
+    sweep_by_variant = {
+        name: capacity_sweep(scores, labels, groups, len(assets))
+        for name, (_, scores) in variant_predictions.items()
+    }
 
     fold_coefs = fold_coefficients(X, labels, groups)
 
@@ -701,6 +763,7 @@ def main():
         "recall_at_15": full_result["recall_at_15"],
         "crew_capacity": config.CREW_CAPACITY,
         "capacity_sweep": sweep,
+        "capacity_sweep_by_variant": sweep_by_variant,
         "c_sweep": c_sweep,
         "brier": brier,
         "calibration_bins": calibration_bins,

@@ -60,7 +60,7 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    action brief that may reference only the documents it was given — checked in its citation array
    *and* in its prose. D-037, D-038.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 289 tests across four files: retrieval behaviour
+   check, and the Bayes ceiling. 291 tests across four files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
    terms are what let the forecast reorder the queue (`test_ranking.py`), and what the interface
    must not misreport (`test_interface.py`).
@@ -289,6 +289,30 @@ pairwise; by risk alone 5, 6, 7, 4, 12, 13. Priority is consistently damped beca
 An earlier build measured 0 on every pair; `DECISIONS.md` D-026 records what changed and why the gate
 that was written around this was dropped rather than reinstated.
 
+**Failures found in the top k, summed over the 16 events** (of 138). The k=15 column is
+the ablation table above; the rest shows whether a variant that looks worse at one capacity is worse
+across the range. These are counts of 10 to 35, so one or two hits move a rate in the third decimal
+place — the gaps between the middle three variants are not large enough to rank them. Three of the
+16 events contain no failures at all and contribute a guaranteed zero to every precision figure.
+
+| Variant | k=10 | k=15 | k=20 | k=25 | k=30 | k=40 |
+|---|---|---|---|---|---|---|
+| Heuristic baseline (peak temp x age) | 1 | 1 | 1 | 2 | 3 | 6 |
+| Register only | 11 | 16 | 21 | 25 | 28 | 32 |
+| Register + notes | 10 | 11 | 18 | 19 | 21 | 30 |
+| Register + interactions (no notes) | 11 | 15 | 22 | 26 | 29 | 35 |
+| Full model | 10 | 13 | 16 | 20 | 26 | 33 |
+
+Recall@k for the same variants:
+
+| Variant | k=10 | k=15 | k=20 | k=25 | k=30 | k=40 |
+|---|---|---|---|---|---|---|
+| Heuristic baseline (peak temp x age) | 0.0018 | 0.0018 | 0.0018 | 0.0274 | 0.0338 | 0.0484 |
+| Register only | 0.0353 | 0.0599 | 0.0713 | 0.0856 | 0.0955 | 0.1119 |
+| Register + notes | 0.0257 | 0.0275 | 0.0855 | 0.0873 | 0.0955 | 0.1233 |
+| Register + interactions (no notes) | 0.0389 | 0.0471 | 0.0952 | 0.1048 | 0.1354 | 0.1696 |
+| Full model | 0.0495 | 0.0627 | 0.0695 | 0.1065 | 0.1344 | 0.1582 |
+
 **Crew capacity is a client operating parameter, not a property of the system**, and the 15 this
 build reports at was chosen rather than derived. A monthly substation inspection cadence puts
 realistic pre-event capacity nearer 30 — 400 substations ÷ 21 working days × 3 days ≈ 57 substation
@@ -380,7 +404,7 @@ the 160 queries**, so no real query reaches the `no_match` path; the floor was n
 main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
 degenerate query instead. See `DECISIONS.md` D-018.
 
-289 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+291 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat
@@ -497,7 +521,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking mechanism, interface invariants
-DECISIONS.md               38 entries, append-only
+DECISIONS.md               39 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

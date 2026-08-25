@@ -1281,3 +1281,42 @@ two documents that were *both* retrieved stays invisible to both checks. Catchin
 that needs the claim checked against the document's content, not its id, and
 that is an LLM-as-judge evaluation — a listed exclusion, and one that would
 itself need validating.
+
+## D-039 — The capacity sweep runs per variant, reversing D-036
+
+**Decision:** `output/metrics.md` and `metrics.json` report precision, recall and
+raw hit counts across `CAPACITY_SWEEP` for **every** ablation variant, not the
+full model alone. The full-model sweep stays where it was, and
+`capacity_sweep_by_variant` is added beside it.
+
+**What this reverses.** D-036 ran the sweep for the full model only, on the
+grounds that the variant comparison should stay at k=15 to remain readable and
+that the sweep answered a different question. That was right about readability
+and wrong about the question. Reading the ablation table at a single capacity, it
+looks as though adding the note flags costs five failures. Read across the range
+the picture is different in kind: the cost is concentrated between k=15 and k=30
+and has closed entirely by k=100. A single column cannot show that, and without
+it a reader draws a conclusion the data does not support.
+
+**Why it is reported as counts.** The tables lead with failures found rather than
+with a rate. Every figure in them rests on 10 to 35 hits out of 138, summed over
+16 events, so one or two assets landing differently move a precision figure in
+the third decimal place. Presenting 0.0458 against 0.0667 without the 11 against
+16 behind it invites a reader to rank variants that a paired bootstrap cannot
+separate. Three of the sixteen events contain no failures at all and contribute a
+guaranteed zero to every precision figure, which is a further reason the rates
+read as more precise than they are.
+
+**Implementation note.** The variants' out-of-fold predictions are now computed
+once and kept, rather than computed inside `evaluate()` and discarded. Both
+tables are built from the same scores, and `tests/test_ranking.py` asserts the
+sweep's k=15 column equals the ablation table's `precision_at_15` and
+`recall_at_15` exactly. Two cross-validation runs over the same variant could
+drift apart, and a reader comparing the tables would have no way to tell.
+
+**What it shows.** No variant dominates. `Register only` leads at k=10 to k=25,
+`Register + interactions (no notes)` at k=30 and k=40, `Register + notes` trails
+at k=15 and recovers by k=40. Given the counts involved none of those orderings
+is established, which is itself the finding worth recording: at 16 events this
+comparison cannot rank its middle three variants, and reporting one capacity
+concealed that.

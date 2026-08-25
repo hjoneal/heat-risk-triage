@@ -42,6 +42,50 @@ Full model, same out-of-fold predictions and the same per-event averaging as abo
 | 30 | 0.0542 | 0.1344 | 3.3% |
 | 40 | 0.0516 | 0.1582 | 4.4% |
 
+### By variant
+
+The k=15 column is the ablation table above. The rest answers what a single
+capacity cannot: whether a feature set that looks worse at one capacity is
+worse across the range, or whether the ordering just moves around.
+
+Read these as counts, not as rates. Each figure rests on the failures found
+in the top k of 900, summed over the 16 events, and those totals run from
+about 10 to 35 out of 138. One or two hits move a rate in the third decimal
+place, so a variant leading one column and trailing the next is noise rather
+than a finding, and none of the gaps here is large enough to rank the middle
+three variants against each other. Three of the sixteen events contain no
+failures at all and contribute a guaranteed zero to every precision figure.
+
+**Precision@k**
+
+| Variant | k=10 | k=15 | k=20 | k=25 | k=30 | k=40 |
+|---|---|---|---|---|---|---|
+| Heuristic baseline (peak temp x age) | 0.0063 | 0.0042 | 0.0031 | 0.0050 | 0.0063 | 0.0094 |
+| Register only | 0.0688 | 0.0667 | 0.0656 | 0.0625 | 0.0583 | 0.0500 |
+| Register + notes | 0.0625 | 0.0458 | 0.0562 | 0.0475 | 0.0437 | 0.0469 |
+| Register + interactions (no notes) | 0.0688 | 0.0625 | 0.0688 | 0.0650 | 0.0604 | 0.0547 |
+| Full model | 0.0625 | 0.0542 | 0.0500 | 0.0500 | 0.0542 | 0.0516 |
+
+**Recall@k**
+
+| Variant | k=10 | k=15 | k=20 | k=25 | k=30 | k=40 |
+|---|---|---|---|---|---|---|
+| Heuristic baseline (peak temp x age) | 0.0018 | 0.0018 | 0.0018 | 0.0274 | 0.0338 | 0.0484 |
+| Register only | 0.0353 | 0.0599 | 0.0713 | 0.0856 | 0.0955 | 0.1119 |
+| Register + notes | 0.0257 | 0.0275 | 0.0855 | 0.0873 | 0.0955 | 0.1233 |
+| Register + interactions (no notes) | 0.0389 | 0.0471 | 0.0952 | 0.1048 | 0.1354 | 0.1696 |
+| Full model | 0.0495 | 0.0627 | 0.0695 | 0.1065 | 0.1344 | 0.1582 |
+
+**Failures found in the top k, summed over the 16 events (of 138)**
+
+| Variant | k=10 | k=15 | k=20 | k=25 | k=30 | k=40 |
+|---|---|---|---|---|---|---|
+| Heuristic baseline (peak temp x age) | 1 | 1 | 1 | 2 | 3 | 6 |
+| Register only | 11 | 16 | 21 | 25 | 28 | 32 |
+| Register + notes | 10 | 11 | 18 | 19 | 21 | 30 |
+| Register + interactions (no notes) | 11 | 15 | 22 | 26 | 29 | 35 |
+| Full model | 10 | 13 | 16 | 20 | 26 | 33 |
+
 ## Calibration
 
 | Brier score, full model | 0.00882 |
