@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise outstanding work according to its effect on the unit's ability to shed heat, completing work in categories one to three before the event begins wherever crew capacity allows (SOP-016). Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Record every de-rating applied, including the reason, value, and period, and restore the full rating only when the underlying condition has been corrected and verified (MG-021).",
+  "brief": "Prioritize outstanding work on the asset in descending order of priority, focusing on forced cooling, ventilation, oil levels, and leaks before the heat event begins as outlined in SOP-016. Where an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed by MG-023. Record every de-rating applied with its reason, value, and period in accordance with MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-016"
   ],
+  "input_tokens": 1495,
+  "output_tokens": 148,
   "status": "ok"
 }

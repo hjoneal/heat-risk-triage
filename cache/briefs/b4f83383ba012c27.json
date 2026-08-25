@@ -1,7 +1,11 @@
 {
-  "brief": "Prioritise this unit for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading, which gives it a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+  "brief": "Prioritise Kelvedon Vale for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal cycling [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. If the event is forecast to run beyond 48 hours with warm overnight minima, apply the loading reduction in MG-021 from the third day and run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
   "cited_doc_ids": [
-    "MG-023"
+    "MG-023",
+    "MG-021",
+    "MG-025"
   ],
+  "input_tokens": 1458,
+  "output_tokens": 182,
   "status": "ok"
 }

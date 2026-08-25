@@ -1,9 +1,11 @@
 {
-  "brief": "Inspect Underhill Hollow 230/34kV (SUB-SGW-095) and apply the loading reduction in MG-021 from the third day on events extending beyond 48 hours with overnight minima above 24 degrees, as required by MG-025. Ensure forced cooling is run continuously through the overnight period rather than allowing the thermostat to drop stages out, per MG-025. Vegetation and obstruction clearance work takes precedence over other remedial activity if an outstanding defect exists, according to SOP-011. Record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+  "brief": "Crews must apply the loading reductions specified in MG-021 from the third day of the heat event due to sustained conditions with warm overnight minima, and run forced cooling continuously through the overnight period rather than letting the thermostat drop stages out as outlined in MG-025. If any vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity as directed in SOP-011. Record every de-rating applied and its reason in accordance with MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-025",
     "SOP-011"
   ],
+  "input_tokens": 1452,
+  "output_tokens": 151,
   "status": "ok"
 }

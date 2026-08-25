@@ -1,8 +1,10 @@
 {
-  "brief": "Execute an emergency load transfer following the approved switching schedule with the operations desk in attendance, and monitor top oil temperature on the receiving asset for the following six hours (ERP-032). Ensure the receiving asset's available capacity is confirmed at the prevailing ambient temperature by applying the de-rating in MG-021 to both assets (ERP-032). Record the time of each operation, the load transferred, and the resulting loading on both assets (ERP-032).",
+  "brief": "Execute the approved switching schedule to transfer load from Langmere Common to an adjacent asset, as detailed in ERP-032. Confirm the receiving asset's available capacity by applying the de-rating in MG-021, and monitor its top oil temperature for six hours following the transfer (ERP-032). Record the time of each operation, the load transferred, and the resulting loading on both assets (ERP-032).",
   "cited_doc_ids": [
     "ERP-032",
     "MG-021"
   ],
+  "input_tokens": 1416,
+  "output_tokens": 132,
   "status": "ok"
 }

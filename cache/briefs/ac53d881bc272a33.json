@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise the unit for pre-event attention because its advanced age and loading history leave it with a reduced margin against mechanical failure under sustained heat exposure [MG-023]. Where a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity to restore the cooling margin [SOP-011]. Obstructed ventilation must be cleared rather than deferred, as clearance is low-cost and immediate [SOP-015].",
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; SOP-015 Ventilation louvre and airflow inspection.",
   "cited_doc_ids": [
     "MG-023",
     "SOP-011",
     "SOP-015"
   ],
-  "status": "ok"
+  "input_tokens": 2894,
+  "output_tokens": 292,
+  "status": "fallback"
 }

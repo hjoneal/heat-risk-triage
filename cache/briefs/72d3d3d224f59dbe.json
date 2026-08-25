@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise Ashford Hill 138/13kV (SUB-SGW-881) for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading [MG-023]. If this unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise the Ashford Hill unit for pre-event attention ahead of a younger unit in otherwise similar condition, as it has advanced age and a history of high loading [MG-023]. If the ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
   "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
+    "MG-023",
+    "MG-021"
   ],
+  "input_tokens": 1456,
+  "output_tokens": 116,
   "status": "ok"
 }

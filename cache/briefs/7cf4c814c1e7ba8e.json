@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise the Kelvedon Vale 230/34kV transformer for pre-event attention ahead of younger units, as its advanced age and history of high loading leave a reduced margin against mechanical failure under thermal stress [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise Kelvedon Vale 230/34kV for pre-event attention before the heat event [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
   "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
+    "MG-023",
+    "MG-025"
   ],
+  "input_tokens": 1455,
+  "output_tokens": 116,
   "status": "ok"
 }

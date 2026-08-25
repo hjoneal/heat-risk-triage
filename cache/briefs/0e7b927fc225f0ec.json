@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise vegetation and obstruction clearance work ahead of the heat event if any clearance defect is outstanding for this unit, as restricted airflow removes its cooling margin according to SOP-011. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure in accordance with MG-023. Record every de-rating applied, including the reason, value, and period, and restore the full rating only when the underlying condition is corrected and verified as specified in MG-021.",
+  "brief": "Prioritise vegetation clearance over other remedial activity for Camden Works 230/34kV to ensure unobstructed airflow to radiator banks and ventilation openings [SOP-011]. Because this ageing unit cannot be attended in time or has a reduced margin against mechanical failure, apply the loading restriction in [MG-021] in preference to accepting the exposure [MG-023]. Record every de-rating applied along with its reason, value, and period [MG-021].",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-011"
   ],
+  "input_tokens": 1460,
+  "output_tokens": 137,
   "status": "ok"
 }

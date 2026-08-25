@@ -1,8 +1,10 @@
 {
-  "brief": "Consider load transfer to move demand from Draycott Bluff to an adjacent asset with available capacity, per ERP-032. Before switching, confirm the receiving asset's available capacity by applying the de-rating in MG-021 to both assets and check the receiving asset's condition. Coordinate the execution with the operations desk according to ERP-032.",
+  "brief": "Reduce permissible load in accordance with MG-021, accounting for ambient de-rating based on accumulated heat above 30 degrees and any reduced cooling capacity. If the unit approaches its temperature limit, consider emergency load transfer to an adjacent asset with available capacity as detailed in ERP-032. Ensure both assets have their available capacity assessed at prevailing ambient temperatures using MG-021 de-ratings before executing any load transfer. Record every de-rating applied and monitor the receiving asset's top oil temperature for the following six hours after any transfer.",
   "cited_doc_ids": [
-    "ERP-032",
-    "MG-021"
+    "MG-021",
+    "ERP-032"
   ],
+  "input_tokens": 1455,
+  "output_tokens": 138,
   "status": "ok"
 }

@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritize Camden Green 230/34kV for pre-event attention because of its advanced age and high loading history [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because Camden Green is an ageing unit that cannot be attended before the event. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, as instructed in MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1447,
+  "output_tokens": 131,
   "status": "ok"
 }

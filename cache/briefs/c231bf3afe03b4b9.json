@@ -1,9 +1,10 @@
 {
-  "brief": "Prioritize Camden Green 230/34kV (SUB-SGW-567) for pre-event attention ahead of a younger unit in otherwise similar condition, as its advanced age and history of high loading leave it with a reduced margin against mechanical failure under heat exposure, per MG-023. Where the asset cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, per MG-023. Note that because this asset uses ONAN cooling, the supplied documents do not cover any specific cooling-stage reduction rules for it, and the guidance on running forced cooling continuously through the overnight period does not apply.",
+  "brief": "Prioritize Camden Green (SUB-SGW-567) for pre-event attention because its advanced age reduces its margin against mechanical failure under heat exposure, as outlined in MG-023. Apply the ambient de-rating specified in MG-021, reducing the permissible load by 1.5 percent for each degree of average ambient above 30 degrees over the preceding 24 hours. If the event extends beyond 48 hours with overnight minima above 24 degrees, apply the further 5 percent reduction from the third day onward as required by MG-021.",
   "cited_doc_ids": [
     "MG-021",
-    "MG-023",
-    "MG-025"
+    "MG-023"
   ],
+  "input_tokens": 1452,
+  "output_tokens": 164,
   "status": "ok"
 }

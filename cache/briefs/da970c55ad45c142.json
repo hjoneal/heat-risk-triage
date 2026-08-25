@@ -1,7 +1,11 @@
 {
-  "brief": "Inspect the Draycott Green transformer before the heat event and prioritize any outstanding vegetation or obstruction clearance work over other remedial activity. Restricted airflow removes the cooling margin the unit relies on during sustained high ambient conditions. Record the clearance work against the originating defect and close it out at the time of completion.",
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; REG-042 Maintenance interval compliance; SOP-011 Vegetation and compound clearance around substation plant.",
   "cited_doc_ids": [
+    "MG-023",
+    "REG-042",
     "SOP-011"
   ],
-  "status": "ok"
+  "input_tokens": 2806,
+  "output_tokens": 296,
+  "status": "fallback"
 }

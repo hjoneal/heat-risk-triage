@@ -5,5 +5,7 @@
     "SOP-016",
     "SOP-013"
   ],
+  "input_tokens": 2992,
+  "output_tokens": 298,
   "status": "fallback"
 }

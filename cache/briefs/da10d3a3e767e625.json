@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise Stonebridge Lock 230/34kV (SUB-SGW-325) for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure. Oil treatment restores dielectric strength, but it does not restore the paper insulation.",
+  "brief": "Prioritise Stonebridge Lock 230/34kV (SUB-SGW-325) for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure. Record every de-rating applied, the reason, the value, and the period.",
   "cited_doc_ids": [
     "MG-023",
     "MG-021"
   ],
+  "input_tokens": 1493,
+  "output_tokens": 120,
   "status": "ok"
 }

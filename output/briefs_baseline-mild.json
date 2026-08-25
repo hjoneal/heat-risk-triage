@@ -42,11 +42,13 @@
         "score": 13.1225
       }
     ],
-    "brief": "Prioritise the Langmere Common transformer for pre-event attention ahead of younger units in similar condition because its advanced age and cumulative thermal exposure reduce its margin against mechanical failure (MG-023). Because the supplied documents do not cover all operational steps for this asset's specific ranking factors, apply the loading restriction in MG-021 in preference to accepting the exposure if the unit cannot be attended before the event (MG-023).",
+    "brief": "Prioritise the Langmere Common transformer for pre-event attention ahead of younger units in otherwise similar condition, as its advanced age reduces its margin against mechanical failure under thermal cycling [MG-023]. Where the unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Reduce permissible load for ambient conditions by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the preceding 24 hours [MG-021].",
     "cited_doc_ids": [
       "MG-023",
       "MG-021"
     ],
+    "input_tokens": 1419,
+    "output_tokens": 159,
     "status": "ok"
   },
   "SUB-SGW-165": {
@@ -102,6 +104,8 @@
       "SOP-016",
       "SOP-011"
     ],
+    "input_tokens": 2952,
+    "output_tokens": 259,
     "status": "fallback"
   },
   "SUB-SGW-518": {
@@ -149,12 +153,14 @@
         "score": 13.811
       }
     ],
-    "brief": "Prioritise outstanding work affecting the unit's ability to shed heat in descending order of priority, completing work in categories 1 to 3 before the event begins wherever crew capacity allows, and apply a loading restriction for category 4 items that cannot be completed [SOP-016]. Where an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021].",
+    "brief": "Prioritise this ageing unit for pre-event attention, checking outstanding work in descending order of priority as specified in SOP-016. If the unit cannot be attended before the heat event, apply the loading restriction in MG-021 rather than accepting the thermal exposure, noting that insulation ageing is cumulative and irreversible under sustained heat as described in MG-023.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023",
       "SOP-016"
     ],
+    "input_tokens": 1494,
+    "output_tokens": 127,
     "status": "ok"
   },
   "SUB-SGW-341": {
@@ -200,11 +206,13 @@
         "score": 10.3979
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure. This asset has an advanced age and a history of high loading as noted in MG-023. The supplied documents do not cover any other specific action for this asset prior to the heat event.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit, as outlined in MG-023. The supplied documents do not cover any other specific action for this asset prior to the heat event.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1419,
+    "output_tokens": 74,
     "status": "ok"
   },
   "SUB-SGW-724": {
@@ -246,12 +254,14 @@
         "score": 8.3673
       }
     ],
-    "brief": "Review the open defect register for Harrowgate Ridge ahead of the forecast heat event, prioritising any outstanding work related to cooling, ventilation, or oil levels for completion before the event begins. If an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. Refer to MG-023, SOP-016, and MG-021 for detailed ageing, defect review, and de-rating criteria.",
+    "brief": "Prioritise pre-event attention for this ageing unit to address any outstanding work affecting its ability to shed heat, in descending order of priority from cooling and ventilation defects to oil leaks and condition defects [SOP-016]. If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
     "cited_doc_ids": [
+      "MG-021",
       "MG-023",
-      "SOP-016",
-      "MG-021"
+      "SOP-016"
     ],
+    "input_tokens": 1490,
+    "output_tokens": 170,
     "status": "ok"
   },
   "SUB-SGW-765": {
@@ -297,13 +307,14 @@
         "score": 14.8214
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: SOP-016 Outstanding work order review and defect close-out; SOP-011 Vegetation and compound clearance around substation plant; MG-023 Insulation ageing and end-of-life indicators.",
+    "brief": "Prioritise outstanding vegetation and obstruction clearance work ahead of the heat event to ensure unobstructed airflow, recording and closing out the work upon completion per SOP-011. Review open work orders for the asset against the open defect register before the event as governed by SOP-016. Because the supplied documents do not cover the transformer's specific ONAN cooling type or its age, no further guidance is improvised from asset facts alone.",
     "cited_doc_ids": [
-      "SOP-016",
       "SOP-011",
-      "MG-023"
+      "SOP-016"
     ],
-    "status": "fallback"
+    "input_tokens": 1474,
+    "output_tokens": 130,
+    "status": "ok"
   },
   "SUB-SGW-848": {
     "query_terms": [
@@ -349,12 +360,14 @@
         "score": 13.0351
       }
     ],
-    "brief": "Prioritise clearance work if an obstruction defect is outstanding, as restricted airflow removes the cooling margin needed during sustained high ambient conditions [SOP-011]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, including the reason, value, and period [MG-021].",
+    "brief": "Prioritise clearance work if an obstruction defect is outstanding, as restricted airflow removes the unit's cooling margin [SOP-011]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, including the reason, value, and period [MG-021].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023",
       "SOP-011"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 138,
     "status": "ok"
   },
   "SUB-SGW-354": {
@@ -407,6 +420,8 @@
       "SOP-016",
       "REG-042"
     ],
+    "input_tokens": 2866,
+    "output_tokens": 296,
     "status": "fallback"
   },
   "SUB-SGW-337": {
@@ -458,6 +473,8 @@
       "SOP-013",
       "SOP-016"
     ],
+    "input_tokens": 2988,
+    "output_tokens": 275,
     "status": "fallback"
   },
   "SUB-SGW-781": {
@@ -508,13 +525,13 @@
         "score": 14.6033
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; REG-042 Maintenance interval compliance.",
+    "brief": "Where the Camden Works transformer has an outstanding vegetation or obstruction defect, perform clearance work as it takes precedence over other remedial activity [SOP-011]. Ensure a minimum clearance of two metres between any growth and the radiator face, and one metre between growth and the compound fence line [SOP-011]. Keep ground cover within the compound below 150mm [SOP-011].",
     "cited_doc_ids": [
-      "MG-023",
-      "SOP-011",
-      "REG-042"
+      "SOP-011"
     ],
-    "status": "fallback"
+    "input_tokens": 2804,
+    "output_tokens": 266,
+    "status": "ok"
   },
   "SUB-SGW-340": {
     "query_terms": [
@@ -567,6 +584,8 @@
       "MG-023",
       "SOP-011"
     ],
+    "input_tokens": 2952,
+    "output_tokens": 331,
     "status": "fallback"
   },
   "SUB-SGW-172": {
@@ -624,6 +643,8 @@
       "SOP-016",
       "SOP-013"
     ],
+    "input_tokens": 3000,
+    "output_tokens": 354,
     "status": "fallback"
   },
   "SUB-SGW-307": {
@@ -671,13 +692,14 @@
         "score": 12.6233
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-013 Oil sampling and dissolved gas analysis.",
+    "brief": "Prioritise outstanding work orders against the asset's ability to shed heat in accordance with SOP-016, addressing any failed or degraded forced cooling, obstructed ventilation, low oil levels, or active leaks before the event begins. Where a Category 4 oil condition defect cannot be completed prior to the event, apply a loading restriction as governed by SOP-016. Furthermore, for units with advanced age and prior thermal exposure, apply the loading restriction referenced in MG-023 where the unit cannot be attended before the event.",
     "cited_doc_ids": [
       "MG-023",
-      "SOP-016",
-      "SOP-013"
+      "SOP-016"
     ],
-    "status": "fallback"
+    "input_tokens": 1497,
+    "output_tokens": 150,
+    "status": "ok"
   },
   "SUB-SGW-818": {
     "query_terms": [
@@ -721,13 +743,15 @@
         "score": 12.531
       }
     ],
-    "brief": "Prioritise the unit for pre-event attention because its advanced age and loading history leave it with a reduced margin against mechanical failure under sustained heat exposure [MG-023]. Where a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity to restore the cooling margin [SOP-011]. Obstructed ventilation must be cleared rather than deferred, as clearance is low-cost and immediate [SOP-015].",
+    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; SOP-015 Ventilation louvre and airflow inspection.",
     "cited_doc_ids": [
       "MG-023",
       "SOP-011",
       "SOP-015"
     ],
-    "status": "ok"
+    "input_tokens": 2894,
+    "output_tokens": 292,
+    "status": "fallback"
   },
   "SUB-SGW-335": {
     "query_terms": [
@@ -783,6 +807,8 @@
       "SOP-011",
       "REG-042"
     ],
+    "input_tokens": 2806,
+    "output_tokens": 298,
     "status": "fallback"
   },
   "SUB-SGW-541": {
@@ -827,11 +853,13 @@
         "score": 11.1649
       }
     ],
-    "brief": "Prioritise Sandbourne Ridge for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal stress (MG-023). Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+    "brief": "Prioritise Sandbourne Ridge 230/34kV for pre-event attention because it is an ageing unit with a history of high loading and prior heat-related faults, giving it a reduced margin against mechanical failure ([MG-023]). Since the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]). Ensure every de-rating applied is recorded along with the reason, the value, and the period ([MG-021]).",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1490,
+    "output_tokens": 153,
     "status": "ok"
   },
   "SUB-SGW-470": {
@@ -875,13 +903,15 @@
         "score": 13.4878
       }
     ],
-    "brief": "Prioritise Harrowgate Park for pre-event attention ahead of the forecast heat event by reviewing its open defect register in accordance with SOP-016. Because the unit is an ageing asset with heavy thermal exposure, also evaluate its insulation ageing and indicators as specified in MG-023. Ensure any failed dielectric results are addressed using the actions prescribed in SOP-013.",
+    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-013 Oil sampling and dissolved gas analysis.",
     "cited_doc_ids": [
-      "SOP-016",
       "MG-023",
+      "SOP-016",
       "SOP-013"
     ],
-    "status": "ok"
+    "input_tokens": 3002,
+    "output_tokens": 359,
+    "status": "fallback"
   },
   "SUB-SGW-095": {
     "query_terms": [
@@ -922,12 +952,15 @@
         "score": 14.3182
       }
     ],
-    "brief": "Inspect intake and exhaust louvres for blockage by debris, leaf litter, nesting material, and accumulated dust as specified in SOP-015. Clear any obstructed ventilation in preference to deferring it to restore the cooling margin before the heat event, adhering to SOP-015 and SOP-011. Where vegetation or obstruction defects are outstanding, execute clearance work as a priority in accordance with SOP-011.",
+    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-015 Ventilation louvre and airflow inspection; SOP-011 Vegetation and compound clearance around substation plant.",
     "cited_doc_ids": [
-      "SOP-011",
-      "SOP-015"
+      "MG-023",
+      "SOP-015",
+      "SOP-011"
     ],
-    "status": "ok"
+    "input_tokens": 2896,
+    "output_tokens": 317,
+    "status": "fallback"
   },
   "SUB-SGW-213": {
     "query_terms": [
@@ -970,11 +1003,13 @@
         "score": 10.3004
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 because this ageing unit cannot be attended before the forecast heat event. Refer to MG-023 and MG-021 for the specific de-rating rules and the rationale regarding cumulative thermal stress. The supplied documents do not cover any additional actions beyond applying this loading restriction.",
+    "brief": "Apply the loading restriction in MG-021 to the Quarrydale Grove transformer before the heat event, as the supplied documents do not cover direct remediation of its mechanical vulnerability from advanced age. Record the de-rating applied, the reason, the value, and the period according to MG-021. Ensure the loading restriction remains in place in accordance with MG-021.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1482,
+    "output_tokens": 103,
     "status": "ok"
   },
   "SUB-SGW-509": {
@@ -1020,13 +1055,15 @@
         "score": 11.8311
       }
     ],
-    "brief": "Prioritise Oakhurst Point for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under heat exposure (MG-023). Review open work orders against the asset to re-prioritise outstanding work affecting the unit's ability to shed heat, ensuring categories 1 to 3 are completed before the event begins (SOP-016). If the detailed inspection is overdue, bring it forward in preference to accepting the exposure (REG-042).",
+    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; REG-042 Maintenance interval compliance.",
     "cited_doc_ids": [
       "MG-023",
       "SOP-016",
       "REG-042"
     ],
-    "status": "ok"
+    "input_tokens": 2868,
+    "output_tokens": 392,
+    "status": "fallback"
   },
   "SUB-SGW-387": {
     "query_terms": [
@@ -1075,6 +1112,8 @@
       "SOP-016",
       "SOP-013"
     ],
+    "input_tokens": 3002,
+    "output_tokens": 381,
     "status": "fallback"
   },
   "SUB-SGW-487": {
@@ -1113,11 +1152,13 @@
         "score": 8.4435
       }
     ],
-    "brief": "As Yarrow Mill is an ageing unit facing heavy load through sustained heat, apply the loading restriction in MG-021 in preference to accepting the exposure if it cannot be attended before the event [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+    "brief": "Prioritise this ageing unit for pre-event attention ahead of a younger unit in otherwise similar condition, as it has a reduced margin against mechanical failure ([MG-023]). Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1451,
+    "output_tokens": 116,
     "status": "ok"
   },
   "SUB-SGW-131": {
@@ -1160,13 +1201,15 @@
         "score": 12.531
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; SOP-015 Ventilation louvre and airflow inspection.",
+    "brief": "Prioritise this ageing unit for pre-event attention before the forecast heat event, as units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling [MG-023]. If an outstanding vegetation or obstruction defect is present, execute clearance work in preference to other remedial activity to restore the unit's cooling margin [SOP-011]. Where blocked ventilation louvres are identified, clear any obstruction exceeding one quarter of the free area before the heat event [SOP-015].",
     "cited_doc_ids": [
       "MG-023",
       "SOP-011",
       "SOP-015"
     ],
-    "status": "fallback"
+    "input_tokens": 2884,
+    "output_tokens": 291,
+    "status": "ok"
   },
   "SUB-SGW-260": {
     "query_terms": [
@@ -1213,11 +1256,15 @@
         "score": 13.735
       }
     ],
-    "brief": "Inspect the Draycott Green transformer before the heat event and prioritize any outstanding vegetation or obstruction clearance work over other remedial activity. Restricted airflow removes the cooling margin the unit relies on during sustained high ambient conditions. Record the clearance work against the originating defect and close it out at the time of completion.",
+    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; REG-042 Maintenance interval compliance; SOP-011 Vegetation and compound clearance around substation plant.",
     "cited_doc_ids": [
+      "MG-023",
+      "REG-042",
       "SOP-011"
     ],
-    "status": "ok"
+    "input_tokens": 2806,
+    "output_tokens": 296,
+    "status": "fallback"
   },
   "SUB-SGW-451": {
     "query_terms": [
@@ -1260,11 +1307,13 @@
         "score": 9.9084
       }
     ],
-    "brief": "Prioritise this ageing unit for pre-event attention ahead of a younger unit in otherwise similar condition, as its age in service and cumulative loading history reduce its margin against mechanical failure [MG-023]. Where this unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritize Wexford Landing for pre-event attention because it is an ageing unit with a history of high loading, giving it a reduced margin against mechanical failure ahead of the heat event. If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. This guidance is drawn from MG-023 and MG-021.",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1450,
+    "output_tokens": 121,
     "status": "ok"
   },
   "SUB-SGW-505": {
@@ -1309,13 +1358,15 @@
         "score": 11.8311
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; REG-042 Maintenance interval compliance.",
+    "brief": "Prioritise pre-event attention for this ageing unit ahead of the forecast heat event (MG-023). Review open work orders against the asset and re-prioritise outstanding work according to its effect on the unit's ability to shed heat (SOP-016). Bring forward any overdue detailed inspection in preference to accepting unverified cooling exposure (REG-042).",
     "cited_doc_ids": [
       "MG-023",
       "SOP-016",
       "REG-042"
     ],
-    "status": "fallback"
+    "input_tokens": 1434,
+    "output_tokens": 132,
+    "status": "ok"
   },
   "SUB-SGW-832": {
     "query_terms": [
@@ -1375,6 +1426,8 @@
       "SOP-011",
       "SOP-016"
     ],
+    "input_tokens": 2950,
+    "output_tokens": 292,
     "status": "fallback"
   },
   "SUB-SGW-699": {
@@ -1412,11 +1465,13 @@
         "score": 11.2394
       }
     ],
-    "brief": "Prioritise Kingsley Green for pre-event attention before the forecast heat event, as it is an ageing unit with a history of high loading that has a reduced margin against mechanical failure (MG-023). If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision (MG-021).",
+    "brief": "Prior to the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit (MG-023).",
     "cited_doc_ids": [
-      "MG-023",
-      "MG-021"
+      "MG-021",
+      "MG-023"
     ],
+    "input_tokens": 1417,
+    "output_tokens": 60,
     "status": "ok"
   },
   "SUB-SGW-794": {
@@ -1477,6 +1532,8 @@
       "SOP-011",
       "SOP-016"
     ],
+    "input_tokens": 2950,
+    "output_tokens": 316,
     "status": "fallback"
   },
   "SUB-SGW-553": {
@@ -1521,10 +1578,12 @@
         "score": 11.6007
       }
     ],
-    "brief": "Inspect the asset's conservator sight glass at settled temperature and verify whether the oil level is below the minimum mark, as specified in SOP-012. If the level is below the mark, make-up oil must be added before the unit is exposed to the forecast heat event (SOP-012).",
+    "brief": "Review the open defect register for asset SUB-SGW-553 and re-prioritise outstanding work against its effect on the unit's ability to shed heat, per SOP-016. Complete any work concerning forced cooling, ventilation or airflow, oil level below minimum, or an active leak before the event begins wherever crew capacity allows, as directed in SOP-016. If category 4 oil condition defects cannot be completed, apply a loading restriction instead in accordance with SOP-016.",
     "cited_doc_ids": [
-      "SOP-012"
+      "SOP-016"
     ],
+    "input_tokens": 1496,
+    "output_tokens": 125,
     "status": "ok"
   },
   "SUB-SGW-868": {
@@ -1582,6 +1641,8 @@
       "SOP-016",
       "SOP-013"
     ],
+    "input_tokens": 2992,
+    "output_tokens": 298,
     "status": "fallback"
   },
   "SUB-SGW-632": {
@@ -1623,12 +1684,14 @@
         "score": 11.7472
       }
     ],
-    "brief": "Prioritise outstanding work orders for Langmere Lock 230/34kV ahead of the forecast heat event by addressing failed or degraded forced cooling, obstructed ventilation, or oil level and leak defects first, as set out in SOP-016. If category 4 oil condition defects cannot be completed before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Record every applied de-rating along with its reason, value, and period as required by MG-021.",
+    "brief": "Review the open defect register for the Langmere Lock unit and prioritise any outstanding work affecting heat shedding in accordance with SOP-016. Ensure work in categories one to three is completed before the heat event begins, or apply the loading restriction in MG-021 if an ageing unit cannot be attended.",
     "cited_doc_ids": [
-      "SOP-016",
+      "MG-021",
       "MG-023",
-      "MG-021"
+      "SOP-016"
     ],
+    "input_tokens": 1494,
+    "output_tokens": 95,
     "status": "ok"
   },
   "SUB-SGW-030": {
@@ -1686,6 +1749,8 @@
       "SOP-016",
       "SOP-013"
     ],
+    "input_tokens": 3010,
+    "output_tokens": 437,
     "status": "fallback"
   },
   "SUB-SGW-241": {
@@ -1733,13 +1798,15 @@
         "score": 12.531
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant; SOP-015 Ventilation louvre and airflow inspection.",
+    "brief": "Prioritise this unit for pre-event attention, as an ageing unit with a history of high loading has a reduced margin against mechanical failure under sustained heat exposure [MG-023]. Where a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity to restore the unit's cooling margin [SOP-011]. Obstructed ventilation must also be cleared in preference to deferring it, restoring the cooling margin across consecutive warm nights [SOP-015].",
     "cited_doc_ids": [
       "MG-023",
       "SOP-011",
       "SOP-015"
     ],
-    "status": "fallback"
+    "input_tokens": 1448,
+    "output_tokens": 154,
+    "status": "ok"
   },
   "SUB-SGW-696": {
     "query_terms": [
@@ -1784,11 +1851,13 @@
         "score": 10.3979
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because the asset cannot be attended before the event [MG-023]. The supplied documents do not cover any other specific action for this asset prior to the heat event.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this unit of advanced age [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified rather than when the event ends [MG-021].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1417,
+    "output_tokens": 115,
     "status": "ok"
   },
   "SUB-SGW-639": {
@@ -1840,13 +1909,13 @@
         "score": 15.2695
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-013 Oil sampling and dissolved gas analysis.",
+    "brief": "Prior to the forecast heat event, review the asset's open defect register as outlined in SOP-016. Because the supplied documents do not cover the specific remediation steps for this 51-year-old ONAN unit beyond this open work order review and the prioritisation of heat-shedding defects, no further physical intervention is instructed here.",
     "cited_doc_ids": [
-      "MG-023",
-      "SOP-016",
-      "SOP-013"
+      "SOP-016"
     ],
-    "status": "fallback"
+    "input_tokens": 1500,
+    "output_tokens": 104,
+    "status": "ok"
   },
   "SUB-SGW-657": {
     "query_terms": [
@@ -1904,6 +1973,8 @@
       "SOP-011",
       "SOP-016"
     ],
+    "input_tokens": 2946,
+    "output_tokens": 324,
     "status": "fallback"
   },
   "SUB-SGW-630": {
@@ -1952,12 +2023,14 @@
         "score": 15.1951
       }
     ],
-    "brief": "Prioritise Ashford Crossing for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure (MG-023). Review open work orders and re-prioritise outstanding work against the unit's ability to shed heat, completing any defects concerning failed cooling, obstructed airflow, or oil level and leaks before the event begins (SOP-016). Bring forward any overdue detailed inspection in preference to accepting the heat exposure, as the time elapsed since the last maintenance bounds how current the recorded condition is (REG-042).",
+    "brief": "Prioritise Ashford Crossing for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under heat exposure, as outlined in MG-023. Review the asset's open defect register as governed by SOP-016 to re-prioritise outstanding work affecting its ability to shed heat. Check maintenance compliance records following REG-042, bearing in mind that time elapsed since the last completed maintenance bounds how current the recorded condition can be.",
     "cited_doc_ids": [
       "MG-023",
       "SOP-016",
       "REG-042"
     ],
+    "input_tokens": 1441,
+    "output_tokens": 153,
     "status": "ok"
   },
   "SUB-SGW-732": {
@@ -2003,13 +2076,14 @@
         "score": 14.8296
       }
     ],
-    "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-011 Vegetation and compound clearance around substation plant.",
+    "brief": "Prioritise clearance work over other remedial activity for Rushmere Junction SUB-SGW-732 where vegetation or obstruction defects are outstanding before the heat event [SOP-011]. Complete work orders in categories 1 to 3 before the event begins wherever crew capacity allows [SOP-016].",
     "cited_doc_ids": [
-      "MG-023",
-      "SOP-016",
-      "SOP-011"
+      "SOP-011",
+      "SOP-016"
     ],
-    "status": "fallback"
+    "input_tokens": 1479,
+    "output_tokens": 109,
+    "status": "ok"
   },
   "SUB-SGW-766": {
     "query_terms": [
@@ -2047,11 +2121,13 @@
         "score": 8.4435
       }
     ],
-    "brief": "Prioritise this ageing unit for pre-event attention ahead of younger units, as its degraded insulation reduces its margin against mechanical failure during a heat event [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise this ageing unit for pre-event attention before the forecast heat event, as its reduced margin against mechanical failure makes it vulnerable during sustained thermal exposure [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-023",
-      "MG-021"
+      "MG-021",
+      "MG-023"
     ],
+    "input_tokens": 1451,
+    "output_tokens": 112,
     "status": "ok"
   }
 }

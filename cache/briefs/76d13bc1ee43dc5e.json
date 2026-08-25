@@ -1,9 +1,11 @@
 {
-  "brief": "Address the active oil leak on Bellview Reach before the heat event begins, as active leaks rank in the third priority tier for heat event preparation under SOP-016. If this oil issue cannot be attended to before the event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed by MG-023.",
+  "brief": "Prioritise the Bellview Reach transformer for pre-event attention because of its oil issue, addressing it in accordance with the priorities for heat events set out in SOP-016. If this work cannot be completed before the event, apply the loading restriction in MG-021 as specified in MG-023. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-016"
   ],
+  "input_tokens": 1491,
+  "output_tokens": 142,
   "status": "ok"
 }

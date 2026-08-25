@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise Westmarch Park 230/34kV for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under sustained thermal exposure [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise this ageing unit for pre-event attention ahead of younger units in similar condition because it has a reduced margin against mechanical failure under thermal cycling [MG-023]. If this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. For events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021].",
   "cited_doc_ids": [
     "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1451,
+  "output_tokens": 132,
   "status": "ok"
 }

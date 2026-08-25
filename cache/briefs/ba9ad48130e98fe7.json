@@ -1,8 +1,11 @@
 {
-  "brief": "Inspect intake and exhaust louvres for blockage by debris, leaf litter, nesting material, and accumulated dust as specified in SOP-015. Clear any obstructed ventilation in preference to deferring it to restore the cooling margin before the heat event, adhering to SOP-015 and SOP-011. Where vegetation or obstruction defects are outstanding, execute clearance work as a priority in accordance with SOP-011.",
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-015 Ventilation louvre and airflow inspection; SOP-011 Vegetation and compound clearance around substation plant.",
   "cited_doc_ids": [
-    "SOP-011",
-    "SOP-015"
+    "MG-023",
+    "SOP-015",
+    "SOP-011"
   ],
-  "status": "ok"
+  "input_tokens": 2896,
+  "output_tokens": 317,
+  "status": "fallback"
 }

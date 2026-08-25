@@ -1,8 +1,10 @@
 {
-  "brief": "Reduce the permissible load on Kingsley Green by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021]. Consider load transfer if the unit is approaching its temperature limit, if a cooling defect cannot be cleared before the event, or if an overtemperature alarm is received and load cannot otherwise be reduced [ERP-032]. Confirm the receiving asset's available capacity at the prevailing ambient temperature by applying the de-rating in MG-021 to both assets before switching [ERP-032].",
+  "brief": "Reduce the permissible load on Kingsley Green 138/13kV (SUB-SGW-699) according to ambient and cooling de-rating rules in MG-021. Consider emergency load transfer if the asset approaches its temperature limit, confirming the receiving asset's available capacity with MG-021 de-rating applied and verifying its condition per ERP-032. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "ERP-032"
   ],
+  "input_tokens": 1408,
+  "output_tokens": 147,
   "status": "ok"
 }

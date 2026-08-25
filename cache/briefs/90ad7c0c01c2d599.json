@@ -1,9 +1,11 @@
 {
-  "brief": "Inspect the open defect register for the Langmere Lock unit and prioritise any outstanding remedial work in descending order of forced-cooling, ventilation, and oil level or leak categories before the event begins. Since this unit is an ageing asset with a history of high loading and has outstanding remedial work, review its loading and apply the appropriate de-rating if the work cannot be completed. Record every de-rating applied along with its reason, value, and period.",
+  "brief": "Prioritise outstanding remedial work affecting the unit's ability to shed heat before the event begins, in accordance with the hierarchy in SOP-016. Because this unit is of advanced age with a history of high loading and has a reduced margin against mechanical failure, apply the loading restriction in MG-021 if the unit cannot be attended before the event as outlined in MG-023. Record every de-rating applied along with its reason, value, and period as required by MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-016"
   ],
+  "input_tokens": 1496,
+  "output_tokens": 156,
   "status": "ok"
 }

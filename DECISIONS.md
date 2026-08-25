@@ -1509,3 +1509,47 @@ table and the per-variant table disagree at k=10`.
 of the form "the right answer appears somewhere" is not a check. The notebook
 freshness test (D-043) has the same weakness and it is documented there; here it
 was not a theoretical weakness but the actual cause of two shipped errors.
+
+## D-045 — LLM cost is measured per distinct call, and briefs are counted too
+
+**Decision:** `extraction_cost.txt` deduplicates by cache key before summing
+tokens and reports distinct note texts alongside inspections. `retrieve.py`
+records tokens on every brief and writes `brief_cost.txt`. The README carries the
+combined table, checked by `tests/test_readme.py`.
+
+**Two defects, both found only when the numbers were needed for something.**
+
+The extraction figure overstated tokens by **38% on input and 28% on output**.
+Counts are stored in each cache entry when it is written; the summary summed them
+across *inspections*, but the cache is keyed on *note text*. 1,800 inspections
+share 1,298 distinct texts, so the 502 duplicates were charged twice. Reported
+1,382,833 input against a true 1,005,218.
+
+The label was wrong as well. "input tokens this run" sat directly beneath "API
+calls made: 0" on a fully cached run, which reads as a contradiction. The figure
+is the cost of *building* the corpus, replayed from cache, and now says so.
+
+Briefs recorded no tokens at all, so the system's total LLM cost was unrecorded.
+The 160 cached briefs predating the change were reported as **unknown rather than
+zero** — a missing measurement and a measured zero are different things, and only
+the `no_match` path is a real zero — then regenerated to measure them.
+
+**Measured.** Extraction 1,298 calls, 774 input and 111 output tokens each.
+Briefs 160 calls, 1,724 in and 163 out each, ranging 1,408–3,010 in because a
+brief carries three procedure documents in full. Whole pipeline from empty:
+1,458 calls, 1.28M input, 171k output.
+
+**Why this matters beyond tidiness.** The two layers have different cost models
+and the distinction was being obscured. Extraction is keyed on note text, which
+never changes, so it is durable: scoring the same fleet against a hundred
+forecasts makes zero extraction calls. Briefs are keyed on the forecast, so every
+forecast run regenerates them — including the same event re-scored at 72h, 48h
+and 24h. That is not a fixable property of the key: of the 63 assets appearing in
+any scenario's top 40, only 24 retrieve the same document set across scenarios,
+and the prompt embeds each asset's leading contributions with their values.
+Caching a brief across forecasts would serve the right procedures for the wrong
+reasons. "A re-run costs nothing" is true of this artefact's four fixed
+scenarios and false of production.
+
+**No monetary figure is recorded anywhere,** deliberately. Rates change and the
+repo has no business asserting one. Tokens and call counts are the durable facts.

@@ -5,5 +5,7 @@
     "SOP-011",
     "REG-042"
   ],
+  "input_tokens": 2806,
+  "output_tokens": 298,
   "status": "fallback"
 }

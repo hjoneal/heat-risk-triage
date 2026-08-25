@@ -62,7 +62,7 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
    action brief that may reference only the documents it was given — checked in its citation array
    *and* in its prose. D-037, D-038.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, a leakage
-   check, and the Bayes ceiling. 310 tests across six files: retrieval behaviour
+   check, and the Bayes ceiling. 312 tests across six files: retrieval behaviour
    (`test_retrieval.py`), citation integrity (`test_citations.py`), the claim that the interaction
    terms are what let the forecast reorder the queue (`test_ranking.py`), what the interface must not
    misreport (`test_interface.py`), whether the committed notebook still matches the pipeline
@@ -221,9 +221,13 @@ gate 4 rather than a sampling accident.
 
 ### Extraction
 
-1,800 notes, `gemini-3.5-flash-lite`, temperature 0. 1,049 API calls on the build run — 751 of the
-1,800 notes hit the cache, because 1,298 of the texts are distinct and the run began with a partially
-warm cache. 1,382,833 input and 184,879 output tokens. A re-run makes zero calls.
+1,800 notes, `gemini-3.5-flash-lite`, temperature 0. The cache is keyed on note text and only
+**1,298 of the 1,800 texts are distinct**, so a build from empty makes 1,298 calls and costs
+**1,005,218 input and 144,882 output tokens**. A re-run makes zero calls.
+
+Those token figures were previously reported as 1,382,833 and 184,879, an overstatement of 38% and
+28%: the counts are stored per cache entry but were summed per inspection, so the 502 duplicate
+notes were charged twice. `DECISIONS.md` D-045.
 
 **Zero extractions failed and zero came back wrapped in markdown fences. One was retried and
 succeeded on the second attempt. Zero of 1,798 evidence quotes were not found verbatim in their
@@ -407,6 +411,34 @@ the invented reference. `BRIEF_PROMPT_VERSION` moved to v2, which forbids passin
 inside a supplied document, and all 160 briefs were regenerated. Both offenders are gone.
 `DECISIONS.md` D-038.
 
+**LLM cost, measured.** Both layers record the tokens their cached results cost to produce, so a
+run that makes no calls still reports what the corpus was worth. `output/extraction_cost.txt` and
+`output/brief_cost.txt`.
+
+| Layer | Calls from empty | Input tokens | Output tokens | Per call (in / out) |
+|---|---|---|---|---|
+| Extraction | 1,298 | 1,005,218 | 144,882 | 774 / 111 |
+| Briefs | 160 | 275,907 | 26,128 | 1,724 / 163 |
+| **Total** | **1,458** | **1,281,125** | **171,010** | |
+
+A brief costs about 2.2× the input of an extraction, because it carries three procedure documents in
+full — 1,408 to 3,010 input tokens depending on which documents were retrieved, against
+60 to 437 output.
+
+**The two layers have different cost models, and only one is a one-off.** Extraction is keyed on note
+text, which never changes once an inspector has written it, so the entry is durable and the cost
+tracks inspection cadence rather than tool usage — scoring the same fleet against a hundred forecasts
+makes zero extraction calls. Briefs are keyed on the forecast, so **every forecast run regenerates
+them**, including the same event re-scored at 72h, 48h and 24h as it firms up. That is not an
+artefact of the key: of the 63 assets appearing in any scenario's top 40, only 24 retrieve the same
+document set across the scenarios they appear in, and the prompt embeds each asset's leading
+contributions with their values, which move with the weather. Caching a brief across forecasts would
+serve the right procedures for the wrong reasons.
+
+In production, then, budget extraction against new notes and briefs against
+`events × forecast updates × 40`. The risk model and the web application make no
+LLM calls at all.
+
 Retrieval filters on applicability before scoring relevance: MG-022 and SOP-014 cover forced-air
 cooling systems and do not apply to naturally-cooled ONAN units. No brief had ever returned an
 inapplicable document, but the constraint was holding by luck — one reaches **rank 4 for 9 of the
@@ -432,7 +464,7 @@ below the observed minimum and does not move when query construction does. A tes
 same terms repeated three times get the same verdict as the terms once. **It does not trigger on any
 of the 160 queries**, so no real query reaches the `no_match` path. `DECISIONS.md` D-041.
 
-310 tests pass, including a freshness check on the notebook: it is committed with its outputs, so
+312 tests pass, including a freshness check on the notebook: it is committed with its outputs, so
 re-running the pipeline silently invalidates every figure in it. The check compares its displayed
 numbers against `output/metrics.json` without executing it, and also asserts it ran clean, rendered
 its plots, and imports from the modules rather than reimplementing them. It went stale twice during
@@ -449,7 +481,7 @@ Out of scope by decision, not oversight.
 | Excluded | Why | What it would need |
 |---|---|---|
 | Water network (pumping stations, treatment) | Same architecture, different failure model. Building it twice adds no evidence. | Pump and treatment asset registers, hydraulic demand model |
-| Other hazards (hurricane, flood, wildfire) | Heat has the longest intervention window and the most predictable failure mechanism. The architecture is hazard-agnostic — the risk model is the swappable part. | Hazard-specific models; flood needs elevation and hydrology data |
+| Other hazards (hurricane, flood, wildfire) | Not because they carry less warning — hurricane tracks are forecast five days out, further than heat. Because heat is the hazard where warning converts into targeted work: a track cone tells you a storm is coming, not which substations it hits, whereas a temperature forecast covers the whole territory with confidence. And wind damage is not condition-dependent, so no inspection prevents it; heat failures are the assets that were already marginal. The architecture is hazard-agnostic — the risk model is the swappable part. | Hazard-specific models; flood needs elevation and hydrology data |
 | Weather forecasting | The system consumes a forecast, it does not produce one. NWS/NOAA feeds are authoritative. | Nothing — permanently out of scope |
 | Load forecasting | Needs real SCADA history to be credible. The risk ranking is useful without it. The generator does model demand rising with temperature, but that is an assumed physical response inside the synthetic world, not a forecast of load from history. | 2–3 years of half-hourly load telemetry per asset |
 | Anomaly detection on telemetry | Complementary, not substitutable. Detects developing faults continuously; this model ranks known condition against forecast stress. | Streaming SCADA integration, labelled fault history |
@@ -554,7 +586,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking, interface, notebook and README freshness
-DECISIONS.md               44 entries, append-only
+DECISIONS.md               45 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

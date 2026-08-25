@@ -1,9 +1,10 @@
 {
-  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-011 Vegetation and compound clearance around substation plant.",
+  "brief": "Review the open defect register for the asset before the forecast heat event, establishing what was raised, when, why it was deferred, and whether the reason for deferral still holds (SOP-016). Re-prioritise outstanding work against its effect on the unit's ability to shed heat, noting that vegetation or obstruction clearance takes precedence over other remedial activity where a defect is outstanding (SOP-011). Complete work in priority categories 1 to 3 before the event begins wherever crew capacity allows (SOP-016).",
   "cited_doc_ids": [
-    "MG-023",
-    "SOP-016",
-    "SOP-011"
+    "SOP-011",
+    "SOP-016"
   ],
-  "status": "fallback"
+  "input_tokens": 1474,
+  "output_tokens": 162,
+  "status": "ok"
 }

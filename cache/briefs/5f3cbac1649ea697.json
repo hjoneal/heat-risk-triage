@@ -1,9 +1,11 @@
 {
-  "brief": "As the supplied documents do not cover the specific action to take for Ashford Hill given its asset facts and ranking, please follow standard operational procedures. Refer to MG-023 regarding cumulative ageing and paper insulation condition indicators, SOP-016 regarding pre-event defect re-prioritisation, and REG-042 regarding maintenance interval compliance and overdue detailed inspections.",
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; REG-042 Maintenance interval compliance.",
   "cited_doc_ids": [
     "MG-023",
     "SOP-016",
     "REG-042"
   ],
-  "status": "ok"
+  "input_tokens": 2866,
+  "output_tokens": 296,
+  "status": "fallback"
 }

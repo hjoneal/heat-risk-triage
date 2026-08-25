@@ -1,9 +1,11 @@
 {
-  "brief": "Review the open defect register for the asset and complete outstanding work in priority categories 1 to 3 before the event begins wherever crew capacity allows, as governed by SOP-016. For this unit with ONAN cooling where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure, according to MG-023.",
+  "brief": "Prioritise the asset for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal cycling, as outlined in MG-023. If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Outstanding work should also be re-prioritised against its effect on the unit's ability to shed heat as governed by SOP-016.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-016"
   ],
+  "input_tokens": 1486,
+  "output_tokens": 158,
   "status": "ok"
 }

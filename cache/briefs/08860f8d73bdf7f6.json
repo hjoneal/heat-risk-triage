@@ -1,9 +1,11 @@
 {
-  "brief": "Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as instructed in MG-025. Apply the loading reduction specified in MG-021 if the event extends beyond 48 hours with overnight minima above 24 degrees, or apply it in preference to accepting the exposure if the unit cannot be attended before the event as outlined in MG-023. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified per MG-021.",
+  "brief": "Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025. Apply the loading reduction in MG-021 from the third day on events forecast to run beyond 48 hours with warm overnight minima, or where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure per MG-023. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified in accordance with MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "MG-025"
   ],
+  "input_tokens": 1458,
+  "output_tokens": 181,
   "status": "ok"
 }

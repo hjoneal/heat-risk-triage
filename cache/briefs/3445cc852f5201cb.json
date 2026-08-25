@@ -1,8 +1,10 @@
 {
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure, as an ageing unit with a history of high loading cannot be attended before the event according to MG-023. Record every de-rating applied, the reason, the value, and the period as required by MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, per MG-021.",
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because the unit cannot be attended before the heat event [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
   "cited_doc_ids": [
     "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1457,
+  "output_tokens": 118,
   "status": "ok"
 }

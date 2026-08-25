@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise this 45-year-old ageing unit for pre-event attention ahead of younger units in otherwise similar condition, as its advanced age and history of high loading leave a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in [MG-021] in preference to accepting the exposure ([MG-023]).",
+  "brief": "Prioritise this aged unit for pre- \u0b8e\u0ba3\u0bcd\u0ba3\u0bc6\u0baf\u0bcd attention ahead of younger units, recognising its reduced margin against mechanical failure under heat exposure [MG-023]. Where the unit cannot be attended before the forecast event, apply the loading restriction specified in MG-021 in preference to accepting the exposure [MG-023].",
   "cited_doc_ids": [
     "MG-023",
     "MG-021"
   ],
+  "input_tokens": 1492,
+  "output_tokens": 114,
   "status": "ok"
 }

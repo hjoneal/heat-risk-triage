@@ -62,11 +62,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure, as an ageing unit cannot be attended before the event [MG-023]. Where forced cooling is partially unavailable, reduce permissible load in proportion to the cooling capacity lost, noting that ONAN cooling type has no forced cooling fans to adjust [MG-021]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure before the forecast heat event, as instructed in MG-023. For sustained events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward in accordance with MG-021. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 140,
     "status": "ok"
   },
   "SUB-SGW-553": {
@@ -129,11 +131,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure before the forecast heat event, as outlined in MG-023. For sustained events exceeding 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward in accordance with MG-021. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified as specified in MG-021.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure before the heat event [MG-023]. Reduce permissible load based on ambient de-rating assessed over the 24 hours preceding the loading decision [MG-021]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1457,
+    "output_tokens": 131,
     "status": "ok"
   },
   "SUB-SGW-354": {
@@ -198,11 +202,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where an ageing unit cannot be attended before an event [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+    "brief": "Prioritise Westmarch Park 230/34kV for pre-event attention ahead of younger units, as its advanced age and history of high loading leave a reduced margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1455,
+    "output_tokens": 122,
     "status": "ok"
   },
   "SUB-SGW-248": {
@@ -263,11 +269,13 @@
         "score": 20.7584
       }
     ],
-    "brief": "Prioritise Penrose Ferry 230/34kV (SUB-SGW-248) for pre-event attention because of its advanced age and high loading history, which reduce its margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise the Penrose Ferry transformer for pre-event attention ahead of a younger unit in otherwise similar condition because its advanced age and history of high loading leave it with a reduced margin against mechanical failure. As stated in MG-023, where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure. Refer to MG-023 and MG-021 for the specific requirements.",
     "cited_doc_ids": [
       "MG-023",
       "MG-021"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 121,
     "status": "ok"
   },
   "SUB-SGW-724": {
@@ -321,10 +329,13 @@
         "score": 20.1944
       }
     ],
-    "brief": "As the Harrowgate Ridge unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where this ageing unit cannot be attended before the heat event [MG-023].",
     "cited_doc_ids": [
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1451,
+    "output_tokens": 75,
     "status": "ok"
   },
   "SUB-SGW-709": {
@@ -386,11 +397,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit, as outlined in MG-023. Note that the supplied documents do not cover ONAN forced cooling operation or specific cooling control instructions for this asset's cooling type.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit, as outlined in MG-023. As stated in MG-021, record every de-rating applied, the reason, the value and the period, and restore the full rating only when the underlying condition has been corrected and verified rather than when the event ends. Additionally, the supplied documents do not cover any specific operational response for the ONAN cooling type on this asset.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1456,
+    "output_tokens": 139,
     "status": "ok"
   },
   "SUB-SGW-213": {
@@ -452,11 +465,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritise this ageing unit for pre-event attention ahead of a younger unit in otherwise similar condition, as detailed in MG-023. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. The supplied documents do not cover any other specific action for this asset.",
+    "brief": "Prioritise this ageing unit with a history of high loading for pre-event attention, as it has a reduced margin against mechanical failure ahead of the heat event (MG-023). Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
     "cited_doc_ids": [
-      "MG-023",
-      "MG-021"
+      "MG-021",
+      "MG-023"
     ],
+    "input_tokens": 1457,
+    "output_tokens": 98,
     "status": "ok"
   },
   "SUB-SGW-165": {
@@ -524,10 +539,13 @@
         "score": 21.4787
       }
     ],
-    "brief": "As the Willow Common transformer cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise this ageing unit for pre-event attention ahead of younger units in otherwise similar condition, as detailed in MG-023. Where the unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023.",
     "cited_doc_ids": [
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1487,
+    "output_tokens": 107,
     "status": "ok"
   },
   "SUB-SGW-331": {
@@ -579,11 +597,13 @@
         "score": 17.0254
       }
     ],
-    "brief": "Execute an emergency load transfer following the approved switching schedule with the operations desk in attendance, and monitor top oil temperature on the receiving asset for the following six hours (ERP-032). Ensure the receiving asset's available capacity is confirmed at the prevailing ambient temperature by applying the de-rating in MG-021 to both assets (ERP-032). Record the time of each operation, the load transferred, and the resulting loading on both assets (ERP-032).",
+    "brief": "Execute the approved switching schedule to transfer load from Langmere Common to an adjacent asset, as detailed in ERP-032. Confirm the receiving asset's available capacity by applying the de-rating in MG-021, and monitor its top oil temperature for six hours following the transfer (ERP-032). Record the time of each operation, the load transferred, and the resulting loading on both assets (ERP-032).",
     "cited_doc_ids": [
       "ERP-032",
       "MG-021"
     ],
+    "input_tokens": 1416,
+    "output_tokens": 132,
     "status": "ok"
   },
   "SUB-SGW-696": {
@@ -641,11 +661,12 @@
         "score": 21.6594
       }
     ],
-    "brief": "Prioritise Ashford Bluff 138/13kV (SUB-SGW-696) for pre-event attention because, as an ageing unit with a history of high loading, it has a reduced margin against mechanical failure (MG-023). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+    "brief": "Prioritise Ashford Bluff 138/13kV (SUB-SGW-696) for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading that has a reduced margin against mechanical failure ([MG-023]). Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
     "cited_doc_ids": [
-      "MG-023",
-      "MG-021"
+      "MG-023"
     ],
+    "input_tokens": 1456,
+    "output_tokens": 129,
     "status": "ok"
   },
   "SUB-SGW-732": {
@@ -709,12 +730,13 @@
         "score": 20.3664
       }
     ],
-    "brief": "Prioritise Rushmere Junction for pre-event attention, and where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure as directed in MG-023. Where a unit is identified for pre-event attention and a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity as specified in SOP-011. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+    "brief": "Prioritise Rushmere Junction 230/34kV for pre-event attention because it is an ageing unit with a history of high loading that has a reduced margin against mechanical failure (MG-023). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023). Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, and apply a further 5 percent reduction from the third day onward on events extending beyond 48 hours with overnight minima above 24 degrees (MG-021).",
     "cited_doc_ids": [
-      "MG-023",
       "MG-021",
-      "SOP-011"
+      "MG-023"
     ],
+    "input_tokens": 1472,
+    "output_tokens": 181,
     "status": "ok"
   },
   "SUB-SGW-765": {
@@ -772,12 +794,14 @@
         "score": 19.3231
       }
     ],
-    "brief": "Inspect the Granite Works substation (SUB-SGW-765) to verify whether any vegetation or obstruction defects are outstanding, giving clearance work precedence over other remedial activity as guided by SOP-011. Re-prioritise any other outstanding work based on its effect on the unit's ability to shed heat in accordance with SOP-016. Ensure that every de-rating applied is recorded along with its reason, value, and period as instructed in MG-021.",
+    "brief": "Review the open defect register for Granite Works 138/13kV (SUB-SGW-765) before the forecast heat event, and re-prioritise any outstanding work against its effect on the unit's ability to shed heat as governed by SOP-016. If vegetation or obstruction defects are outstanding, execute clearance work as it takes precedence over other remedial activity in accordance with SOP-011. Additionally, apply loading and de-rating rules as specified in MG-021 where ambient conditions or cooling limitations require it.",
     "cited_doc_ids": [
       "MG-021",
       "SOP-011",
       "SOP-016"
     ],
+    "input_tokens": 1492,
+    "output_tokens": 150,
     "status": "ok"
   },
   "SUB-SGW-881": {
@@ -846,11 +870,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritise Ashford Hill 138/13kV (SUB-SGW-881) for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading [MG-023]. If this unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise the Ashford Hill unit for pre-event attention ahead of a younger unit in otherwise similar condition, as it has advanced age and a history of high loading [MG-023]. If the ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1456,
+    "output_tokens": 116,
     "status": "ok"
   },
   "SUB-SGW-260": {
@@ -916,11 +942,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Reduce the permissible load on Draycott Green according to MG-021, accounting for ambient de-rating based on the preceding 24 hours. Because the supplied documents do not cover ONAN cooling configuration specifics for forced cooling adjustments, apply only the ambient de-rating and sustained event reductions specified in MG-021. Furthermore, as directed by MG-023, apply the loading restriction in MG-021 in preference to accepting the exposure.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because this ageing unit cannot be attended before the heat event [MG-023]. Reduce the permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1457,
+    "output_tokens": 153,
     "status": "ok"
   },
   "SUB-SGW-341": {
@@ -978,11 +1006,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Prioritise this unit for pre-event attention ahead of younger units due to its advanced age and cumulative loading history, as outlined in MG-023. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023.",
+    "brief": "Prioritise Wexford Green 230/34kV (SUB-SGW-341) for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1452,
+    "output_tokens": 132,
     "status": "ok"
   },
   "SUB-SGW-794": {
@@ -1055,12 +1085,14 @@
         "score": 24.0918
       }
     ],
-    "brief": "Prioritise this aged unit for pre-event attention because units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling, as detailed in MG-023. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure, as stated in MG-023. Additionally, clear any outstanding vegetation or obstruction defects, as clearance work takes precedence over other remedial activity to maintain airflow for cooling, according to SOP-011.",
+    "brief": "Prioritise pre-event attention for this ageing unit to address its reduced margin against mechanical failure and accumulated heat exposure, as outlined in MG-023. If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, per MG-023. Additionally, where a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity to maintain unobstructed airflow to the radiator banks and ventilation openings, as specified in SOP-011.",
     "cited_doc_ids": [
-      "MG-023",
       "MG-021",
+      "MG-023",
       "SOP-011"
     ],
+    "input_tokens": 1467,
+    "output_tokens": 157,
     "status": "ok"
   },
   "SUB-SGW-567": {
@@ -1126,12 +1158,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritize Camden Green 230/34kV (SUB-SGW-567) for pre-event attention ahead of a younger unit in otherwise similar condition, as its advanced age and history of high loading leave it with a reduced margin against mechanical failure under heat exposure, per MG-023. Where the asset cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure, per MG-023. Note that because this asset uses ONAN cooling, the supplied documents do not cover any specific cooling-stage reduction rules for it, and the guidance on running forced cooling continuously through the overnight period does not apply.",
+    "brief": "Prioritize Camden Green (SUB-SGW-567) for pre-event attention because its advanced age reduces its margin against mechanical failure under heat exposure, as outlined in MG-023. Apply the ambient de-rating specified in MG-021, reducing the permissible load by 1.5 percent for each degree of average ambient above 30 degrees over the preceding 24 hours. If the event extends beyond 48 hours with overnight minima above 24 degrees, apply the further 5 percent reduction from the third day onward as required by MG-021.",
     "cited_doc_ids": [
       "MG-021",
-      "MG-023",
-      "MG-025"
+      "MG-023"
     ],
+    "input_tokens": 1452,
+    "output_tokens": 164,
     "status": "ok"
   },
   "SUB-SGW-565": {
@@ -1178,11 +1211,14 @@
         "score": 20.1944
       }
     ],
-    "brief": "Inspect Underhill Bluff before the heat event, noting that its advanced age of 54 years reduces its margin against mechanical failure under thermal stress (MG-023). Because this asset has ONAN cooling and the documents do not cover forced cooling operations for this type, apply the ambient and sustained event loading restrictions outlined in MG-021. Record every de-rating applied along with its reason, value, and period in accordance with MG-021.",
+    "brief": "Inspect Underhill Bluff before the forecast heat event, prioritizing this older unit with a history of high loading as outlined in MG-023. Where the event extends beyond 48 hours with overnight minima above 24 degrees, apply the loading reduction from MG-021 starting on the third day in accordance with MG-023 and MG-025. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
     "cited_doc_ids": [
       "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-025"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 151,
     "status": "ok"
   },
   "SUB-SGW-095": {
@@ -1230,12 +1266,14 @@
         "score": 15.6339
       }
     ],
-    "brief": "Inspect Underhill Hollow 230/34kV (SUB-SGW-095) and apply the loading reduction in MG-021 from the third day on events extending beyond 48 hours with overnight minima above 24 degrees, as required by MG-025. Ensure forced cooling is run continuously through the overnight period rather than allowing the thermostat to drop stages out, per MG-025. Vegetation and obstruction clearance work takes precedence over other remedial activity if an outstanding defect exists, according to SOP-011. Record every de-rating applied along with its reason, value, and period as specified in MG-021.",
+    "brief": "Crews must apply the loading reductions specified in MG-021 from the third day of the heat event due to sustained conditions with warm overnight minima, and run forced cooling continuously through the overnight period rather than letting the thermostat drop stages out as outlined in MG-025. If any vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity as directed in SOP-011. Record every de-rating applied and its reason in accordance with MG-021.",
     "cited_doc_ids": [
       "MG-021",
       "MG-025",
       "SOP-011"
     ],
+    "input_tokens": 1452,
+    "output_tokens": 151,
     "status": "ok"
   },
   "SUB-SGW-493": {
@@ -1303,11 +1341,13 @@
         "score": 21.4787
       }
     ],
-    "brief": "Prioritise this 45-year-old ageing unit for pre-event attention ahead of younger units in otherwise similar condition, as its advanced age and history of high loading leave a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in [MG-021] in preference to accepting the exposure ([MG-023]).",
+    "brief": "Prioritise this aged unit for pre- \u0b8e\u0ba3\u0bcd\u0ba3\u0bc6\u0baf\u0bcd attention ahead of younger units, recognising its reduced margin against mechanical failure under heat exposure [MG-023]. Where the unit cannot be attended before the forecast event, apply the loading restriction specified in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
       "MG-023",
       "MG-021"
     ],
+    "input_tokens": 1492,
+    "output_tokens": 114,
     "status": "ok"
   },
   "SUB-SGW-337": {
@@ -1371,11 +1411,13 @@
         "score": 21.4787
       }
     ],
-    "brief": "Prioritise Penrose Park for pre-event attention before the forecast heat event, noting that units of advanced age with warm nights have a reduced margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value and the period [MG-021].",
+    "brief": "Prioritise Penrose Park for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal stress [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1491,
+    "output_tokens": 115,
     "status": "ok"
   },
   "SUB-SGW-548": {
@@ -1444,11 +1486,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritise this ageing unit for pre-event attention, as units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal cycling [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise this aged unit for pre-event attention because of its accumulated heat and heavy sustained loading [MG-023]. If the unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
       "MG-023",
       "MG-021"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 102,
     "status": "ok"
   },
   "SUB-SGW-839": {
@@ -1513,11 +1557,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Prioritise this ageing unit for pre-event attention before the forecast heat event, as units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling [MG-023]. If this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritize Briarcliff Hill for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under the thermal cycling of a multi-day heat event [MG-023]. If the ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-023",
-      "MG-021"
+      "MG-021",
+      "MG-023"
     ],
+    "input_tokens": 1459,
+    "output_tokens": 122,
     "status": "ok"
   },
   "SUB-SGW-781": {
@@ -1580,11 +1626,14 @@
         "score": 19.1558
       }
     ],
-    "brief": "Inspect Camden Works 230/34kV (SUB-SGW-781) and clear any vegetation or obstruction encroaching on the ventilation openings or radiator banks, giving clearance work precedence over other remedial activity as specified in SOP-011. Reduce permissible load in accordance with MG-021 by assessing the average ambient over the 24 hours preceding the loading decision against the reference average of 30 degrees. Record every de-rating applied, the reason, the value, and the period pursuant to MG-021.",
+    "brief": "Inspect Camden Works 230/34kV (SUB-SGW-781) and clear any encroaching vegetation maintaining a minimum clearance of two metres between any growth and the radiator face, and one metre between growth and the compound fence line, as specified in SOP-011. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Record the sample reference, the result, and the resulting action against the asset, treating an open sampling defect as an outstanding remedial item for the purposes of pre-event triage pursuant to SOP-013.",
     "cited_doc_ids": [
       "MG-021",
-      "SOP-011"
+      "SOP-011",
+      "SOP-013"
     ],
+    "input_tokens": 1481,
+    "output_tokens": 180,
     "status": "ok"
   },
   "SUB-SGW-490": {
@@ -1640,12 +1689,14 @@
         "score": 17.3741
       }
     ],
-    "brief": "Inspect Halloway Hill 138/13kV (SUB-SGW-490) and apply the loading reductions and operational responses required by MG-021 and MG-025 during sustained heat events, as the supplied documents do not contain specific oil sampling or dissolved gas analysis results for this asset. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, as specified in MG-021.",
+    "brief": "As the Halloway Hill 138/13kV transformer has ONAN cooling, the forced cooling instructions in MG-025 and MG-021 do not apply to it. According to MG-021, apply the ambient de-rating for accumulated heat above 30 degrees and sustained high load, and record every de-rating applied along with the reason, value, and period. Per SOP-013, if there is an open sampling defect within the remedial window before the forecast heat event, apply the loading restriction in MG-021 until the work is complete and the retest returns within specification.",
     "cited_doc_ids": [
       "MG-021",
       "MG-025",
       "SOP-013"
     ],
+    "input_tokens": 1472,
+    "output_tokens": 182,
     "status": "ok"
   },
   "SUB-SGW-505": {
@@ -1702,11 +1753,13 @@
         "score": 20.1944
       }
     ],
-    "brief": "Prioritise Langmere Dale 230/34kV for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise Langmere Dale 230/34kV for pre-event attention ahead of a younger unit in otherwise similar condition because it is a unit of advanced age with a history of high loading (MG-023). Where this ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 124,
     "status": "ok"
   },
   "SUB-SGW-335": {
@@ -1775,10 +1828,12 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritise Fairmount Heights 230/34kV (SUB-SGW-335) for pre-event attention because, as an ageing unit with a history of high loading, it has a reduced margin against mechanical failure ([MG-023]). Where this unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+    "brief": "Prioritise this ageing unit for pre-vent attention ahead of a younger unit in otherwise similar condition, as a unit of advanced age with a history of high loading has a reduced margin against mechanical failure ([MG-023]). Where this unit cannot be attended before the heat event, apply the loading restriction in another procedure in preference to accepting the exposure ([MG-023]).",
     "cited_doc_ids": [
       "MG-023"
     ],
+    "input_tokens": 1454,
+    "output_tokens": 115,
     "status": "ok"
   },
   "SUB-SGW-787": {
@@ -1841,11 +1896,14 @@
         "score": 22.2234
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure for this ageing unit, as outlined in MG-023. The supplied documents do not cover any specific crew actions for ONAN cooling type beyond applying the general de-ratings and loading restrictions.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because this unit has advanced age and a history of high loading under heat exposure, as outlined in MG-023. The supplied documents do not cover any specific operational response for this asset's ONAN cooling type beyond the ambient and sustained loading provisions in MG-021 and MG-025.",
     "cited_doc_ids": [
       "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-025"
     ],
+    "input_tokens": 1456,
+    "output_tokens": 129,
     "status": "ok"
   },
   "SUB-SGW-442": {
@@ -1899,11 +1957,13 @@
         "score": 20.1944
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure, as an ageing unit with a history of high loading cannot be attended before the event according to MG-023. Record every de-rating applied, the reason, the value, and the period as required by MG-021. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends, per MG-021.",
+    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure because the unit cannot be attended before the heat event [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1457,
+    "output_tokens": 118,
     "status": "ok"
   },
   "SUB-SGW-717": {
@@ -1969,11 +2029,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure where this ageing unit cannot be attended before the heat event [MG-023]. A unit of advanced age with a history of high loading has a reduced margin against mechanical failure and must be prioritised for pre-event attention ahead of a younger unit in otherwise similar condition [MG-023].",
+    "brief": "Prioritise the Willow Bend 138/13kV unit for pre-event attention ahead of a younger unit in otherwise similar condition because its advanced age and history of high loading leave it with a reduced margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1455,
+    "output_tokens": 115,
     "status": "ok"
   },
   "SUB-SGW-517": {
@@ -2041,11 +2103,13 @@
         "score": 21.4787
       }
     ],
-    "brief": "Prioritise this unit for pre-event attention ahead of younger units in otherwise similar condition because it is an ageing unit with a history of high loading [MG-023]. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+    "brief": "Prioritise Langmere Gate for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under the thermal cycling of a multi-day heat event [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1492,
+    "output_tokens": 145,
     "status": "ok"
   },
   "SUB-SGW-325": {
@@ -2109,11 +2173,13 @@
         "score": 21.4787
       }
     ],
-    "brief": "Prioritise Stonebridge Lock 230/34kV (SUB-SGW-325) for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure. Oil treatment restores dielectric strength, but it does not restore the paper insulation.",
+    "brief": "Prioritise Stonebridge Lock 230/34kV (SUB-SGW-325) for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure. Where this ageing unit cannot be attended before the forecast heat event, apply the loading restriction in MG-021 in preference to accepting the exposure. Record every de-rating applied, the reason, the value, and the period.",
     "cited_doc_ids": [
       "MG-023",
       "MG-021"
     ],
+    "input_tokens": 1493,
+    "output_tokens": 120,
     "status": "ok"
   },
   "SUB-SGW-307": {
@@ -2179,10 +2245,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Prioritise Tilbrook Mill for pre-event attention before the forecast heat event, as it is an ageing unit with a history of high loading that has a reduced margin against mechanical failure ([MG-023]). If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+    "brief": "Prioritise Tilbrook Mill 230/34kV for pre-event attention ahead of younger units, as its advanced age and history of high loading leave it with a reduced margin against mechanical failure during heat exposure [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
+      "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1451,
+    "output_tokens": 127,
     "status": "ok"
   },
   "SUB-SGW-408": {
@@ -2246,10 +2315,14 @@
         "score": 20.7584
       }
     ],
-    "brief": "Prioritise this unit for pre-event attention ahead of a younger unit in otherwise similar condition because it is an ageing unit with a history of high loading, which gives it a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+    "brief": "Prioritise Kelvedon Vale for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal cycling [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. If the event is forecast to run beyond 48 hours with warm overnight minima, apply the loading reduction in MG-021 from the third day and run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
     "cited_doc_ids": [
-      "MG-023"
+      "MG-023",
+      "MG-021",
+      "MG-025"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 182,
     "status": "ok"
   },
   "SUB-SGW-489": {
@@ -2304,11 +2377,13 @@
         "score": 17.0103
       }
     ],
-    "brief": "Consider load transfer to move demand from Draycott Bluff to an adjacent asset with available capacity, per ERP-032. Before switching, confirm the receiving asset's available capacity by applying the de-rating in MG-021 to both assets and check the receiving asset's condition. Coordinate the execution with the operations desk according to ERP-032.",
+    "brief": "Reduce permissible load in accordance with MG-021, accounting for ambient de-rating based on accumulated heat above 30 degrees and any reduced cooling capacity. If the unit approaches its temperature limit, consider emergency load transfer to an adjacent asset with available capacity as detailed in ERP-032. Ensure both assets have their available capacity assessed at prevailing ambient temperatures using MG-021 de-ratings before executing any load transfer. Record every de-rating applied and monitor the receiving asset's top oil temperature for the following six hours after any transfer.",
     "cited_doc_ids": [
-      "ERP-032",
-      "MG-021"
+      "MG-021",
+      "ERP-032"
     ],
+    "input_tokens": 1455,
+    "output_tokens": 138,
     "status": "ok"
   },
   "SUB-SGW-571": {
@@ -2371,11 +2446,13 @@
         "score": 22.2234
       }
     ],
-    "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure for this ageing unit, as outlined in MG-023. Note that the supplied documents do not cover forced cooling operation for this ONAN cooling type.",
+    "brief": "Prioritize this unit for pre-event attention because its advanced age and history of high loading reduce its margin against mechanical failure (MG-023). Where the unit cannot be attended before the heat event, apply the loading restrictions specified in MG-021 in preference to accepting the exposure (MG-023).",
     "cited_doc_ids": [
       "MG-021",
       "MG-023"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 107,
     "status": "ok"
   },
   "SUB-SGW-192": {
@@ -2440,11 +2517,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Prioritise Vernham Creek (SUB-SGW-192) for pre-event attention because, as an ageing unit with a history of high loading, it has a reduced margin against mechanical failure ([MG-023]). Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
+    "brief": "Prioritise Vernham Creek for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure [MG-023]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-021",
-      "MG-023"
+      "MG-023",
+      "MG-021"
     ],
+    "input_tokens": 1457,
+    "output_tokens": 111,
     "status": "ok"
   },
   "SUB-SGW-619": {
@@ -2509,12 +2588,13 @@
         "score": 21.6594
       }
     ],
-    "brief": "Prioritise Underhill Reach for pre-event attention because units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling [MG-023]. Where an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. If the event extends beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Run available forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
+    "brief": "Prioritise Underhill Reach for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under thermal cycling [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
     "cited_doc_ids": [
-      "MG-023",
       "MG-021",
-      "MG-025"
+      "MG-023"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 115,
     "status": "ok"
   },
   "SUB-SGW-149": {
@@ -2561,12 +2641,14 @@
         "score": 20.1944
       }
     ],
-    "brief": "Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as instructed in MG-025. Apply the loading reduction specified in MG-021 if the event extends beyond 48 hours with overnight minima above 24 degrees, or apply it in preference to accepting the exposure if the unit cannot be attended before the event as outlined in MG-023. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified per MG-021.",
+    "brief": "Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as detailed in MG-025. Apply the loading reduction in MG-021 from the third day on events forecast to run beyond 48 hours with warm overnight minima, or where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure per MG-023. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified in accordance with MG-021.",
     "cited_doc_ids": [
       "MG-021",
       "MG-023",
       "MG-025"
     ],
+    "input_tokens": 1458,
+    "output_tokens": 181,
     "status": "ok"
   },
   "SUB-SGW-699": {
@@ -2610,12 +2692,14 @@
         "score": 16.2082
       }
     ],
-    "brief": "Reduce the permissible load on Kingsley Green 138/13kV (SUB-SGW-699) in accordance with the ambient de-rating and sustained event requirements in MG-021 and MG-025, since the unit has accumulated heat above 30 degrees and sustained heavy load during the heat event. Consider emergency load transfer pursuant to ERP-032 if the unit approaches its temperature limit, ensuring the receiving asset's capacity is assessed with MG-021 de-ratings applied. Record every de-rating applied, the reason, the value, and the period as specified in MG-021.",
+    "brief": "Reduce permissible load in accordance with MG-021, accounting for ambient de-rating and the sustained event reduction, while noting that the supplied documents do not cover any specific operational response for this asset's ONAN cooling type. Record every de-rating applied, the reason, the value, and the period as required by MG-021. Consider load transfer under ERP-032 if the unit approaches its temperature limit, ensuring the receiving asset's capacity is assessed with MG-021 de-rating applied.",
     "cited_doc_ids": [
       "MG-021",
       "MG-025",
       "ERP-032"
     ],
+    "input_tokens": 1414,
+    "output_tokens": 141,
     "status": "ok"
   }
 }

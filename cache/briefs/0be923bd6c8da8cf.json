@@ -1,7 +1,10 @@
 {
-  "brief": "Prioritise this ageing asset for pre-event attention before the forecast heat event, as an ageing unit with a history of high loading has a reduced margin against mechanical failure [MG-023]. Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise Briarcliff Hill for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under heat exposure (MG-023). Where such an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
   "cited_doc_ids": [
+    "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1455,
+  "output_tokens": 101,
   "status": "ok"
 }

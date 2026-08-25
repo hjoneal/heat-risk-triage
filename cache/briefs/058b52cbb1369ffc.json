@@ -1,9 +1,10 @@
 {
-  "brief": "Brief generation failed. Applicable procedures: SOP-016 Outstanding work order review and defect close-out; SOP-011 Vegetation and compound clearance around substation plant; MG-023 Insulation ageing and end-of-life indicators.",
+  "brief": "Prioritise outstanding vegetation and obstruction clearance work ahead of the heat event to ensure unobstructed airflow, recording and closing out the work upon completion per SOP-011. Review open work orders for the asset against the open defect register before the event as governed by SOP-016. Because the supplied documents do not cover the transformer's specific ONAN cooling type or its age, no further guidance is improvised from asset facts alone.",
   "cited_doc_ids": [
-    "SOP-016",
     "SOP-011",
-    "MG-023"
+    "SOP-016"
   ],
-  "status": "fallback"
+  "input_tokens": 1474,
+  "output_tokens": 130,
+  "status": "ok"
 }

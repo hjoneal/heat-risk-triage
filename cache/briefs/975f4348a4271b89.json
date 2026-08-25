@@ -1,9 +1,11 @@
 {
-  "brief": "Review the open defect register for Westmarch Park 230/34kV ahead of the forecast heat event and re-prioritise any outstanding work according to its effect on the unit's ability to shed heat (SOP-016). For this ageing unit, apply the loading restriction in MG-021 if pre-event attention is not possible (MG-023).",
+  "brief": "Prioritise Westmarch Park for pre-event attention before the forecast heat event, as units of advanced age with high loading have a reduced margin against mechanical failure ([MG-023]). Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]). Re-prioritise any outstanding work against its effect on the unit's ability to shed heat, completing categories 1 to 3 before the event begins wherever crew capacity allows ([SOP-016]).",
   "cited_doc_ids": [
-    "SOP-016",
     "MG-023",
-    "MG-021"
+    "MG-021",
+    "SOP-016"
   ],
+  "input_tokens": 1486,
+  "output_tokens": 167,
   "status": "ok"
 }

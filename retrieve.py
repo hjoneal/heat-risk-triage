@@ -177,7 +177,9 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
                    scenario_id, model, offline):
     """One brief, cached by asset, scenario and the documents it was given."""
     if not retrieved:
-        return {"brief": config.NO_MATCH_BRIEF, "cited_doc_ids": [], "status": "no_match"}
+        # No call is made, so the zeros are real rather than unknown.
+        return {"brief": config.NO_MATCH_BRIEF, "cited_doc_ids": [], "status": "no_match",
+                "input_tokens": 0, "output_tokens": 0}
 
     doc_ids = "".join(hit["doc_id"] for hit in retrieved)
     key = llm.cache_key(asset["asset_id"] + scenario_id + doc_ids
@@ -195,9 +197,15 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
     prompt = build_brief_prompt(asset, contributions, retrieved, documents_by_id)
     retrieved_ids = {hit["doc_id"] for hit in retrieved}
 
+    input_tokens = 0
+    output_tokens = 0
     for _ in range(config.LLM_MAX_RETRIES + 1):
-        raw_text, _, _ = llm.call_llm(
+        raw_text, used_in, used_out = llm.call_llm(
             BRIEF_SYSTEM_PROMPT, prompt, model, config.BRIEF_MAX_TOKENS)
+        # Accumulated across retries, because a retry is billed like any other
+        # call and a cost figure that ignored them would understate the corpus.
+        input_tokens += used_in
+        output_tokens += used_out
         body, _ = llm.strip_code_fences(raw_text)
         try:
             parsed = json.loads(body)
@@ -215,7 +223,8 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
         # Measured before this check existed, 2 of 160 briefs did exactly that.
         if not set(DOC_ID_IN_TEXT.findall(brief)) <= retrieved_ids:
             continue
-        record = {"brief": brief, "cited_doc_ids": cited, "status": "ok"}
+        record = {"brief": brief, "cited_doc_ids": cited, "status": "ok",
+                  "input_tokens": input_tokens, "output_tokens": output_tokens}
         llm.write_cache(config.BRIEF_CACHE_DIR, key, record)
         return record
 
@@ -225,6 +234,8 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
         "brief": f"Brief generation failed. Applicable procedures: {titles}.",
         "cited_doc_ids": [hit["doc_id"] for hit in retrieved],
         "status": "fallback",
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
     }
     llm.write_cache(config.BRIEF_CACHE_DIR, key, record)
     return record
@@ -261,6 +272,51 @@ def write_score_distribution(all_top_scores, path):
     path.write_text("\n".join(lines) + "\n")
 
 
+def write_brief_cost(briefs_by_scenario, model, path):
+    """What the brief corpus cost to produce, alongside the extraction figure.
+
+    Only the extraction layer reported its tokens, which left the system's total
+    LLM cost unrecorded — a gap that showed up the moment someone needed a cost
+    line rather than a metric. Counts are stored per cached brief when it is
+    written, so like the extraction figure they survive a replay.
+
+    Entries cached before this accounting existed carry no counts. They are
+    reported as unknown rather than as zero: a missing measurement and a measured
+    zero are different things, and only the `no_match` path is a real zero.
+    """
+    records = [r for briefs in briefs_by_scenario.values() for r in briefs.values()]
+    measured = [r for r in records if "input_tokens" in r]
+    unknown = len(records) - len(measured)
+    called = [r for r in measured if r["status"] != "no_match"]
+
+    lines = [
+        "Brief generation",
+        f"model: {model}",
+        f"prompt version: {config.BRIEF_PROMPT_VERSION}",
+        f"scenarios: {len(briefs_by_scenario)}",
+        f"briefs: {len(records)} ({config.BRIEF_TOP_N} per scenario)",
+        f"reaching the no_match path, so making no call: "
+        f"{sum(1 for r in measured if r['status'] == 'no_match')}",
+        "",
+        "Cost of building the brief corpus, whether or not this run paid it.",
+        f"briefs with token counts recorded: {len(measured)} of {len(records)}",
+        f"input tokens: {sum(r['input_tokens'] for r in measured)}",
+        f"output tokens: {sum(r['output_tokens'] for r in measured)}",
+        f"calls to rebuild from empty: {len(called)}",
+    ]
+    if unknown:
+        lines += [
+            "",
+            f"NOT COUNTED: {unknown} briefs were cached before token accounting was",
+            "added and carry no counts. The totals above cover the rest. Regenerate",
+            "with a bumped BRIEF_PROMPT_VERSION, or delete cache/briefs/, to measure",
+            "the whole corpus.",
+        ]
+    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n")
+    print("\n".join(lines[:6]))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--offline", action="store_true",
@@ -276,6 +332,7 @@ def main():
     index = build_index(documents)
 
     all_top_scores = []
+    briefs_by_scenario = {}
     no_match_count = 0
 
     for scenario_id, _, _, _, _, _ in config.SCENARIOS:
@@ -304,11 +361,13 @@ def main():
                 **brief,
             }
 
+        briefs_by_scenario[scenario_id] = briefs
         if not args.scores_only:
             path = config.OUTPUT_DIR / f"briefs_{scenario_id}.json"
             path.write_text(json.dumps(briefs, indent=2) + "\n")
             print(f"wrote {path.name}: {len(briefs)} briefs")
 
+    write_brief_cost(briefs_by_scenario, model, config.OUTPUT_DIR / "brief_cost.txt")
     write_score_distribution(all_top_scores, config.OUTPUT_DIR / "bm25_scores.txt")
     totals = [s for s, _ in all_top_scores]
     per_term = [s / n if n else 0.0 for s, n in all_top_scores]

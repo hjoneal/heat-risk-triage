@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise Harrowgate Park for pre-event attention ahead of the forecast heat event by reviewing its open defect register in accordance with SOP-016. Because the unit is an ageing asset with heavy thermal exposure, also evaluate its insulation ageing and indicators as specified in MG-023. Ensure any failed dielectric results are addressed using the actions prescribed in SOP-013.",
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; SOP-013 Oil sampling and dissolved gas analysis.",
   "cited_doc_ids": [
-    "SOP-016",
     "MG-023",
+    "SOP-016",
     "SOP-013"
   ],
-  "status": "ok"
+  "input_tokens": 3002,
+  "output_tokens": 359,
+  "status": "fallback"
 }

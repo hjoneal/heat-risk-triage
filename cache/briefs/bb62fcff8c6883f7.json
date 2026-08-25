@@ -1,9 +1,11 @@
 {
-  "brief": "Inspect Halloway Hill 138/13kV (SUB-SGW-490) and apply the loading reductions and operational responses required by MG-021 and MG-025 during sustained heat events, as the supplied documents do not contain specific oil sampling or dissolved gas analysis results for this asset. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021. Restore the full rating only when the underlying condition has been corrected and verified, as specified in MG-021.",
+  "brief": "As the Halloway Hill 138/13kV transformer has ONAN cooling, the forced cooling instructions in MG-025 and MG-021 do not apply to it. According to MG-021, apply the ambient de-rating for accumulated heat above 30 degrees and sustained high load, and record every de-rating applied along with the reason, value, and period. Per SOP-013, if there is an open sampling defect within the remedial window before the forecast heat event, apply the loading restriction in MG-021 until the work is complete and the retest returns within specification.",
   "cited_doc_ids": [
     "MG-021",
     "MG-025",
     "SOP-013"
   ],
+  "input_tokens": 1472,
+  "output_tokens": 182,
   "status": "ok"
 }

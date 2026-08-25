@@ -180,3 +180,64 @@ def test_no_dropped_feature_is_described_as_a_feature():
                         rf"`{name}`[^.]{{0,60}}\bare features\b"]:
             assert not re.search(pattern, text), \
                 f"README still describes the dropped {name} as a feature"
+
+
+def test_the_cost_table_matches_what_the_scripts_recorded():
+    """Cost figures are quoted in a PRD, so a stale one is worse than none.
+
+    The previous extraction figure overstated tokens by 38% for a year of this
+    build's life, because the counts were summed per inspection while the cache
+    is keyed per note text (D-045). Nothing caught it until someone needed the
+    number for something.
+    """
+    import json as _json
+    for path in ["extraction_cost.txt", "brief_cost.txt"]:
+        if not (config.OUTPUT_DIR / path).exists():
+            pytest.skip(f"{path} not present; run the pipeline first")
+
+    def figure(filename, prefix):
+        for line in (config.OUTPUT_DIR / filename).read_text().splitlines():
+            if line.startswith(prefix):
+                return int(line.split()[-1])
+        raise AssertionError(f"{filename} has no line starting {prefix!r}")
+
+    rows = table_with_header(load_readme(), "Layer", "Calls from empty")
+    body = {r[0].strip("*"): r for r in rows[1:]}
+
+    expected = {
+        "Extraction": (figure("extraction_cost.txt", "calls to rebuild from empty:"),
+                       figure("extraction_cost.txt", "input tokens:"),
+                       figure("extraction_cost.txt", "output tokens:")),
+        "Briefs": (figure("brief_cost.txt", "calls to rebuild from empty:"),
+                   figure("brief_cost.txt", "input tokens:"),
+                   figure("brief_cost.txt", "output tokens:")),
+    }
+    for layer, (calls, tokens_in, tokens_out) in expected.items():
+        assert layer in body, f"{layer} missing from the README cost table"
+        row = body[layer]
+        for column, value, what in [(1, calls, "calls"), (2, tokens_in, "input tokens"),
+                                    (3, tokens_out, "output tokens")]:
+            assert numeric(row[column].replace(",", "")) == value, (
+                f"cost table, {layer}, {what}: README says {row[column]}, "
+                f"the run recorded {value:,}"
+            )
+
+    total = body["Total"]
+    assert numeric(total[1].replace(",", "")) == sum(v[0] for v in expected.values())
+    assert numeric(total[2].replace(",", "")) == sum(v[1] for v in expected.values())
+    assert numeric(total[3].replace(",", "")) == sum(v[2] for v in expected.values())
+
+
+def test_extraction_tokens_are_counted_once_per_distinct_note():
+    """The bug this guards: 1,800 inspections share 1,298 texts and one cache
+    entry each, so summing per inspection charged 502 duplicates twice."""
+    import pandas as pd
+    path = config.DATA_DIR / "inspections.csv"
+    if not path.exists() or not (config.OUTPUT_DIR / "extraction_cost.txt").exists():
+        pytest.skip("inspections or extraction cost not present")
+    reported = None
+    for line in (config.OUTPUT_DIR / "extraction_cost.txt").read_text().splitlines():
+        if line.startswith("distinct note texts:"):
+            reported = int(line.split()[-1])
+    assert reported is not None, "extraction_cost.txt no longer reports distinct texts"
+    assert reported == pd.read_csv(path)["note_text"].nunique()

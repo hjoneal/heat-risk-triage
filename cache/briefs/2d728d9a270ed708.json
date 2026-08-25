@@ -1,9 +1,11 @@
 {
-  "brief": "Review the open defect register for Harrowgate Ridge ahead of the forecast heat event, prioritising any outstanding work related to cooling, ventilation, or oil levels for completion before the event begins. If an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. Refer to MG-023, SOP-016, and MG-021 for detailed ageing, defect review, and de-rating criteria.",
+  "brief": "Prioritise pre-event attention for this ageing unit to address any outstanding work affecting its ability to shed heat, in descending order of priority from cooling and ventilation defects to oil leaks and condition defects [SOP-016]. If the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
   "cited_doc_ids": [
+    "MG-021",
     "MG-023",
-    "SOP-016",
-    "MG-021"
+    "SOP-016"
   ],
+  "input_tokens": 1490,
+  "output_tokens": 170,
   "status": "ok"
 }

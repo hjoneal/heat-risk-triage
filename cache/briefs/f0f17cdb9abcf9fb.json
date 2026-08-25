@@ -1,8 +1,10 @@
 {
-  "brief": "For Langmere Common 230/34kV (SUB-SGW-331), apply the cooling defect reduction to the permissible load in proportion to the capacity lost, and apply ambient de-rating for average ambient above 30 degrees [MG-021]. Consider emergency load transfer where the unit approaches its temperature limit, confirming the receiving asset's available capacity with MG-021 de-rating and checking its condition before switching [ERP-032]. On events exceeding 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021].",
+  "brief": "Reduce permissible load by 1.5 percent of rating for each degree of average ambient above 30 degrees, assessed over the 24 hours preceding the loading decision [MG-021]. Where an event extends beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Consider load transfer where the unit is approaching its temperature limit, where a cooling defect cannot be cleared before an event, or where an overtemperature alarm has been received [ERP-032]. Confirm the receiving asset's available capacity at the prevailing ambient temperature by applying the de-rating in MG-021 to both assets before switching [ERP-032].",
   "cited_doc_ids": [
     "MG-021",
     "ERP-032"
   ],
+  "input_tokens": 1410,
+  "output_tokens": 180,
   "status": "ok"
 }

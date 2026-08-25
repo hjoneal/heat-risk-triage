@@ -2,10 +2,17 @@ Extraction run
 model: gemini-3.5-flash-lite
 prompt version: v1
 notes processed: 1800
+distinct note texts: 1298
 served from cache: 1800
-API calls made: 0
+API calls made this run: 0
 extractions retried: 1
 extractions failed after retry: 0
 outputs wrapped in markdown fences: 0
-input tokens this run: 1382833
-output tokens this run: 184879
+
+Cost of building the extraction corpus, whether or not this run paid it.
+Token counts are stored in each cache entry when it is written, so they
+survive a replay from cache; a run reporting zero API calls still reports
+what the corpus cost to produce.
+input tokens: 1005218
+output tokens: 144882
+calls to rebuild from empty: 1298

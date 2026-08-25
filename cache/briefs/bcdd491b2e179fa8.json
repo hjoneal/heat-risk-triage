@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritise this ageing unit for pre-event attention before the forecast heat event, as units of advanced age with high loading histories have reduced margins against mechanical failure under thermal cycling [MG-023]. If this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritize Briarcliff Hill for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under the thermal cycling of a multi-day heat event [MG-023]. If the ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
   "cited_doc_ids": [
-    "MG-023",
-    "MG-021"
+    "MG-021",
+    "MG-023"
   ],
+  "input_tokens": 1459,
+  "output_tokens": 122,
   "status": "ok"
 }

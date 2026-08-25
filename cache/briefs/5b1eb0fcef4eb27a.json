@@ -1,9 +1,9 @@
 {
-  "brief": "Prioritise clearance work over other remedial activity where an obstruction defect is outstanding, as restricted airflow removes the cooling margin the unit relies on during sustained high ambient conditions [SOP-011]. Complete outstanding work in categories 1 to 3 before the event begins wherever crew capacity allows [SOP-016]. Record every de-rating applied, the reason, the value and the period [MG-021].",
+  "brief": "Inspect ventilation grilles and intake louvres for accumulated leaf litter, seed heads, and nesting material as set out in SOP-011. Where a unit is identified for pre-event attention and an obstruction defect is outstanding, clearance work takes precedence over other remedial activity according to SOP-011. Record the clearance work against the originating defect and close it out upon completion per SOP-011.",
   "cited_doc_ids": [
-    "MG-021",
-    "SOP-011",
-    "SOP-016"
+    "SOP-011"
   ],
+  "input_tokens": 1483,
+  "output_tokens": 102,
   "status": "ok"
 }

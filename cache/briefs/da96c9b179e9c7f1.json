@@ -1,8 +1,10 @@
 {
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting exposure, as an ageing unit cannot be attended before the event [MG-023]. Where forced cooling is partially unavailable, reduce permissible load in proportion to the cooling capacity lost, noting that ONAN cooling type has no forced cooling fans to adjust [MG-021]. On events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward [MG-021]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure before the forecast heat event, as instructed in MG-023. For sustained events extending beyond 48 hours with overnight minima above 24 degrees, apply a further 5 percent reduction from the third day onward in accordance with MG-021. Record every de-rating applied, the reason, the value, and the period as required by MG-021.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1458,
+  "output_tokens": 140,
   "status": "ok"
 }

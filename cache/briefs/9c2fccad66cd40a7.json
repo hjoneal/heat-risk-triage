@@ -1,9 +1,11 @@
 {
-  "brief": "Prior to the forecast heat event, review the open defect register for Pinecrest Junction (SUB-SGW-659) to establish what open work orders exist and why any were deferred. If any outstanding work falls into categories 1 to 3 regarding heat-shedding ability, complete it before the event begins wherever crew capacity allows, or apply the loading restriction in MG-021 if an ageing unit cannot be attended. Do not close any defect without verified remedial work completed on site.",
+  "brief": "Review the open defect register for Pinecrest Junction (SUB-SGW-659) to establish what was raised, when, why it was deferred, and whether the reason for deferral still holds. If any outstanding work falls into categories 1 to 3 regarding heat-shedding ability, complete it before the event begins wherever crew capacity allows. For ageing units that cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-016"
   ],
+  "input_tokens": 1489,
+  "output_tokens": 133,
   "status": "ok"
 }

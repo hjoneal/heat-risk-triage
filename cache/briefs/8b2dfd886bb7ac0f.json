@@ -1,8 +1,10 @@
 {
-  "brief": "Prioritize Ashford Hill for pre-event attention because its advanced age and history of high loading leave it with a reduced margin against mechanical failure under thermal stress [MG-023]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise Ashford Hill for pre-event attention because units of advanced age with a history of high loading have a reduced margin against mechanical failure under heat exposure, as outlined in MG-023. Where the unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure, in accordance with MG-023. Ensure that every de-rating applied is recorded along with the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified per MG-021.",
   "cited_doc_ids": [
-    "MG-021",
-    "MG-023"
+    "MG-023",
+    "MG-021"
   ],
+  "input_tokens": 1447,
+  "output_tokens": 161,
   "status": "ok"
 }

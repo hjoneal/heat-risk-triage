@@ -1,8 +1,10 @@
 {
-  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure. This asset has an advanced age and a history of high loading as noted in MG-023. The supplied documents do not cover any other specific action for this asset prior to the heat event.",
+  "brief": "Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit, as outlined in MG-023. The supplied documents do not cover any other specific action for this asset prior to the heat event.",
   "cited_doc_ids": [
     "MG-021",
     "MG-023"
   ],
+  "input_tokens": 1419,
+  "output_tokens": 74,
   "status": "ok"
 }

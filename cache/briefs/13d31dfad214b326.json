@@ -1,9 +1,11 @@
 {
-  "brief": "Brief generation failed. Applicable procedures: SOP-016 Outstanding work order review and defect close-out; MG-023 Insulation ageing and end-of-life indicators; SOP-011 Vegetation and compound clearance around substation plant.",
+  "brief": "Review the open defect register for Ivybridge Green (SUB-SGW-340) before the heat event, as governed by SOP-016. If a vegetation or obstruction defect is outstanding, clearance work takes precedence over other remedial activity as directed by SOP-011. Since the unit is 43 years old, note that age in service serves as a proxy indicator for insulation condition under MG-023 when no historical data exists.",
   "cited_doc_ids": [
     "SOP-016",
-    "MG-023",
-    "SOP-011"
+    "SOP-011",
+    "MG-023"
   ],
-  "status": "fallback"
+  "input_tokens": 2954,
+  "output_tokens": 349,
+  "status": "ok"
 }

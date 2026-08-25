@@ -1,7 +1,9 @@
 {
-  "brief": "Prioritise Underhill Hollow for pre-event attention, and where the unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "brief": "Prioritise this aged unit for pre-event attention ahead of a younger unit in otherwise similar condition, as it has a reduced margin against mechanical failure ([MG-023]). Where this unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure ([MG-023]).",
   "cited_doc_ids": [
     "MG-023"
   ],
+  "input_tokens": 1467,
+  "output_tokens": 107,
   "status": "ok"
 }

@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise Harrowgate Ridge for pre-event attention and review its open defect register for items affecting its ability to shed heat in descending order of priority, completing work in categories 1 to 3 before the event begins wherever crew capacity allows (SOP-016). For category 4 items that cannot be completed, apply the loading restriction in MG-021 in preference to accepting the exposure (MG-023).",
+  "brief": "Prioritise Harrowgate Ridge for pre-event attention because units of advanced age with high loading have reduced margins against mechanical failure. Review open work orders against the asset's ability to shed heat, and complete any work in categories 1 to 3 before the event begins where crew capacity allows. If an ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure.",
   "cited_doc_ids": [
-    "MG-021",
     "MG-023",
-    "SOP-016"
+    "SOP-016",
+    "MG-021"
   ],
+  "input_tokens": 1490,
+  "output_tokens": 138,
   "status": "ok"
 }

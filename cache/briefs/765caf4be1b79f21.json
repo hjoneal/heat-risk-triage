@@ -1,9 +1,11 @@
 {
-  "brief": "Prioritise clearance work if an obstruction defect is outstanding, as restricted airflow removes the cooling margin needed during sustained high ambient conditions [SOP-011]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, including the reason, value, and period [MG-021].",
+  "brief": "Prioritise clearance work if an obstruction defect is outstanding, as restricted airflow removes the unit's cooling margin [SOP-011]. Where this ageing unit cannot be attended before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, including the reason, value, and period [MG-021].",
   "cited_doc_ids": [
     "MG-021",
     "MG-023",
     "SOP-011"
   ],
+  "input_tokens": 1458,
+  "output_tokens": 138,
   "status": "ok"
 }

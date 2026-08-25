@@ -1,8 +1,11 @@
 {
-  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, check blades, insect mesh, and damper travel, and walk the airflow path before the heat event per SOP-015. Since the detailed inspection is overdue per REG-042, bring it forward in preference to accepting the exposure.",
+  "brief": "Inspect intake and exhaust louvres for blockage exceeding one quarter of free area, clear any obstructed ventilation in preference to deferring it, and check motorised or thermostatic dampers for full travel on a thermostat call [SOP-015]. Because the asset's detailed inspection is overdue [REG-042], bring the detailed inspection forward in preference to accepting the exposure before the heat event [REG-042]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
   "cited_doc_ids": [
-    "SOP-015",
-    "REG-042"
+    "MG-021",
+    "REG-042",
+    "SOP-015"
   ],
+  "input_tokens": 1417,
+  "output_tokens": 176,
   "status": "ok"
 }

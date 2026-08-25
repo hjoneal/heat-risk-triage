@@ -277,21 +277,37 @@ def main():
     n_failed = sum(1 for r in records if r["extraction_status"] == "failed")
     n_retried = sum(1 for r in records if r["attempts"] > 1)
     n_fenced = sum(r["fenced_output"] for r in records)
-    input_tokens = sum(r["input_tokens"] for r in records)
-    output_tokens = sum(r["output_tokens"] for r in records)
+
+    # Billed once per distinct note text, not once per inspection. The cache is
+    # keyed on the text, so duplicate notes share an entry and share its token
+    # counts — summing across inspections counted the duplicates again and
+    # overstated the corpus by 38% on input. Deduplicated by cache key here.
+    # See DECISIONS.md D-045.
+    billed = {}
+    for inspection, record in zip(inspections.itertuples(), records):
+        billed[build_cache_key(inspection.note_text, model)] = record
+    input_tokens = sum(r["input_tokens"] for r in billed.values())
+    output_tokens = sum(r["output_tokens"] for r in billed.values())
 
     lines = [
         "Extraction run",
         f"model: {model}",
         f"prompt version: {config.PROMPT_VERSION}",
         f"notes processed: {len(records)}",
+        f"distinct note texts: {len(billed)}",
         f"served from cache: {cache_hits}",
-        f"API calls made: {len(records) - cache_hits}",
+        f"API calls made this run: {len(records) - cache_hits}",
         f"extractions retried: {n_retried}",
         f"extractions failed after retry: {n_failed}",
         f"outputs wrapped in markdown fences: {n_fenced}",
-        f"input tokens this run: {input_tokens}",
-        f"output tokens this run: {output_tokens}",
+        "",
+        "Cost of building the extraction corpus, whether or not this run paid it.",
+        "Token counts are stored in each cache entry when it is written, so they",
+        "survive a replay from cache; a run reporting zero API calls still reports",
+        "what the corpus cost to produce.",
+        f"input tokens: {input_tokens}",
+        f"output tokens: {output_tokens}",
+        f"calls to rebuild from empty: {len(billed)}",
     ]
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     (config.OUTPUT_DIR / "extraction_cost.txt").write_text("\n".join(lines) + "\n")
