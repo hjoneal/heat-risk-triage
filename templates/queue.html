@@ -1,67 +1,111 @@
 {% extends "base.html" %}
 {% block title %}{{ scenario.scenario_label }} — Heat risk triage{% endblock %}
+
+{% macro sort_link(key, label, numeric=True) %}
+  {# Clicking a column sorts by it; clicking the sorted column reverses it. #}
+  {% set is_current = sort == key %}
+  {% set next_direction = 'asc' if (is_current and direction == 'desc') else 'desc' %}
+  <th scope="col" {% if numeric %}class="num"{% endif %}
+      {% if is_current %}aria-sort="{{ 'descending' if direction == 'desc' else 'ascending' }}"{% endif %}>
+    <a class="sort{% if is_current %} is-sorted{% endif %}"
+       href="/scenario/{{ scenario_id }}?sort={{ key }}&amp;direction={{ next_direction }}&amp;capacity={{ crew_capacity }}">
+      {{ label }}<span class="sort-caret" aria-hidden="true">{% if is_current %}{{ '▾' if direction == 'desc' else '▴' }}{% else %}<span class="sort-hint">↕</span>{% endif %}</span>
+    </a>
+  </th>
+{% endmacro %}
+
 {% block content %}
 
 <section class="hazard" aria-label="Forecast hazard">
   <div class="hazard-figures">
     <div class="figure"><span class="value">{{ "%.1f"|format(scenario.hazard.peak_temp_c) }}</span><span class="unit">°C</span><span class="label">Peak temperature</span></div>
     <div class="figure"><span class="value">{{ scenario.hazard.consecutive_warm_nights }}</span><span class="label">Consecutive warm nights</span></div>
-    <div class="figure"><span class="value">{{ "%.0f"|format(scenario.hazard.degree_hours_above_30) }}</span><span class="label">Degree-hours above 30°C</span></div>
+    <div class="figure"><span class="value">{{ "%.0f"|format(scenario.hazard.degree_hours_above_30) }}</span><span class="unit">°C·h</span><span class="label">Degree-hours above 30°C</span></div>
     <div class="figure"><span class="value">{{ "%.1f"|format(scenario.hazard.max_overnight_min_c) }}</span><span class="unit">°C</span><span class="label">Warmest overnight minimum</span></div>
     <div class="figure"><span class="value">{{ scenario.hazard.event_duration_days }}</span><span class="label">Days</span></div>
   </div>
 
-  <figure class="sparkline">
+  <figure class="chart">
     <svg viewBox="0 0 {{ sparkline.width }} {{ sparkline.height }}" width="100%" height="{{ sparkline.height }}"
-         role="img" aria-label="Hourly ambient temperature across the event, from {{ sparkline.low }} to {{ sparkline.high }} degrees Celsius">
-      <polyline points="{{ sparkline.points }}" fill="none" stroke="var(--accent)" stroke-width="1.25"/>
+         role="img" aria-label="Hourly ambient temperature across {{ sparkline.days }} days, from {{ sparkline.low }} to {{ sparkline.high }} degrees Celsius, peaking each afternoon">
+
+      {% for t in sparkline.temperatures %}
+        <line class="gridline" x1="{{ sparkline.plot_left }}" y1="{{ t.y }}" x2="{{ sparkline.plot_right }}" y2="{{ t.y }}"/>
+        <text class="axis-label" x="{{ sparkline.plot_left - 8 }}" y="{{ t.y + 3.5 }}" text-anchor="end">{{ t.value }}</text>
+      {% endfor %}
+      <text class="axis-title" x="{{ sparkline.plot_left - 8 }}" y="{{ sparkline.plot_top - 1 }}" text-anchor="end">°C</text>
+
+      {% for h in sparkline.hours %}
+        <line class="tick{% if h.major %} tick-major{% endif %}"
+              x1="{{ h.x }}" y1="{{ sparkline.plot_bottom }}" x2="{{ h.x }}" y2="{{ sparkline.plot_bottom + (5 if h.major else 3) }}"/>
+        <text class="axis-label" x="{{ h.x }}" y="{{ sparkline.plot_bottom + 16 }}" text-anchor="middle">{{ h.label }}</text>
+        {% if h.major %}
+          <text class="axis-day" x="{{ h.x }}" y="{{ sparkline.plot_bottom + 28 }}" text-anchor="middle">Day {{ h.day }}</text>
+        {% endif %}
+      {% endfor %}
+
+      <line class="axis" x1="{{ sparkline.plot_left }}" y1="{{ sparkline.plot_bottom }}" x2="{{ sparkline.plot_right }}" y2="{{ sparkline.plot_bottom }}"/>
+      <line class="axis" x1="{{ sparkline.plot_left }}" y1="{{ sparkline.plot_top }}" x2="{{ sparkline.plot_left }}" y2="{{ sparkline.plot_bottom }}"/>
+
+      <polyline points="{{ sparkline.points }}" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
       {% for m in sparkline.markers %}
         <circle cx="{{ m.x }}" cy="{{ m.y }}" r="2.5" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.25"/>
       {% endfor %}
     </svg>
-    <figcaption>Ambient temperature, hourly. Circles mark each overnight minimum — the floor the asset resets to before the next day.</figcaption>
+    <figcaption>Ambient temperature, hourly, across {{ sparkline.days }} days. Circles mark each
+      overnight minimum — the floor the asset resets to before the next day.</figcaption>
   </figure>
 </section>
 
-<form class="controls" method="get" action="/scenario/{{ scenario_id }}">
+<form class="controls" method="get" action="/scenario/{{ scenario_id }}" data-autosubmit>
   <input type="hidden" name="sort" value="{{ sort }}">
+  <input type="hidden" name="direction" value="{{ direction }}">
   <label class="capacity">
     <span class="control-label">Crew capacity</span>
     <input type="range" name="capacity" min="{{ capacity_min }}" max="{{ capacity_max }}"
-           step="1" value="{{ crew_capacity }}"
-           aria-describedby="capacity-readout">
+           step="1" value="{{ crew_capacity }}" aria-describedby="capacity-readout">
   </label>
   <output id="capacity-readout" class="capacity-readout">{{ crew_capacity }} interventions</output>
-  <button type="submit">Apply</button>
+  {# Submits itself while dragging when scripting is available; the button is the
+     fallback and is hidden by the same script that makes it redundant. #}
+  <button type="submit" data-fallback-submit>Apply</button>
   <p class="control-note">
-    The ranking is fixed for a given forecast — capacity decides where the line falls across it.
-    These {{ crew_capacity }} visits are expected to reach
-    <strong>{{ "%.1f"|format(intercepted) }}</strong> of the
-    <strong>{{ "%.1f"|format(fleet_expected) }}</strong> failures this forecast implies fleet-wide.
+    The forecast sets the order; capacity decides where the line falls across it.
+    These <strong>{{ crew_capacity }}</strong> assets are
+    <strong>{{ "%.1f"|format(fleet_share * 100) }}%</strong> of the fleet and carry
+    <strong>{{ "%.1f"|format(risk_share * 100) }}%</strong> of its expected failures —
+    <strong>{{ "%.1f"|format(concentration) }}×</strong> the risk of visiting
+    {{ crew_capacity }} at random.
+  </p>
+  <p class="control-note subtle">
+    In absolute terms that is {{ "%.2f"|format(intercepted) }} of the
+    {{ "%.1f"|format(fleet_expected) }} failures expected across all {{ fleet_size }} assets
+    for this forecast. Both numbers are small because no single transformer is likely to fail:
+    the figure measures where the risk is concentrated, not how much of it a visit removes.
   </p>
 </form>
 
-<p class="sortbar">
-  Sorted by {% if sort == 'risk' %}risk{% else %}expected impact{% endif %}.
-  {% if sort == 'risk' %}
-    <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Sort by expected impact</a>
-  {% else %}
-    <a href="/scenario/{{ scenario_id }}?sort=risk&amp;capacity={{ crew_capacity }}">Sort by risk</a>
-  {% endif %}
-</p>
+{% if not dispatch_order and rows %}
+  <p class="sortbar">
+    Sorted by a column other than expected impact, so the crew-capacity line is not shown —
+    it marks where the crew stops working down the dispatch order, and this is not that order.
+    <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Back to dispatch order</a>
+  </p>
+{% endif %}
 
 {% if not rows %}
   <p class="empty">No assets exceed the review threshold for this forecast.</p>
 {% else %}
 <table class="queue">
+  <caption class="visually-hidden">Assets ranked for this forecast. Select a column heading to sort.</caption>
   <thead>
     <tr>
-      <th scope="col" class="num">#</th>
-      <th scope="col">Asset</th>
-      <th scope="col" class="num">Risk</th>
-      <th scope="col" class="num">Customers</th>
-      <th scope="col" class="num">Expected impact</th>
-      <th scope="col" class="num">Criticality</th>
+      {{ sort_link('rank', '#') }}
+      {{ sort_link('name', 'Asset', numeric=False) }}
+      {{ sort_link('risk', 'Risk') }}
+      {{ sort_link('customers', 'Customers') }}
+      {{ sort_link('priority', 'Expected impact') }}
+      {{ sort_link('criticality', 'Criticality') }}
       <th scope="col"><span class="visually-hidden">Decision</span></th>
     </tr>
   </thead>
@@ -87,7 +131,7 @@
       <td class="num"><span class="criticality">{{ row.criticality }}</span></td>
       <td class="decided">{% if row.decision %}<span title="{{ row.decision }}">✓</span>{% endif %}</td>
     </tr>
-    {% if row.position == crew_capacity %}
+    {% if dispatch_order and loop.index == crew_capacity %}
     <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} interventions</td></tr>
     {% endif %}
   {% endfor %}

@@ -134,12 +134,38 @@ a { color: var(--accent); }
   margin-top: 6px;
 }
 
-.sparkline { margin: 22px 0 0; }
+.chart { margin: 22px 0 0; }
 
-.sparkline figcaption {
+.chart figcaption {
   font-size: 13px;
   color: var(--text-muted);
   margin-top: 4px;
+}
+
+/* Axes are structure, not data: they sit behind the trace and never compete
+   with it for attention. */
+.chart .gridline { stroke: var(--rule); stroke-width: 1; }
+.chart .axis { stroke: #C7CCD1; stroke-width: 1; }
+.chart .tick { stroke: #C7CCD1; stroke-width: 1; }
+.chart .tick-major { stroke: var(--text-muted); }
+
+.chart .axis-label {
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  fill: var(--text-muted);
+}
+
+.chart .axis-title {
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  fill: var(--text-muted);
+}
+
+.chart .axis-day {
+  font-family: var(--font-ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--text-muted);
 }
 
 /* Queue table ---------------------------------------------------------- */
@@ -174,6 +200,8 @@ a { color: var(--accent); }
   min-width: 130px;
 }
 
+.controls button[hidden] { display: none; }
+
 .controls button {
   padding: 7px 16px;
   border: 1px solid var(--accent);
@@ -198,6 +226,29 @@ a { color: var(--accent); }
   font-weight: 600;
   color: var(--text);
 }
+
+.control-note.subtle { font-size: 12px; margin-top: -6px; }
+
+/* Sortable column headings ------------------------------------------------ */
+
+.queue th { padding: 0; }
+
+.queue th a.sort {
+  display: block;
+  padding: 10px 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.queue th.num a.sort { text-align: right; }
+.queue th a.sort:hover { background: var(--bg); color: var(--text); }
+.queue th a.sort.is-sorted { color: var(--text); }
+
+.sort-caret { margin-left: 6px; font-size: 10px; }
+/* The affordance stays visible but quiet until the column is hovered. */
+.sort-hint { opacity: 0.35; }
+.queue th a.sort:hover .sort-hint { opacity: 1; }
 
 .sortbar {
   font-size: 13px;
@@ -396,6 +447,80 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
 .contrib tr.up td:first-child { box-shadow: inset 3px 0 0 var(--heat-3); padding-left: 9px; }
 .contrib tr.down td:first-child { padding-left: 9px; }
 .contrib tr.intercept td { color: var(--text-muted); border-bottom: none; }
+
+.contrib td { vertical-align: top; }
+.contrib .factor { padding-right: 12px; }
+
+/* The log-odds figure is kept, because it is the model's actual unit and the
+   thing that sums, but it stops being the headline. */
+.logodds {
+  display: block;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.contrib .reading {
+  font-size: 13px;
+  min-width: 150px;
+  padding-right: 12px;
+}
+
+/* Where this reading sits across the training range. A tick on a track, not a
+   fill, because the quantity is a position rather than an amount. */
+.rangebar {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 130px;
+  height: 3px;
+  margin: 5px 0 3px;
+  background: linear-gradient(to right, #7FA86B, #E6B45C, #A83B2A);
+  opacity: 0.55;
+}
+
+.rangebar span {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 7px;
+  margin-left: -1px;
+  background: var(--text);
+}
+
+.rangenote {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.contrib .effect { white-space: nowrap; min-width: 108px; }
+
+.multiplier {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  min-width: 46px;
+}
+
+/* Length is the size of the effect, colour its direction. The multiplier sits
+   beside it, so neither is carried by colour alone. */
+.effect-bar {
+  display: block;
+  width: 100%;
+  max-width: 92px;
+  height: 5px;
+  margin-top: 4px;
+  margin-left: auto;
+  background: var(--rule);
+}
+
+.effect-bar span { display: block; height: 100%; }
+.effect-bar.raises span { background: var(--heat-4); }
+.effect-bar.lowers span { background: #6E9B57; }
 
 .quote { margin: 0 0 16px; }
 

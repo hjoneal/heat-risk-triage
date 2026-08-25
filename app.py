@@ -9,6 +9,7 @@ here, and why there is no code path in this file that could reach an API.
 """
 
 import json
+import math
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, Form, Request
@@ -85,21 +86,47 @@ def read_decisions():
     return decisions
 
 
+def axis_ticks(low, high):
+    """Temperature gridlines at a round interval covering the observed range.
+
+    Chosen from a fixed ladder rather than computed, so the axis never lands on
+    an interval like 3.7 °C. Whichever step first yields at most the target
+    number of lines wins.
+    """
+    for step in config.CHART_TEMPERATURE_STEPS_C:
+        first = math.floor(low / step) * step
+        last = math.ceil(high / step) * step
+        count = int(round((last - first) / step)) + 1
+        if count <= config.CHART_MAX_TEMPERATURE_LINES:
+            return [first + i * step for i in range(count)]
+    return [low, high]
+
+
 def sparkline(hourly_temps):
-    """Server-rendered polyline points, plus the overnight minimum markers.
+    """Server-rendered temperature chart: polyline, axes, gridlines and markers.
 
     Built here rather than in the template so the template holds no arithmetic,
-    and no JavaScript is involved at all.
+    and no JavaScript is involved at all. The curve carried no axes until a
+    reader pointed out that a shape without a scale is decoration — an hourly
+    temperature trace is only readable against the degrees it spans and the hour
+    of day it peaks at.
     """
-    width, height, pad = 720.0, 64.0, 4.0
+    width, height = float(config.CHART_WIDTH), float(config.CHART_HEIGHT)
+    left, right = float(config.CHART_PAD_LEFT), float(config.CHART_PAD_RIGHT)
+    top, bottom = float(config.CHART_PAD_TOP), float(config.CHART_PAD_BOTTOM)
+
     lowest, highest = min(hourly_temps), max(hourly_temps)
-    span = highest - lowest or 1.0
+    ticks = axis_ticks(lowest, highest)
+    # The plotted band is the gridlines' span, so the curve never runs off an axis.
+    floor_c, ceiling_c = min(ticks[0], lowest), max(ticks[-1], highest)
+    span = ceiling_c - floor_c or 1.0
+    plot_width, plot_height = width - left - right, height - top - bottom
 
     def x_at(index):
-        return pad + (width - 2 * pad) * index / max(len(hourly_temps) - 1, 1)
+        return left + plot_width * index / max(len(hourly_temps) - 1, 1)
 
     def y_at(value):
-        return pad + (height - 2 * pad) * (1 - (value - lowest) / span)
+        return top + plot_height * (1 - (value - floor_c) / span)
 
     points = " ".join(f"{x_at(i):.1f},{y_at(t):.1f}" for i, t in enumerate(hourly_temps))
 
@@ -112,8 +139,30 @@ def sparkline(hourly_temps):
         markers.append({"x": round(x_at(index), 1), "y": round(y_at(hourly_temps[index]), 1),
                         "temp": round(hourly_temps[index], 1)})
 
-    return {"points": points, "markers": markers, "width": width, "height": height,
-            "low": round(lowest, 1), "high": round(highest, 1)}
+    # Hour-of-day labels at midnight and midday. Every tick would be unreadable
+    # over a six-day event, and the two that matter are when it is coldest and
+    # when the load peaks.
+    hours = []
+    for index in range(0, len(hourly_temps), config.CHART_HOUR_TICK_INTERVAL):
+        hour_of_day = index % config.HOURS_PER_DAY
+        hours.append({
+            "x": round(x_at(index), 1),
+            "label": f"{hour_of_day:02d}:00",
+            "major": hour_of_day == 0,
+            "day": index // config.HOURS_PER_DAY + 1,
+        })
+
+    return {
+        "points": points,
+        "markers": markers,
+        "width": width, "height": height,
+        "plot_left": left, "plot_right": width - right,
+        "plot_top": top, "plot_bottom": height - bottom,
+        "temperatures": [{"value": round(t, 1), "y": round(y_at(t), 1)} for t in ticks],
+        "hours": hours,
+        "days": len(hourly_temps) // config.HOURS_PER_DAY,
+        "low": round(lowest, 1), "high": round(highest, 1),
+    }
 
 
 def reason_line(asset):
@@ -124,6 +173,37 @@ def reason_line(asset):
     """
     positive = [c for c in asset["contributions"] if c["contribution"] > 0]
     return [c["label"] for c in positive[:2]]
+
+
+def percentile_label(share):
+    """A percentile as a phrase, because "0.94" is not a comparison anyone makes.
+
+    Bands rather than a figure: the reference set is 14,400 synthetic asset-event
+    rows, which does not support a claim finer than this.
+    """
+    for threshold, label in config.PERCENTILE_BANDS:
+        if share >= threshold:
+            return label
+    return config.PERCENTILE_BANDS[-1][1]
+
+
+def contribution_view(contributions):
+    """Add the display-only fields the contribution table needs.
+
+    Kept out of the scored JSON because these are presentation choices — a bar
+    length and a form of words — and the JSON is the record of what the model
+    computed. `odds_multiplier`, `reading` and `percentile` are in the JSON
+    because they are properties of the fit, not of this page.
+    """
+    widest = max((abs(c["contribution"]) for c in contributions), default=1.0) or 1.0
+    return [
+        {
+            **c,
+            "percentile_label": percentile_label(c["percentile"]),
+            "effect_pct": 100.0 * abs(c["contribution"]) / widest,
+        }
+        for c in contributions
+    ]
 
 
 def clamp_capacity(value):
@@ -139,17 +219,36 @@ def clamp_capacity(value):
     return max(config.CREW_CAPACITY_MIN, min(config.CREW_CAPACITY_MAX, capacity))
 
 
-def queue_rows(scenario_id, sort_key):
+def sort_columns():
+    """Which queue columns can be sorted, and how each reads out of a row.
+
+    The queue used to carry two buttons offering the only two orders anyone had
+    anticipated. Every column a supervisor can see is a question they might be
+    asking — who serves the most customers, what is most critical — so each
+    header sorts instead.
+    """
+    return {
+        "rank": lambda a: a["rank"],
+        "name": lambda a: a["name"].lower(),
+        "risk": lambda a: a["risk"],
+        "customers": lambda a: a["customers_served"],
+        "priority": lambda a: a["priority"],
+        "criticality": lambda a: (a["criticality"], a["priority"]),
+    }
+
+
+def queue_rows(scenario_id, sort_key, descending):
     scored = SCORED[scenario_id]
     assets = scored["assets"][:config.QUEUE_ROWS]
-    if sort_key == "risk":
-        assets = sorted(assets, key=lambda a: -a["risk"])
+    columns = sort_columns()
+    key = columns.get(sort_key, columns[config.QUEUE_DEFAULT_SORT])
+    assets = sorted(assets, key=key, reverse=descending)
 
     decisions = read_decisions()
     highest_risk = max((a["risk"] for a in assets), default=1.0) or 1.0
 
     rows = []
-    for position, asset in enumerate(assets, start=1):
+    for asset in assets:
         decision = decisions.get((scenario_id, asset["asset_id"]))
         share = asset["risk"] / highest_risk
         # Four steps of the thermal ramp, relative to the highest-risk asset in
@@ -158,7 +257,10 @@ def queue_rows(scenario_id, sort_key):
         heat_step = min(int(share * 4) + 1, 4)
         rows.append({
             **asset,
-            "position": position,
+            # The asset's place in the dispatch order, not its position in
+            # whatever order the reader has sorted into. Renumbering it per sort
+            # would make the column mean something different on every click.
+            "position": asset["rank"],
             "reasons": reason_line(asset),
             "risk_pct": asset["risk"] * 100,
             "bar_pct": 100.0 * share,
@@ -174,18 +276,38 @@ def index():
 
 
 @app.get("/scenario/{scenario_id}")
-def queue(request: Request, scenario_id: str, sort: str = "priority",
-          capacity: str = str(config.CREW_CAPACITY)):
+def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_SORT,
+          direction: str = "desc", capacity: str = str(config.CREW_CAPACITY)):
     scored = SCORED[scenario_id]
     crew_capacity = clamp_capacity(capacity)
-    rows = queue_rows(scenario_id, sort)
+    if sort not in sort_columns():
+        sort = config.QUEUE_DEFAULT_SORT
+    descending = direction != "asc"
+    rows = queue_rows(scenario_id, sort, descending)
 
-    # Expected failures among the assets the crew would actually reach, against
-    # the expected total across the fleet. Both are sums of already-scored
-    # probabilities — no model runs here, and the ranking does not change with
-    # capacity; only where the line falls does.
-    intercepted = sum(row["risk"] for row in rows[:crew_capacity])
-    fleet_expected = sum(asset["risk"] for asset in scored["assets"])
+    # The capacity line marks where the crew stops working down the dispatch
+    # order. Drawn in any other order it would say that the fifteen rows above it
+    # get visited, which is only true when the queue is in that order.
+    dispatch_order = sort in (config.QUEUE_DEFAULT_SORT, "rank") and (
+        descending if sort == config.QUEUE_DEFAULT_SORT else not descending)
+
+    # The concentration the ranking achieves, not a claim about prevention. The
+    # first figure is the expected failures sitting among the assets the crew
+    # would reach; the second is the expected total across all 900. Both are sums
+    # of already-scored probabilities — no model runs here.
+    #
+    # It is reported as a share and a lift because the raw pair reads as failure:
+    # "0.5 of 5.0" sounds like the tool missing nine tenths of the problem, when
+    # it is the arithmetic of visiting 2.8% of a fleet whose mean risk is under
+    # 1%. What the ranking can be judged on is how much better than 2.8% of the
+    # risk those visits carry.
+    visited = sorted(scored["assets"], key=lambda a: -a["priority"])[:crew_capacity]
+    intercepted = sum(a["risk"] for a in visited)
+    fleet_expected = sum(a["risk"] for a in scored["assets"])
+    fleet_size = len(scored["assets"])
+    risk_share = intercepted / fleet_expected if fleet_expected else 0.0
+    fleet_share = crew_capacity / fleet_size
+    concentration = risk_share / fleet_share if fleet_share else 0.0
 
     return templates.TemplateResponse("queue.html", {
         "request": request,
@@ -194,12 +316,18 @@ def queue(request: Request, scenario_id: str, sort: str = "priority",
         "scenarios": SCENARIO_LINKS,
         "rows": rows,
         "sort": sort,
+        "direction": "desc" if descending else "asc",
+        "dispatch_order": dispatch_order,
         "sparkline": sparkline(scored["hourly_temps"]),
         "crew_capacity": crew_capacity,
         "capacity_min": config.CREW_CAPACITY_MIN,
         "capacity_max": config.CREW_CAPACITY_MAX,
         "intercepted": intercepted,
         "fleet_expected": fleet_expected,
+        "fleet_size": fleet_size,
+        "risk_share": risk_share,
+        "fleet_share": fleet_share,
+        "concentration": concentration,
     })
 
 
@@ -221,11 +349,14 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str,
         "scenario": scored,
         "scenario_id": scenario_id,
         "scenarios": SCENARIO_LINKS,
-        "asset": asset,
+        "asset": {**asset, "contributions": contribution_view(asset["contributions"])},
         "brief": brief,
         "cited": cited,
         "decision": decision,
         "intercept": scored["intercept"],
+        # The intercept as a probability. A bare -5.83 log-odds told a reader
+        # nothing; 0.29% is the same number in the units the rest of the page uses.
+        "baseline_pct": 100.0 / (1.0 + math.exp(-scored["intercept"])),
         "crew_capacity": clamp_capacity(capacity),
     })
 

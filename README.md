@@ -50,6 +50,17 @@ A batch pipeline writes JSON to `output/`; the web application only reads it.
 4. **Validation** (`validate.py`, `tests/`) — extraction against generation-time truth, retrieval
    assertions, citation integrity, and a leakage check.
 
+The asset page reports each factor's **effect on the odds** of failure — the exponential of its
+log-odds contribution, which is exact rather than a simplification — with the reading in its own
+units, a marker showing where that reading sits across the training range, and the log-odds figure
+retained in small type so the table stays auditable. See `DECISIONS.md` D-032.
+
+Queue columns sort on click. The crew-capacity line is drawn only when the queue is in dispatch
+order, because in any other order it would assert that the rows above it get visited. D-033.
+
+One 30-line script (`static/app.js`) makes the capacity slider live and then hides the Apply button
+it replaced. It issues no request of its own, and the interface works without it. D-034.
+
 The queue carries a crew-capacity control (5–25). It is the only input that changes which assets get
 visited: the ranking is fixed for a given forecast, and capacity decides where the line falls across
 it. Alongside it, the expected failures those visits would reach against the expected fleet total —
@@ -308,7 +319,7 @@ of the 100 queries**, so no real query reaches the `no_match` path; the floor wa
 main cluster to make it fire. The branch is covered by two unit tests that reach it with a synthetic
 degenerate query instead. See `DECISIONS.md` D-018.
 
-87 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
+114 tests pass. The cold-weather negative control is asserted exhaustively over the vocabulary
 `build_query` can emit, not only over hand-written queries. `tests/test_ranking.py` additionally
 asserts that every demo scenario sits inside the hazard envelope the model was trained on — a check
 that immediately caught the first `long-severe` scenario, whose overnight minimum of 33.3 °C sat

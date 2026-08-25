@@ -1039,3 +1039,82 @@ supervisor can see.
 **What would change it.** More positives. The collinearity is tolerable at 138
 failures because L2 keeps the coefficients stable across folds; at a tenth of
 that it would not be.
+
+## D-032 — The contribution table speaks in odds, not log-odds
+
+**Decision:** The asset page leads with **effect on odds** — the exponential of
+each contribution — with the reading in its own units beside it and the log-odds
+figure kept underneath in small type. The intercept row is labelled as the
+baseline failure rate and shown as a percentage.
+
+**Why.** A reader who is not a data scientist asked what `Typical asset, typical
+event — -5.827` meant, and what a value of `20.34` meant for "Ageing asset with
+warm nights". Both are fair questions with bad answers: the first was the model
+intercept in log-odds, the second a product of two centred quantities. Neither is
+a reading of anything a supervisor could check against the transformer.
+
+Exponentiating is not a simplification — `exp(contribution)` is exactly the
+factor by which that feature multiplies the asset's odds of failure, and the
+multipliers compose to the score the same way the log-odds sum to it. The
+property that made the table trustworthy is preserved, in a unit that can be
+acted on: "sustained heat multiplied this asset's odds by 6.0" is a sentence a
+crew supervisor can use.
+
+**What else changed with it.** Every reading now carries its unit, and the ones
+that had no readable form got one: cooling type renders as `ONAN` rather than
+`0`, flags as `yes`/`no`, peak load as `91%`, and an interaction as its two
+components — `91% load × 678 °C·h heat` — because the product itself is not a
+measurement. A position marker on a green-to-red track shows where the reading
+sits among the 14,400 training rows, with a phrase rather than a percentile,
+because the reference set is synthetic and does not support a finer claim.
+
+**What was kept.** The log-odds figure stays on every row. It is the model's
+actual unit, it is what `assert_contributions_sum` checks to 1e-6, and removing
+it would make the page easier to read and harder to audit. It is demoted, not
+deleted.
+
+**Alternatives considered.** Percentage-point contributions to the final
+probability were rejected: they are not additive, so the column would not sum to
+anything and the honesty of the table would be lost. Words instead of numbers
+("raises risk strongly") were rejected as a layer of interpretation the interface
+would be inventing.
+
+## D-033 — Every column sorts, and the capacity line only appears in dispatch order
+
+**Decision:** The two sort buttons are replaced by sortable column headings.
+The crew-capacity line is drawn only when the queue is in dispatch order, and a
+note explains its absence otherwise.
+
+**Why.** Two buttons offered the only two orders anyone had anticipated. Every
+column a supervisor can see is a question they might be asking — who serves the
+most customers, what is most critical — and a heading that sorts costs nothing.
+
+The second half matters more than the first. Sorting by customers and leaving the
+line at row 15 would assert that those fifteen assets get visited, which is false:
+the crew works down expected impact. For the same reason the `#` column shows the
+asset's dispatch rank rather than its row number, so it means the same thing
+whatever the page is sorted by, and the concentration figures in the capacity
+note are computed from the dispatch order rather than from what is on screen.
+
+**Risk accepted.** Sorting reorders only the 25 assets already in the queue,
+which are the top 25 by expected impact. Sorting by customers therefore shows the
+largest of those 25, not of the fleet. That is a real limitation of sorting a
+pre-filtered list and is not signposted on screen yet.
+
+## D-034 — One script, which only removes a button
+
+**Decision:** `static/app.js` makes the capacity slider report its value while
+dragging and submit on release, then hides the Apply button. Roughly thirty
+lines, no dependency, loaded from the application's own static mount.
+
+**Why the previous rule bent.** D-022 chose no JavaScript at all, and the reason
+behind it — that serve time stays offline and inert, with no CDN asset, no web
+font and no network call at request time — is untouched by a local script that
+issues no request of its own. What it does not survive is a slider that shows a
+stale number until a separate button is pressed.
+
+**Progressive enhancement, not decoration.** The server renders the whole
+interface. Without scripting the form and its button still work exactly as
+before; the script's last act is to hide the control it has made redundant, so
+the page is never left with a button that does nothing or a slider that does
+nothing. `tests/test_interface.py` asserts the button is still in the markup.

@@ -398,6 +398,53 @@ FEATURE_LABELS = {
 }
 assert set(FEATURE_LABELS) == set(FEATURES)
 
+# How a feature's reading is written on screen. FEATURE_LABELS gives the name; a
+# reading without its unit is not a reading, and several of these were being
+# shown as bare numbers whose meaning a crew supervisor could not recover.
+FEATURE_UNITS = {
+    "peak_temp_c": "°C",
+    "degree_hours_above_30": "°C·h",
+    "max_overnight_min_c": "°C",
+    "consecutive_warm_nights": "nights",
+    "age_years": "years",
+    "cooling_type_ordinal": "",  # rendered as the cooling type's name
+    "peak_load_pct": "%",  # rendered as a percentage of rating
+    "days_since_maintenance": "days",
+    "prior_heat_faults": "recorded",
+    "flag_cooling_degraded": "",  # rendered yes/no
+    "flag_ventilation_obstructed": "",
+    "flag_oil_issue": "",
+    "flag_overdue_remedial": "",
+    "load_x_degree_hours": "",  # rendered as its two components
+    "condition_x_degree_hours": "",
+    "age_x_warm_nights": "",
+}
+assert set(FEATURE_UNITS) == set(FEATURES)
+
+# An interaction's own value is a product of two centred numbers and means
+# nothing read on its own — "20.34" for an ageing asset in warm nights is not a
+# quantity anyone can check. The components are shown instead. The flag count is
+# not itself a feature, so it carries its own name here.
+CONDITION_FLAG_COUNT = "n_condition_flags"  # chosen: pseudo-feature, display only
+INTERACTION_COMPONENTS = {
+    "load_x_degree_hours": ("peak_load_pct", "degree_hours_above_30"),
+    "condition_x_degree_hours": (CONDITION_FLAG_COUNT, "degree_hours_above_30"),
+    "age_x_warm_nights": ("age_years", "consecutive_warm_nights"),
+}
+assert set(INTERACTION_COMPONENTS) == set(INTERACTION_FEATURES)
+
+# Each component's own phrasing, because composing a unit with a label gives
+# "43 years age x 5 nights warm nights". A cell reading "Peak load 91% x
+# Accumulated heat above 30°C 774 °C·h" is also worse than the number it
+# replaced, so these are deliberately short.
+COMPONENT_DISPLAY = {
+    "peak_load_pct": "{value:.0%} load",
+    "degree_hours_above_30": "{value:,.0f} °C·h heat",
+    "age_years": "{value:,.0f} years old",
+    "consecutive_warm_nights": "{value:.0f} warm nights",
+    CONDITION_FLAG_COUNT: "{value:.0f} recorded defects",
+}
+
 DEGREE_HOUR_BASE_C = 30.0  # chosen: conventional degree-hour base for heat stress
 # Overnight minimum is taken from the first six hours of the day, which is when
 # ambient bottoms out under the diurnal curve above.
@@ -406,6 +453,7 @@ WARM_NIGHT_C = 24.0  # assumed: overnight minimum above which an asset fails to 
 
 # Ordered by cooling capability, so the coefficient has a readable sign.
 COOLING_TYPE_ORDINAL = {"ONAN": 0, "ONAF": 1, "OFAF": 2}  # chosen
+COOLING_TYPE_BY_ORDINAL = {value: name for name, value in COOLING_TYPE_ORDINAL.items()}
 
 # ---------------------------------------------------------------------------
 # Condition flags
@@ -547,6 +595,33 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # ---------------------------------------------------------------------------
 
 QUEUE_ROWS = 25  # chosen: the briefed assets, so every visible row has a brief
+
+# The forecast chart. Rendered as SVG on the server, so the page still carries no
+# plotting library and no request-time computation. The left pad holds the
+# temperature scale and the bottom pad the hour-of-day labels.
+CHART_WIDTH = 720  # chosen
+CHART_HEIGHT = 190  # chosen
+CHART_PAD_LEFT = 44  # chosen: room for a "40 °C" label
+CHART_PAD_RIGHT = 10  # chosen
+CHART_PAD_TOP = 10  # chosen
+CHART_PAD_BOTTOM = 34  # chosen: room for two rows of hour labels
+CHART_TEMPERATURE_STEPS_C = [2, 5, 10]  # chosen: the ladder of round gridline intervals
+CHART_MAX_TEMPERATURE_LINES = 7  # chosen
+CHART_HOUR_TICK_INTERVAL = 12  # chosen: midnight and midday only
+
+# The queue's default order. Every column sorts, so this is only the order the
+# page opens in — expected impact, because that is what the crew is dispatched on.
+QUEUE_DEFAULT_SORT = "priority"  # chosen
+
+# A reading's place among the 14,400 training asset-event rows, as a phrase. The
+# reference set is synthetic and does not support a claim finer than a band.
+PERCENTILE_BANDS = [
+    (0.90, "among the highest in the fleet"),
+    (0.70, "higher than most"),
+    (0.30, "about typical"),
+    (0.10, "lower than most"),
+    (0.00, "among the lowest in the fleet"),
+]  # chosen
 
 # The crew-capacity control's range. Capacity is the one input that genuinely
 # changes which assets get visited: the ranking is fixed for a given forecast,

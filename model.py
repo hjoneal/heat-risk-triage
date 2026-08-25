@@ -270,6 +270,51 @@ def explain(model, x_row):
     return [(config.FEATURES[i], float(x_row[i]), float(contributions[i])) for i in order]
 
 
+def format_reading(name, value, components):
+    """One feature's value as a crew supervisor would write it down.
+
+    A contribution table is only an explanation if the reading beside it can be
+    checked against the asset. A bare `0.91` for peak load, `0` for cooling type
+    or `20.34` for an interaction cannot be, so each is rendered in the terms the
+    register uses. `components` supplies the raw values behind an interaction,
+    whose own number is a product of two centred quantities and is not a reading
+    of anything.
+    """
+    if name in config.INTERACTION_COMPONENTS:
+        return " × ".join(
+            config.COMPONENT_DISPLAY[part].format(value=components[part])
+            for part in config.INTERACTION_COMPONENTS[name]
+        )
+
+    unit = config.FEATURE_UNITS[name]
+    if name.startswith("flag_"):
+        return "yes" if value >= 0.5 else "no"
+    if name == "cooling_type_ordinal":
+        return config.COOLING_TYPE_BY_ORDINAL[int(round(value))]
+    if name == "peak_load_pct":
+        return f"{value * 100:.0f}{unit}"
+    if name in ("consecutive_warm_nights", "prior_heat_faults", "days_since_maintenance",
+                "age_years", "degree_hours_above_30"):
+        return f"{value:,.0f} {unit}".strip()
+    return f"{value:.1f} {unit}".strip()
+
+
+def feature_percentiles(X_frame):
+    """Sorted training values per feature, for placing a reading in context.
+
+    "774 °C·h" says nothing without knowing that the fleet has seen 0 to 787.
+    The reference is the whole training matrix rather than the current scenario,
+    because within one scenario every asset shares an identical hazard reading
+    and the comparison would be vacuous for four of the sixteen features.
+    """
+    return {name: np.sort(X_frame[name].to_numpy()) for name in config.FEATURES}
+
+
+def percentile_of(sorted_values, value):
+    """Share of the training set at or below this reading, 0 to 1."""
+    return float(np.searchsorted(sorted_values, value, side="right") / len(sorted_values))
+
+
 def assert_contributions_sum(model, X, probabilities):
     """Contributions must sum to logit(p) minus the intercept, exactly."""
     intercept = float(model["clf"].intercept_[0])
@@ -313,7 +358,7 @@ def calibration_plot(labels, predictions, path):
 
 
 def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_label,
-                   hourly, extraction_model):
+                   hourly, extraction_model, training_percentiles):
     """Score every asset against one forecast scenario and rank by priority."""
     pairs = features.scenario_pairs(assets, scenario_id)
     X_frame = features.build_feature_matrix(assets, hazard_table, flags, pairs)
@@ -336,11 +381,31 @@ def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_lab
         asset_id = pairs["asset_id"].iloc[row_index]
         asset = asset_rows.loc[asset_id]
         flag_row = flag_rows.loc[asset_id]
+        # Raw values of everything an interaction is built from, so its reading
+        # can be shown as its components rather than as a product of two centred
+        # numbers, which is not a reading of anything.
+        components = {
+            name: float(X_frame[name].iloc[row_index])
+            for name in ("peak_load_pct", "degree_hours_above_30",
+                         "age_years", "consecutive_warm_nights")
+        }
+        components[config.CONDITION_FLAG_COUNT] = float(sum(
+            X_frame[f"flag_{flag}"].iloc[row_index] for flag in config.CONDITION_FLAGS))
+
         contributions = [
             {
                 "feature": name,
                 "label": config.FEATURE_LABELS[name],
                 "value": value,
+                "reading": format_reading(name, value, components),
+                # Where this reading sits among everything the model was trained
+                # on. A temperature means little without the range behind it.
+                "percentile": round(percentile_of(training_percentiles[name], value), 4),
+                # The contribution is a log-odds term, which is the honest unit
+                # and an unreadable one. Its exponential is the factor this
+                # feature multiplies the asset's odds of failure by — exactly
+                # equivalent, and a number an operator can act on.
+                "odds_multiplier": round(float(np.exp(contribution)), 4),
                 "contribution": contribution,
             }
             for name, value, contribution in explain(model, X[row_index])
@@ -580,9 +645,11 @@ def main():
     (config.OUTPUT_DIR / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
     write_metrics_markdown(metrics, config.OUTPUT_DIR / "metrics.md")
 
+    training_percentiles = feature_percentiles(X_frame)
     for scenario_id, scenario_label, _, _, _, _ in config.SCENARIOS:
         scored = score_scenario(final_model, assets, hazard_table, flags,
-                                scenario_id, scenario_label, hourly, extraction_model)
+                                scenario_id, scenario_label, hourly, extraction_model,
+                                training_percentiles)
         path = config.OUTPUT_DIR / f"scored_{scenario_id}.json"
         path.write_text(json.dumps(scored, indent=2) + "\n")
         print(f"wrote {path.name}: top asset {scored['assets'][0]['asset_id']} "
