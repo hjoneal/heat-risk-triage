@@ -541,6 +541,45 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
 .effect-bar.raises span { background: var(--heat-4); }
 .effect-bar.lowers span { background: #6E9B57; }
 
+/* The view filter. Ordinary links, so the filter survives with scripting off
+   and each view has its own URL a supervisor can send to someone. */
+.viewfilter {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.viewfilter .control-label { margin-right: 4px; }
+
+.chip {
+  display: inline-block;
+  padding: 3px 9px;
+  font-size: 12px;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+}
+
+.chip:hover { border-color: var(--accent); }
+
+.chip.is-current {
+  color: var(--surface);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.chip-count {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 3px;
+}
+
+.chip.is-current .chip-count { color: var(--surface); opacity: 0.75; }
+
 /* What kind of intervention the ranking implies. Three tones from the existing
    palette; the word beside them is what carries the meaning, so nothing here is
    communicated by colour alone. */

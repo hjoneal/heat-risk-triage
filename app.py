@@ -10,6 +10,7 @@ here, and why there is no code path in this file that could reach an API.
 
 import json
 import math
+from collections import Counter
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, Form, Request
@@ -279,13 +280,31 @@ def sort_columns():
         "risk": lambda a: a["risk"],
         "customers": lambda a: a["customers_served"],
         "priority": lambda a: a["priority"],
-        "criticality": lambda a: (a["criticality"], a["priority"]),
     }
 
 
-def queue_rows(scenario_id, sort_key, descending):
+def queue_filters(assets):
+    """The view filters, with the count behind each.
+
+    Built from INTERVENTION_LABELS rather than listed here, so an intervention
+    type cannot appear on a badge and be missing from the filter that would find
+    it. The count matters as much as the label: "Crew visit (366)" says something
+    about this forecast that "Crew visit" does not.
+    """
+    counts = Counter(a["intervention_type"] for a in assets)
+    filters = [{"key": config.QUEUE_FILTER_ALL, "label": "All", "count": len(assets)}]
+    filters += [
+        {"key": key, "label": label, "count": counts.get(key, 0)}
+        for key, label in config.INTERVENTION_LABELS.items()
+    ]
+    return filters
+
+
+def queue_rows(scenario_id, sort_key, descending, intervention_filter):
     scored = SCORED[scenario_id]
-    assets = scored["assets"][:config.QUEUE_ROWS]
+    assets = scored["assets"]
+    if intervention_filter != config.QUEUE_FILTER_ALL:
+        assets = [a for a in assets if a["intervention_type"] == intervention_filter]
     columns = sort_columns()
     key = columns.get(sort_key, columns[config.QUEUE_DEFAULT_SORT])
     assets = sorted(assets, key=key, reverse=descending)
@@ -316,6 +335,10 @@ def queue_rows(scenario_id, sort_key, descending):
             # so the raw token has no route to the screen at all.
             "intervention_label": config.INTERVENTION_LABELS[asset["intervention_type"]],
             "intervention_step": config.INTERVENTION_STYLE_INDEX[asset["intervention_type"]],
+            # Briefs cover the top BRIEF_TOP_N. Now that the queue shows the whole
+            # fleet, most rows have none, and the reader should know that before
+            # following the link rather than after.
+            "has_brief": asset["rank"] <= config.BRIEF_TOP_N,
             "decision": decision["decision"] if decision else None,
         })
     return rows
@@ -380,13 +403,18 @@ def index():
 
 @app.get("/scenario/{scenario_id}")
 def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_SORT,
-          direction: str = "desc", capacity: str = str(config.CREW_CAPACITY)):
+          direction: str = "desc", capacity: str = str(config.CREW_CAPACITY),
+          view: str = config.QUEUE_FILTER_ALL):
     scored = SCORED[scenario_id]
     crew_capacity = clamp_capacity(capacity)
     if sort not in sort_columns():
         sort = config.QUEUE_DEFAULT_SORT
+    # An unknown filter falls back rather than erroring, as an unknown sort does:
+    # a mistyped URL should show the queue, not a stack trace.
+    if view != config.QUEUE_FILTER_ALL and view not in config.INTERVENTION_LABELS:
+        view = config.QUEUE_FILTER_ALL
     descending = direction != "asc"
-    rows = queue_rows(scenario_id, sort, descending)
+    rows = queue_rows(scenario_id, sort, descending, view)
 
     # The capacity line marks where the crew stops working down the dispatch
     # order. Drawn in any other order it would say that the fifteen rows above it
@@ -414,6 +442,9 @@ def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_S
         "rows": rows,
         "sort": sort,
         "direction": "desc" if descending else "asc",
+        "view": view,
+        "filters": queue_filters(scored["assets"]),
+        "brief_top_n": config.BRIEF_TOP_N,
         "dispatch_order": dispatch_order,
         "sparkline": sparkline(scored["hourly_temps"]),
         "crew_capacity": crew_capacity,
@@ -450,6 +481,7 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str,
         "asset": {**asset, "contributions": contribution_view(asset["contributions"])},
         "intervention": intervention_view(asset),
         "brief": brief,
+        "brief_top_n": config.BRIEF_TOP_N,
         "cited": cited,
         "decision": decision,
         "intercept": scored["intercept"],

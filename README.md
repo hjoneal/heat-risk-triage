@@ -106,6 +106,11 @@ it is loading, which is remedied from the control room by moving demand to an ad
 *monitor only* where nothing actionable is raising its risk. It is a rule over contributions that
 already exist in the scored JSON — no model change, no extra field on the model, and no LLM call.
 
+The queue shows the whole fleet with a filter over the three types, because the capacity line lands
+around rank 44 to 97 and a queue capped at 40 rows could not show where its own line fell. Briefs
+still cover the top 40 by expected impact; rows below that are ranked and explained but marked as
+carrying no brief. See `DECISIONS.md` D-050.
+
 The consequence is that the crew budget constrains only part of the queue. The capacity line falls
 after the *n*th crew row rather than the *n*th row, which in the `short-severe` scenario is rank 44
 rather than rank 15; the 29 assets above it that carry load-driven risk consume no crew capacity.

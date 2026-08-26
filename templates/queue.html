@@ -8,7 +8,7 @@
   <th scope="col" {% if numeric %}class="num"{% endif %}
       {% if is_current %}aria-sort="{{ 'descending' if direction == 'desc' else 'ascending' }}"{% endif %}>
     <a class="sort{% if is_current %} is-sorted{% endif %}"
-       href="/scenario/{{ scenario_id }}?sort={{ key }}&amp;direction={{ next_direction }}&amp;capacity={{ crew_capacity }}">
+       href="/scenario/{{ scenario_id }}?sort={{ key }}&amp;direction={{ next_direction }}&amp;capacity={{ crew_capacity }}&amp;view={{ view }}">
       {{ label }}<span class="sort-caret" aria-hidden="true">{% if is_current %}{{ '▾' if direction == 'desc' else '▴' }}{% else %}<span class="sort-hint">↕</span>{% endif %}</span>
     </a>
   </th>
@@ -57,9 +57,20 @@
   </figure>
 </section>
 
+<nav class="viewfilter" aria-label="Filter by intervention type">
+  <span class="control-label">Show</span>
+  {% for f in filters %}
+    <a class="chip{% if f.key == view %} is-current{% endif %}"
+       {% if f.key == view %}aria-current="true"{% endif %}
+       href="/scenario/{{ scenario_id }}?sort={{ sort }}&amp;direction={{ direction }}&amp;capacity={{ crew_capacity }}&amp;view={{ f.key }}">{{ f.label }}
+      <span class="chip-count">{{ "{:,}".format(f.count) }}</span></a>
+  {% endfor %}
+</nav>
+
 <form class="controls" method="get" action="/scenario/{{ scenario_id }}" data-autosubmit>
   <input type="hidden" name="sort" value="{{ sort }}">
   <input type="hidden" name="direction" value="{{ direction }}">
+  <input type="hidden" name="view" value="{{ view }}">
   <label class="capacity">
     <span class="control-label">Crew capacity</span>
     <input type="range" name="capacity" min="{{ capacity_min }}" max="{{ capacity_max }}"
@@ -98,12 +109,18 @@
   <p class="sortbar">
     Sorted by a column other than expected impact, so the crew-capacity line is not shown —
     it marks where the crew stops working down the dispatch order, and this is not that order.
-    <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Back to dispatch order</a>
+    <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}&amp;view={{ view }}">Back to dispatch order</a>
   </p>
 {% endif %}
 
 {% if not rows %}
-  <p class="empty">No assets exceed the review threshold for this forecast.</p>
+  {% if view != 'all' %}
+    <p class="empty">No asset in this forecast is classified
+      {{ filters | selectattr('key', 'equalto', view) | map(attribute='label') | first | lower }}.
+      <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Show the whole fleet</a></p>
+  {% else %}
+    <p class="empty">No assets exceed the review threshold for this forecast.</p>
+  {% endif %}
 {% else %}
 <table class="queue">
   <caption class="visually-hidden">Assets ranked for this forecast. Select a column heading to sort.</caption>
@@ -114,7 +131,6 @@
       {{ sort_link('risk', 'Risk') }}
       {{ sort_link('customers', 'Customers') }}
       {{ sort_link('priority', 'Expected impact') }}
-      {{ sort_link('criticality', 'Criticality') }}
       <th scope="col">Action</th>
       <th scope="col"><span class="visually-hidden">Decision</span></th>
     </tr>
@@ -125,7 +141,7 @@
       <td class="num rank">{{ row.position }}</td>
       <td class="asset">
         <a href="/scenario/{{ scenario_id }}/asset/{{ row.asset_id }}">{{ row.name }}</a>
-        <span class="asset-id">{{ row.asset_id }} · {{ row.district }}</span>
+        <span class="asset-id">{{ row.asset_id }} · {{ row.district }}{% if not row.has_brief %} · no brief{% endif %}</span>
         {% if row.extraction_status == 'failed' %}
           <span class="reason">Condition data unavailable</span>
         {% else %}
@@ -147,7 +163,7 @@
     {# After the nth *crew* row, not the nth row: a load transfer is made from a
        desk and consumes no crew capacity. #}
     {% if dispatch_order and capacity_line_row and loop.index == capacity_line_row %}
-    <tr class="capacity-rule"><td colspan="8">Crew capacity: {{ crew_capacity }} crew visits,
+    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} crew visits,
       the last of them at rank {{ covered.line }}</td></tr>
     {% endif %}
   {% endfor %}
@@ -156,9 +172,10 @@
 {% if dispatch_order and not capacity_line_row %}
   <p class="sortbar">
     {% if covered.line %}
-      The {{ crew_capacity }}th crew visit falls at rank {{ covered.line }}, past the
-      {{ rows | length }} rows shown, so the capacity line is not drawn. Most assets near the
-      top of this ranking are remediable by load transfer and consume no crew capacity.
+      The {{ crew_capacity }}th crew visit falls at rank {{ covered.line }}, which this view
+      filters out, so the capacity line is not drawn — it marks where the crew stops working down
+      the dispatch order, and that row is not shown here.
+      <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Show the whole fleet</a>
     {% else %}
       Fewer than {{ crew_capacity }} assets in the whole ranking are crew-remediable, so the
       capacity line is not drawn: the crew budget is not the binding constraint on this forecast.
@@ -168,6 +185,9 @@
 {% endif %}
 
 <p class="footnote">
+  Showing {{ "{:,}".format(rows | length) }} of {{ "{:,}".format(covered.fleet_size) }} assets.
+  Action briefs cover the top {{ brief_top_n }} by expected impact; rows below that are ranked and
+  explained but carry no brief.
   Expected impact is risk multiplied by customers served. Scored
   {{ scenario.generated_at }} from cached extractions ({{ scenario.extraction_model }}).
 </p>

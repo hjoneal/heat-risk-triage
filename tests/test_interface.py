@@ -37,22 +37,11 @@ def top_asset_id(scenario_id):
     return json.loads(path.read_text())["assets"][0]["asset_id"]
 
 
-def capacity_within_the_visible_queue():
-    """A crew capacity whose line lands among the rows the queue shows.
-
-    The line now falls after the nth *crew* row, which sits further down than
-    rank n — often past the end of the queue. Tests that need to see it drawn
-    have to pick a capacity that puts it on screen rather than assume one.
-    """
-    path = config.OUTPUT_DIR / f"scored_{SCENARIO}.json"
+def scored(scenario_id=None):
+    path = config.OUTPUT_DIR / f"scored_{scenario_id or SCENARIO}.json"
     if not path.exists():
-        pytest.skip("scored output not present; run model.py first")
-    assets = json.loads(path.read_text())["assets"]
-    for capacity in range(config.CREW_CAPACITY, config.CREW_CAPACITY_MIN - 1, -1):
-        line = app_module.crew_capacity_line(assets, capacity)
-        if line and line <= config.QUEUE_ROWS:
-            return capacity
-    pytest.skip("no capacity in range draws the line within the visible queue")
+        pytest.skip(f"{path.name} not present; run model.py first")
+    return json.loads(path.read_text())
 
 
 def reading_cells(html):
@@ -71,7 +60,7 @@ def rank_column(html):
     return [int(n) for n in re.findall(r'<td class="num rank">(\d+)</td>', body)]
 
 
-@pytest.mark.parametrize("column", ["rank", "name", "risk", "customers", "priority", "criticality"])
+@pytest.mark.parametrize("column", ["rank", "name", "risk", "customers", "priority"])
 @pytest.mark.parametrize("direction", ["asc", "desc"])
 def test_every_sortable_column_renders(column, direction):
     html = queue_html(f"?sort={column}&direction={direction}")
@@ -95,10 +84,10 @@ def test_the_rank_column_is_the_dispatch_position_not_the_row_number():
 def test_the_capacity_line_appears_only_in_dispatch_order():
     """Drawn in any other order it would assert that the rows above it get
     visited, which is only true when the queue is in the order the crew works."""
-    within = capacity_within_the_visible_queue()
+    within = config.CREW_CAPACITY
     assert "capacity-rule" in queue_html(f"?capacity={within}")
     for query in ["?sort=customers&direction=desc", "?sort=risk&direction=asc",
-                  "?sort=priority&direction=asc", "?sort=criticality&direction=desc"]:
+                  "?sort=priority&direction=asc", "?sort=name&direction=asc"]:
         html = queue_html(f"{query}&capacity={within}")
         assert "capacity-rule" not in html, f"capacity line drawn for {query}"
         assert "not that order" in html, f"no explanation offered for {query}"
@@ -108,7 +97,7 @@ def test_the_capacity_line_falls_after_the_nth_crew_row_not_the_nth_row():
     """The substantive change. A load transfer is made from a desk and consumes
     no crew capacity, so counting it against the budget drew the line short."""
     scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
-    capacity = capacity_within_the_visible_queue()
+    capacity = config.CREW_CAPACITY
     line = app_module.crew_capacity_line(scored["assets"], capacity)
     above = [a for a in scored["assets"] if a["rank"] <= line]
     assert sum(1 for a in above if a["intervention_type"] == "crew") == capacity
@@ -127,20 +116,28 @@ def test_the_capacity_line_falls_after_the_nth_crew_row_not_the_nth_row():
         f"line drawn after rank {ranks[drawn_after - 1]}, expected {line}"
 
 
-def test_a_capacity_line_beyond_the_queue_is_explained_rather_than_omitted():
-    """Silently drawing nothing looks like a defect. Where it falls is also the
-    finding: the crew budget reaches much further down than its own number."""
-    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
-    beyond = next(
-        (c for c in range(config.CREW_CAPACITY_MIN, config.CREW_CAPACITY_MAX + 1)
-         if (app_module.crew_capacity_line(scored["assets"], c) or config.QUEUE_ROWS + 1)
-         > config.QUEUE_ROWS),
-        None)
-    assert beyond, "no capacity puts the line past the visible queue"
-    html = queue_html(f"?capacity={beyond}")
+def test_a_capacity_line_the_filter_hides_is_explained_rather_than_omitted():
+    """Silently drawing nothing looks like a defect. Filtering to load transfers
+    removes every crew row, so there is no nth crew row on screen to mark."""
+    html = queue_html(f"?view=remote&capacity={config.CREW_CAPACITY}")
     assert "capacity-rule" not in html
-    line = app_module.crew_capacity_line(scored["assets"], beyond)
+    line = app_module.crew_capacity_line(scored()["assets"], config.CREW_CAPACITY)
     assert f"rank {line}" in html, "the page does not say where the line fell"
+
+
+def test_the_capacity_line_marks_the_same_asset_whichever_view_it_is_seen_in():
+    """Filtering is a view, not a different plan. The nth crew row is the nth
+    crew row whether or not the load transfers between them are on screen."""
+    assets = scored()["assets"]
+    line = app_module.crew_capacity_line(assets, config.CREW_CAPACITY)
+    named = next(a for a in assets if a["rank"] == line)
+    for view in ("all", "crew"):
+        html = queue_html(f"?view={view}&capacity={config.CREW_CAPACITY}")
+        marker = html.index('class="capacity-rule"')
+        preceding = html.rfind(f'/asset/{named["asset_id"]}"', 0, marker)
+        assert preceding != -1, f"{view}: the line does not follow rank {line}"
+        # Nothing else between that row's link and the line.
+        assert '<td class="num rank">' not in html[preceding:marker]
 
 
 def test_the_forecast_chart_carries_both_axes():
@@ -235,24 +232,52 @@ def test_multipliers_compose_to_the_score(scenario_id=None):
             f"{asset['asset_id']}: multipliers give odds {product}, score implies {actual}"
 
 
-def test_every_capacity_the_slider_offers_has_rows_and_a_brief_behind_it():
-    """The slider, the queue and the brief coverage must agree.
+def test_every_capacity_the_slider_offers_can_draw_its_line():
+    """The slider, the sweep and the ranking must agree.
 
-    A capacity the slider can reach but the queue cannot show would put the line
-    nowhere, and a visible row without a brief breaks the invariant that every
-    row the crew can be sent to carries guidance.
+    The queue used to be capped at 40 rows and the invariant was that every
+    visible row carried a brief. It shows the whole fleet now, so most rows do
+    not — what has to hold instead is that every capacity the slider reaches puts
+    its line somewhere real.
     """
-    assert config.CREW_CAPACITY_MAX <= config.QUEUE_ROWS <= config.BRIEF_TOP_N
     assert max(config.CAPACITY_SWEEP) <= config.CREW_CAPACITY_MAX
     assert config.CREW_CAPACITY in config.CAPACITY_SWEEP, \
         "the default capacity must appear in the sweep it is reported against"
 
-    html = queue_html(f"?capacity={config.CREW_CAPACITY_MAX}")
-    rows = re.findall(r'/asset/(SUB-SGW-\d+)', html.split("<tbody>")[1])
-    assert len(set(rows)) >= config.CREW_CAPACITY_MAX
-    briefs = json.loads((config.OUTPUT_DIR / f"briefs_{SCENARIO}.json").read_text())
-    missing = [a for a in rows[:config.CREW_CAPACITY_MAX] if a not in briefs]
-    assert not missing, f"visible rows with no brief: {missing}"
+    assets = scored()["assets"]
+    for capacity in range(config.CREW_CAPACITY_MIN, config.CREW_CAPACITY_MAX + 1):
+        line = app_module.crew_capacity_line(assets, capacity)
+        assert line, f"capacity {capacity} has no nth crew row to fall after"
+        assert line <= len(assets)
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_a_row_with_no_brief_says_so_before_the_reader_clicks(scenario_id):
+    """Showing the whole fleet means most rows have no brief. Discovering that
+    after following the link is worse than being told in the row."""
+    briefs = json.loads((config.OUTPUT_DIR / f"briefs_{scenario_id}.json").read_text())
+    html = client.get(f"/scenario/{scenario_id}").text
+    body = html.split("<tbody>")[1]
+    rows = re.findall(r'/asset/(SUB-SGW-\d+)".*?</tr>', body, re.DOTALL)
+    marked = re.findall(r'/asset/(SUB-SGW-\d+)".*?(· no brief)?</span>', body, re.DOTALL)
+    assert len(rows) == len(scored(scenario_id)["assets"]), "the queue is not showing the fleet"
+    for asset_id, note in marked:
+        assert (asset_id in briefs) == (note != "· no brief"), \
+            f"{asset_id}: brief present={asset_id in briefs}, row says {note!r}"
+
+
+def test_the_queue_has_one_cell_per_column():
+    """The Action column was added by replacing the Criticality cell instead of
+    inserting beside it, so for two commits the table carried eight headers and
+    seven cells and every value from Action rightwards sat under the wrong one.
+    Nothing caught it, because every individual cell rendered correctly."""
+    for query in ("", "?view=crew", "?sort=risk&direction=asc"):
+        html = queue_html(query)
+        headers = re.findall(r"<th\b", html.split("<thead>")[1].split("</thead>")[0])
+        body = html.split("<tbody>")[1]
+        for row in re.findall(r"<tr>(.*?)</tr>", body, re.DOTALL)[:20]:
+            assert len(re.findall(r"<td\b", row)) == len(headers), \
+                f"{query or 'default'}: {len(headers)} headers, {len(re.findall(r'<td', row))} cells"
 
 
 def test_a_capacity_beyond_the_range_is_clamped_not_rejected():
@@ -434,12 +459,18 @@ def test_no_raw_intervention_value_reaches_the_screen(scenario_id):
     asset_id = top_asset_id(scenario_id)
     for path in [f"/scenario/{scenario_id}", f"/scenario/{scenario_id}/asset/{asset_id}"]:
         html = client.get(path).text
-        # "crew" is ordinary prose on this page; a stored value appearing inside
-        # a markup attribute is what would be a leak.
-        attributes = re.findall(r'\w+="([^"]*)"', html)
+        # The rule is about what a reader sees and what styling keys off, not
+        # about addressing: the view filter carries the value in `?view=crew` and
+        # in a hidden field, which is machinery. So the check is class attributes
+        # and rendered text, and never href or input values.
+        classes = re.findall(r'class="([^"]*)"', html)
+        text = re.sub(r"<[^>]+>", " ", html)
         for value in config.INTERVENTION_LABELS:
-            leaked = [a for a in attributes if re.search(rf"\b{value}\b", a)]
-            assert not leaked, f"{path} leaked {value!r} in {leaked}"
+            leaked = [c for c in classes if re.search(rf"\b{value}\b", c)]
+            assert not leaked, f"{path} styles on the stored value: {leaked}"
+        # "crew" and "monitor" are ordinary prose; the stored form of "remote"
+        # is not a word this interface has any other reason to print.
+        assert not re.search(r"\bremote\b", text), f"{path} shows the stored value 'remote'"
         assert "intervention_type" not in html and "intervention_driver" not in html
 
 
@@ -461,7 +492,7 @@ def test_the_coverage_figure_counts_interventions_not_rows():
     """It reports the crew visits and the load transfers alongside them. Counting
     every row above the line would credit the monitor rows, which get nothing."""
     scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
-    capacity = capacity_within_the_visible_queue()
+    capacity = config.CREW_CAPACITY
     covered = app_module.coverage(scored["assets"], capacity)
     assert covered["crew_count"] == capacity
     assert covered["covered_count"] == covered["crew_count"] + covered["remote_count"]
@@ -474,3 +505,50 @@ def test_the_coverage_figure_counts_interventions_not_rows():
 
     html = queue_html(f"?capacity={capacity}")
     assert f">{covered['remote_count']}</strong> load transfers" in html
+
+
+@pytest.mark.parametrize("view", ["all"] + list(config.INTERVENTION_LABELS))
+def test_every_filter_shows_exactly_the_assets_it_names(view):
+    """A filter that quietly showed something else would undermine the count
+    beside it, which is the part a supervisor reads off."""
+    assets = scored()["assets"]
+    expected = [a for a in assets
+                if view == config.QUEUE_FILTER_ALL or a["intervention_type"] == view]
+    html = queue_html(f"?view={view}")
+    if not expected:
+        assert '<p class="empty">' in html
+        return
+    shown = re.findall(r'/asset/(SUB-SGW-\d+)', html.split("<tbody>")[1])
+    assert shown == [a["asset_id"] for a in expected]
+
+
+def test_the_filter_offers_every_intervention_type_that_can_appear_on_a_badge():
+    """Built from INTERVENTION_LABELS, so a type cannot be badged in the queue
+    and have no filter that would find it."""
+    html = queue_html()
+    for label in config.INTERVENTION_LABELS.values():
+        assert f">{label}\n" in html or f">{label} " in html or f">{label}<" in html, \
+            f"no filter offers {label!r}"
+    counts = {f["key"]: f["count"] for f in app_module.queue_filters(scored()["assets"])}
+    assert counts["all"] == sum(v for k, v in counts.items() if k != "all")
+
+
+def test_the_filter_survives_a_sort_and_the_capacity_control():
+    """Three controls on one page. Losing the filter on a sort would make the
+    queue jump back to the fleet under the reader."""
+    html = queue_html("?view=crew")
+    for href in re.findall(r'<a class="sort[^"]*"\s+href="([^"]+)"', html):
+        assert "view=crew" in href, href
+    assert '<input type="hidden" name="view" value="crew">' in html
+    resorted = queue_html("?view=crew&sort=customers&direction=desc")
+    shown = re.findall(r'/asset/(SUB-SGW-\d+)', resorted.split("<tbody>")[1])
+    crew = {a["asset_id"] for a in scored()["assets"] if a["intervention_type"] == "crew"}
+    assert set(shown) == crew
+
+
+def test_an_unknown_filter_falls_back_rather_than_erroring():
+    """As an unknown sort does. A mistyped URL should show the queue."""
+    html = queue_html("?view=nonsense")
+    assert '<p class="empty">' not in html
+    assert len(re.findall(r'/asset/SUB-SGW-\d+', html.split("<tbody>")[1])) \
+        == len(scored()["assets"])

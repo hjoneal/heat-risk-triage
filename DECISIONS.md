@@ -1796,3 +1796,41 @@ committed files implying a corpus three times its real size — and were deleted
 to reproduce offline from its own 160. Measured for v4: 160 calls, 287,166 input and 21,559 output
 tokens, 1,552 to 3,596 in per brief. Input per brief rose about 4% against v2, output fell about 17%:
 the findings add tokens, and a brief that names a defect is shorter than one reasoning around one.
+
+## D-050 — The queue is the fleet, filtered by intervention type
+
+**Decision:** The queue renders all 900 ranked assets rather than the top 40, with a view filter over
+the intervention types and their counts. `QUEUE_ROWS` is retired. The Criticality column is removed.
+
+**Why the cap went.** It existed to hold an invariant — every visible row carries an action brief —
+and that invariant stopped being the important one when the capacity line moved to the *n*th crew row
+(D-048). The line then landed at rank 44 to 97 depending on scenario, so at the default capacity the
+queue could not show where its own capacity line fell in any of the four. A queue that cannot answer
+that is answering a narrower question than the one being asked of it.
+
+The invariant is retired rather than quietly broken. Briefs still cover the top `BRIEF_TOP_N` by
+expected impact; a row below that is marked `· no brief` in the queue and the asset page names the
+cut-off and the asset's own rank. A stated limit, not a hidden one.
+
+**Cost of showing everything: 675 KB of HTML, rendered in about 46 ms.** Measured, and accepted — the
+page is a static table with no request-time computation, and paginating it would put the capacity
+line back off-screen for exactly the reason the cap was removed.
+
+**The filter is built from `INTERVENTION_LABELS`,** not from a separate list of the two types anyone
+would think to ask for. A hard-coded pair would let a fourth intervention type appear on a badge with
+no filter that would find it. `monitor` currently returns nothing in three of four scenarios, and the
+empty state says which classification found nothing rather than reusing the "no assets exceed the
+review threshold" message, which would have been false.
+
+Filtering is a view, not a different plan. The capacity line still marks the *n*th crew row, which is
+the same asset whether or not the load transfers between them are on screen — asserted. Filtering to
+load transfers removes every crew row, so there is no line to draw, and the page says where it fell
+and offers the whole fleet.
+
+**Criticality is removed, and it was already broken.** The column was added to the header and never
+to the body: the Action column went in by *replacing* the criticality cell rather than inserting
+beside it, so from D-048 onward the table carried eight headers and seven cells and every value from
+Action rightwards rendered under the wrong heading. Nothing caught it, because each cell was
+individually correct and the count was never checked. `test_the_queue_has_one_cell_per_column` now
+checks it. Criticality remains on the asset page, where it is a register field worth reading; it was
+never a model input and never will be — it ranks, it does not predict.

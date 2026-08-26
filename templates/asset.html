@@ -110,8 +110,9 @@
       <p class="note">Brief status: {{ brief.status }}.</p>
     {% endif %}
   {% else %}
-    <p class="unavailable">No brief was generated for this asset; briefs cover the
-      top {{ asset.rank if asset.rank else '' }} ranked assets in each scenario.</p>
+    <p class="unavailable">No brief was generated for this asset. Briefs cover the top
+      {{ brief_top_n }} assets by expected impact in each scenario; this one ranks
+      {{ asset.rank }}.</p>
   {% endif %}
 </section>
 

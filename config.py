@@ -673,9 +673,22 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # Web application
 # ---------------------------------------------------------------------------
 
-# Raised from 25 with BRIEF_TOP_N, so that every capacity the sweep reports and
-# the slider offers has rows to draw a line across.
-QUEUE_ROWS = 40  # chosen: the briefed assets, so every visible row has a brief
+# The queue shows the whole fleet. It used to show the top 40, on the invariant
+# that every visible row carried an action brief — but truncating it also meant
+# the crew-capacity line frequently fell past the last row, since the line moved
+# to the nth *crew* row (D-048) and that sits around rank 44 to 97. A queue that
+# cannot show where its own capacity line falls is answering a narrower question
+# than the one being asked of it.
+#
+# The invariant is retired rather than quietly broken: briefs still cover the top
+# BRIEF_TOP_N, rows below that are marked as carrying no brief, and the asset page
+# says so. That is a stated limit rather than a hidden one.
+QUEUE_ROWS = None  # chosen: no cap — the queue is the fleet
+
+# The queue's view filter. Built from INTERVENTION_LABELS rather than listed
+# separately, so a fourth intervention type could not appear in the badges and be
+# missing from the filter.
+QUEUE_FILTER_ALL = "all"  # chosen
 
 # The notebook is committed with its outputs, so a plot that failed to render is
 # invisible in review and looks like a clean diff. It has happened once, when
@@ -775,8 +788,8 @@ PERCENTILE_BANDS = [
 
 # The crew-capacity control's range. Capacity is the one input that genuinely
 # changes which assets get visited: the ranking is fixed for a given forecast,
-# and capacity decides where the line is drawn across it. Capped at QUEUE_ROWS
-# because past that the queue has no rows left to draw the line after.
+# and capacity decides where the line is drawn across it. Capped at the top of
+# CAPACITY_SWEEP so the control offers exactly the range the metrics report.
 CREW_CAPACITY_MIN = 5  # chosen
-CREW_CAPACITY_MAX = 40  # chosen: the top of CAPACITY_SWEEP, and of QUEUE_ROWS
+CREW_CAPACITY_MAX = 40  # chosen: the top of CAPACITY_SWEEP
 DECISIONS_LOG = OUTPUT_DIR / "decisions.jsonl"
