@@ -1611,6 +1611,21 @@ rows on the asset page where one belongs.
 The display fix stands on its own. It was a presentation defect, not an encoding
 one, and it is fixed where it lived.
 
+**Correction, same day.** The first version of this drew the levels *beneath* the
+reading, so the cooling type row read "ONAN ONAN ONAF OFAF" — the levels are the
+reading, and printing both said it twice. The levels now carry it, with a
+visually-hidden marker naming the asset's own for a screen reader.
+
+Finding that also exposed a test passing on nothing.
+`test_no_reading_is_shown_as_a_bare_uninterpretable_number` matched from the
+opening of the reading cell to the first tag inside it, which works only while
+every reading is plain text. Once five of them became markup the regex matched an
+empty string for those rows, and an empty string is not a bare number, so the
+test went on passing while checking ten features instead of fifteen. It now
+strips the cell to its visible text and asserts the count of cells as well as
+their content. Same failure mode as D-044: a check that asks whether something
+bad *appears* rather than what is actually *there*.
+
 ## D-047 — Sorting keeps the reader's place
 
 **Decision:** `static/app.js` stores the scroll position before a sort link or a

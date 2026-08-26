@@ -37,16 +37,15 @@
         <tr class="{{ 'up' if c.contribution > 0 else 'down' }}">
           <td class="factor">{{ c.label }}</td>
           <td class="reading">
-            {{ c.reading }}
             {% if c.is_state %}
-              {# A category has levels, not a range. The reading above names the
-                 one this asset is at; these show how many there were to be at. #}
-              <span class="states" aria-hidden="true">
-                {% for state in c.states %}
-                  <span class="state{% if state.is_current %} is-current{% endif %}">{{ state.label }}</span>
-                {% endfor %}
+              {# A category has levels, not a range, and the levels *are* the
+                 reading — printing it above them as well said ONAN twice. The
+                 asset's own is marked; the rest show how many it was one of. #}
+              <span class="states">
+                {% for state in c.states %}<span class="state{% if state.is_current %} is-current{% endif %}">{{ state.label }}{% if state.is_current %}<span class="visually-hidden"> — this asset</span>{% endif %}</span>{% endfor %}
               </span>
             {% else %}
+              {{ c.reading }}
               {# Where this reading sits against everything the model was trained on.
                  A temperature means little without the range behind it. #}
               <span class="rangebar" aria-hidden="true"><span style="left: {{ "%.1f"|format(c.percentile * 100) }}%"></span></span>

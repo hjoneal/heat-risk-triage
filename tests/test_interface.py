@@ -37,6 +37,17 @@ def top_asset_id(scenario_id):
     return json.loads(path.read_text())["assets"][0]["asset_id"]
 
 
+def reading_cells(html):
+    """The visible text of every reading cell, tags stripped.
+
+    Matching to the first tag inside the cell is not the same thing: a
+    categorical feature's reading *is* markup — its levels — so that form of the
+    check matched an empty string and passed on rows it was not reading at all.
+    """
+    cells = re.findall(r'<td class="reading">(.*?)</td>', html, flags=re.DOTALL)
+    return [" ".join(re.sub(r"<[^>]+>", " ", cell).split()) for cell in cells]
+
+
 def rank_column(html):
     body = html.split("<tbody>")[1]
     return [int(n) for n in re.findall(r'<td class="num rank">(\d+)</td>', body)]
@@ -100,11 +111,15 @@ def test_no_reading_is_shown_as_a_bare_uninterpretable_number(scenario_id):
     """
     asset_id = top_asset_id(scenario_id)
     html = client.get(f"/scenario/{scenario_id}/asset/{asset_id}").text
-    readings = re.findall(r'<td class="reading">\s*([^<\n]+?)\s*<', html)
-    assert len(readings) >= len(config.FEATURES)
+    readings = reading_cells(html)
+    assert len(readings) == len(config.FEATURES) + 1, \
+        f"{len(readings)} reading cells for {len(config.FEATURES)} features and a baseline row"
     for reading in readings[:len(config.FEATURES)]:
-        assert not re.fullmatch(r"-?[\d.,]+", reading), \
-            f"{reading!r} is a bare number with no unit or referent"
+        assert reading, "a factor was shown with no reading at all"
+        # The comparison note sits in the same cell; the reading is what precedes it.
+        head = reading.split(" of the fleet")[0].split(" among ")[0].split(" about ")[0]
+        assert not re.fullmatch(r"-?[\d.,]+", head.strip()), \
+            f"{head!r} is a bare number with no unit or referent"
 
 
 def test_the_odds_multiplier_matches_the_log_odds_contribution(scenario_id=None):
@@ -236,12 +251,37 @@ def test_every_level_of_a_categorical_is_shown_not_just_the_asset_s_own():
     blocks = re.findall(r'<span class="states".*?(?=<span class="rangenote")',
                         html, flags=re.DOTALL)
     assert len(blocks) == len(config.FEATURE_STATES)
-    rendered = [re.findall(r'<span class="state[^"]*">([^<]+)</span>', b) for b in blocks]
+    # The marker naming the asset's own level is for screen readers, not for the
+    # list of levels; drop it before reading the labels off.
+    spoken = re.compile(r'<span class="visually-hidden">[^<]*</span>')
+    rendered = [re.findall(r'<span class="state[^"]*">([^<]*)</span>', spoken.sub("", block))
+                for block in blocks]
     assert config.FEATURE_STATES["cooling_type_ordinal"] in rendered, \
         f"the three cooling types are not shown as three levels: {rendered}"
     for block, labels in zip(blocks, rendered):
         assert block.count("is-current") == 1, \
             f"exactly one level is the asset's own, found {block.count('is-current')} in {labels}"
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_a_categorical_s_reading_is_shown_once_not_twice(scenario_id):
+    """The levels are the reading, so printing the reading beside them said the
+    same word twice — the page read "ONAN ONAN ONAF OFAF"."""
+    asset_id = top_asset_id(scenario_id)
+    html = client.get(f"/scenario/{scenario_id}/asset/{asset_id}").text
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    asset = next(a for a in scored["assets"] if a["asset_id"] == asset_id)
+    cells = dict(zip([c["label"] for c in asset["contributions"]], reading_cells(html)))
+    for c in asset["contributions"]:
+        if c["feature"] not in config.FEATURE_STATES:
+            continue
+        current = config.FEATURE_STATES[c["feature"]][c["state_index"]]
+        # "this asset" is the screen-reader marker on the current level and is
+        # part of neither the reading nor the levels.
+        text = cells[c["label"]].replace("— this asset", "")
+        occurrences = len(re.findall(rf"\b{re.escape(current)}\b", text))
+        assert occurrences == 1, \
+            f"{c['label']}: {current!r} appears {occurrences} times in {text!r}"
 
 
 @pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])

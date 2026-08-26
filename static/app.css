@@ -479,26 +479,28 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
   background: var(--text);
 }
 
-/* Levels, not a range. Each state is drawn whether or not the asset is at it,
-   so a reader can see that cooling type has three and a condition flag two. */
+/* Levels, not a range. These are the reading for a categorical feature, not a
+   decoration beside it: every level is drawn whether or not the asset is at it,
+   so a reader can see that cooling type has three and a condition flag two.
+   Direction is deliberately not carried here — whether the level is good or bad
+   is the effect column's job, and saying it twice invites the two to disagree. */
 .states {
-  display: flex;
+  display: inline-flex;
   gap: 2px;
-  margin: 5px 0 3px;
-  max-width: 130px;
+  margin: 1px 0 3px;
+  max-width: 150px;
 }
 
 .state {
   flex: 1;
-  padding: 1px 0;
+  padding: 2px 5px;
   font-family: var(--font-data);
-  font-size: 9px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.03em;
   text-align: center;
-  text-transform: uppercase;
   color: var(--text-muted);
   background: var(--rule);
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 .state.is-current {
