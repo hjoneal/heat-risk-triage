@@ -206,3 +206,93 @@ def test_no_raw_feature_name_reaches_the_screen(scenario_id):
         html = client.get(path).text
         leaked = [name for name in config.FEATURES if name in html]
         assert not leaked, f"{path} leaked {leaked}"
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_a_categorical_feature_is_never_shown_on_a_continuous_scale(scenario_id):
+    """A gradient bar asserts a continuum, and cooling type does not have one.
+
+    The page used to draw one for all fifteen features, which put ONAN — the
+    lowest of three levels and the one that raises an asset's odds most — at 40%
+    of the way along a green-to-red bar and captioned it "about typical".
+    """
+    asset_id = top_asset_id(scenario_id)
+    html = client.get(f"/scenario/{scenario_id}/asset/{asset_id}").text
+    n_categorical = len(config.FEATURE_STATES)
+    assert html.count('class="states"') == n_categorical
+    assert html.count('class="rangebar"') == len(config.FEATURES) - n_categorical
+
+
+def test_every_level_of_a_categorical_is_shown_not_just_the_asset_s_own():
+    """Three cooling types are three segments, whichever one the asset is.
+
+    Showing only the reading leaves the reader unable to tell whether ONAN is
+    one of two options or one of five.
+    """
+    asset_id = top_asset_id(SCENARIO)
+    html = client.get(f"/scenario/{SCENARIO}/asset/{asset_id}").text
+    # From each states block to the comparison note that closes the cell; the
+    # inner spans make a match on the outer closing tag unreliable.
+    blocks = re.findall(r'<span class="states".*?(?=<span class="rangenote")',
+                        html, flags=re.DOTALL)
+    assert len(blocks) == len(config.FEATURE_STATES)
+    rendered = [re.findall(r'<span class="state[^"]*">([^<]+)</span>', b) for b in blocks]
+    assert config.FEATURE_STATES["cooling_type_ordinal"] in rendered, \
+        f"the three cooling types are not shown as three levels: {rendered}"
+    for block, labels in zip(blocks, rendered):
+        assert block.count("is-current") == 1, \
+            f"exactly one level is the asset's own, found {block.count('is-current')} in {labels}"
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_a_categorical_carries_a_fleet_share_and_no_percentile(scenario_id):
+    """The two comparators are not interchangeable, and the wrong one for a
+    category is the one that misled. A template reaching for `percentile` on a
+    cooling type should fail rather than render a cumulative share of levels."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    for asset in scored["assets"][:20]:
+        for c in asset["contributions"]:
+            if c["feature"] in config.FEATURE_STATES:
+                assert "percentile" not in c, f"{c['feature']} carries a percentile"
+                assert 0.0 < c["state_share"] <= 1.0
+                assert 0 <= c["state_index"] < len(config.FEATURE_STATES[c["feature"]])
+            else:
+                assert "state_share" not in c, f"{c['feature']} carries a state share"
+                assert 0.0 <= c["percentile"] <= 1.0
+
+
+def test_the_fleet_share_shown_for_a_state_is_the_share_of_the_fleet_in_it():
+    """Measured against the register rather than trusted from the JSON."""
+    import pandas as pd
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
+    assets = pd.read_csv(config.DATA_DIR / "assets.csv")
+    observed = assets["cooling_type"].value_counts(normalize=True)
+    for asset in scored["assets"][:20]:
+        c = next(c for c in asset["contributions"] if c["feature"] == "cooling_type_ordinal")
+        state = config.FEATURE_STATES["cooling_type_ordinal"][c["state_index"]]
+        assert state == asset["cooling_type"]
+        assert math.isclose(c["state_share"], observed[state], abs_tol=0.01), \
+            f"{state}: JSON says {c['state_share']:.2%}, register says {observed[state]:.2%}"
+
+    # And that the figure survives the trip to the page. Checking only the JSON
+    # left the rendered wording free to say anything at all.
+    asset = scored["assets"][0]
+    html = client.get(f"/scenario/{SCENARIO}/asset/{asset['asset_id']}").text
+    label = config.FEATURE_LABELS["cooling_type_ordinal"]
+    row = re.search(
+        rf'{re.escape(label)}</td>.*?<span class="rangenote">([^<]+)</span>',
+        html, flags=re.DOTALL)
+    assert row, "no cooling type row on the page"
+    expected = f"{observed[asset['cooling_type']]:.0%} of the fleet"
+    assert row.group(1).strip() == expected, f"page reads {row.group(1)!r}, expected {expected!r}"
+
+
+def test_sorting_a_column_is_a_plain_link_that_works_without_scripting():
+    """The script keeps the reader's place across a sort; it must not be what
+    makes the sort happen. Every header is an ordinary GET that stands alone."""
+    html = queue_html()
+    hrefs = re.findall(r'<a class="sort[^"]*"\s+href="([^"]+)"', html)
+    assert len(hrefs) == len(app_module.sort_columns())
+    for href in hrefs:
+        assert href.startswith(f"/scenario/{SCENARIO}?sort="), href
+        assert client.get(href.replace("&amp;", "&")).status_code == 200

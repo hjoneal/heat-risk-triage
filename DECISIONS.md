@@ -1553,3 +1553,76 @@ scenarios and false of production.
 
 **No monetary figure is recorded anywhere,** deliberately. Rates change and the
 repo has no business asserting one. Tokens and call counts are the durable facts.
+
+## D-046 — A category is shown as its levels, not as a position on a scale
+
+**Decision:** The contribution table draws a green-to-red range bar and a
+percentile phrase only for features that have a range. The five that do not —
+cooling type and the four condition flags — are drawn as their levels, with the
+asset's own marked and the share of the fleet in it named. `FEATURE_STATES` in
+`config.py` is the list, and the scored JSON now carries `state_index` and
+`state_share` for those features **instead of** `percentile`, not alongside it.
+
+**What went wrong.** Every feature got the same treatment, and for cooling type
+the result was actively misleading. ONAN is the lowest of the three levels on the
+ordinal encoding and the one that raises an asset's odds most — ×1.81 on the
+top-ranked asset in `short-severe`, the single largest positive factor on that
+page. The percentile machinery computed the share of the fleet at or below it,
+0.41, put the marker four-tenths along a bar reading green on the left and red on
+the right, and captioned it "about typical". Three separate false impressions
+from one statistic: that the levels lie on a continuum, that this asset sat in the
+middle of it, and that the middle was unremarkable.
+
+The flags were the same defect in a milder form. A boolean has no percentile —
+"42% of the fleet" is the whole of what can be said about a `yes`, and the
+cumulative form of it says nothing at all.
+
+**Why the key is dropped rather than kept.** A cumulative share of an ordinal
+encoding is a real computation, so keeping it in the JSON and simply not
+rendering it was the smaller change. It would also leave a number in the record
+that must never be shown, and a template reaching for `c.percentile` on a cooling
+type would silently render the thing this entry exists to remove. Absent, it
+fails loudly instead.
+
+**The encoding itself is unchanged, and that was checked rather than assumed.**
+`cooling_type_ordinal` maps ONAN→0, ONAF→1, OFAF→2 and asks the model for one
+coefficient across all three, which imposes an equal step between adjacent
+levels. Refitting with indicator columns for ONAF and OFAF against an ONAN
+reference — same rows, same folds, same protocol — measured:
+
+| | pooled AUC | within-event AUC | P@15 | R@15 | Brier |
+|---|---|---|---|---|---|
+| ordinal (as built) | 0.8432 | 0.6216 | 0.0542 | 0.0627 | 0.008832 |
+| one-hot | 0.8429 | 0.6161 | 0.0583 | 0.0581 | 0.008845 |
+
+A paired bootstrap over events puts one-hot 0.0054 *below* ordinal on
+within-event AUC (95% interval −0.0143 to +0.0010; ordinal wins 89% of
+resamples), and the two rankings share 14 of the top 15 rows. The free fit does
+disagree slightly with the equal-step assumption — relative to ONAN it puts ONAF
+at −0.89 log-odds and OFAF at −1.35, where equal steps would put OFAF at −1.78 —
+so the real effect has diminishing returns and the ordinal encoding mildly
+overstates OFAF's advantage. That is a genuine finding about the generator
+(`COOLING_OFFSET_C` is linear at +2/0/−2 °C, but it passes through a convex
+ageing law, so equal temperature steps are not equal risk steps) and it changes
+nothing anyone would act on. **Not adopted:** the extra degree of freedom costs
+variance and buys no measurable ranking, and a two-column encoding would put two
+rows on the asset page where one belongs.
+
+The display fix stands on its own. It was a presentation defect, not an encoding
+one, and it is fixed where it lived.
+
+## D-047 — Sorting keeps the reader's place
+
+**Decision:** `static/app.js` stores the scroll position before a sort link or a
+capacity change navigates, and restores it on arrival if the path matches.
+
+Sorting is a full page load, and a full page load starts at the top, which takes
+the row the reader was looking at out from under them. The position is keyed on
+the path so that following a link through to an asset still arrives at the top of
+that page — a different page, where the stored position means nothing.
+
+Still progressive enhancement: every column header remains an ordinary GET link
+that sorts on its own, asserted in `tests/test_interface.py`. Without scripting a
+sort lands at the top of the page exactly as it did before. `form.submit()` does
+not fire a submit event, so the capacity slider stores its position in the same
+handler that submits rather than through a listener that would never run.

@@ -427,6 +427,27 @@ FEATURE_UNITS = {
 }
 assert set(FEATURE_UNITS) == set(FEATURES)
 
+# Which features read as one of a fixed set of named states rather than as a
+# position on a scale. The distinction is not cosmetic: a gradient bar and a
+# percentile phrase both assert a continuum, and applied to cooling type they
+# said that ONAN — the *lowest* of the three levels, and the one that raises an
+# asset's odds most — was "about typical", because 40% of the fleet sits at or
+# below it on the ordinal encoding. A cumulative share is the wrong statistic
+# for a category. These are shown as the states they are, with the share of the
+# fleet in the asset's own state. See DECISIONS.md D-046.
+#
+# Order matters for cooling type: it is the order of COOLING_TYPE_ORDINAL, which
+# is what the model was given, so the segments read left to right in the same
+# direction as the encoding.
+FEATURE_STATES = {
+    "cooling_type_ordinal": COOLING_TYPES,
+    "flag_cooling_degraded": ["no", "yes"],
+    "flag_ventilation_obstructed": ["no", "yes"],
+    "flag_oil_issue": ["no", "yes"],
+    "flag_overdue_remedial": ["no", "yes"],
+}  # chosen
+assert set(FEATURE_STATES) <= set(FEATURES)
+
 # An interaction's own value is a product of two centred numbers and means
 # nothing read on its own — "20.34" for an ageing asset in warm nights is not a
 # quantity anyone can check. The components are shown instead. The flag count is
@@ -460,6 +481,10 @@ WARM_NIGHT_C = 24.0  # assumed: overnight minimum above which an asset fails to 
 # Ordered by cooling capability, so the coefficient has a readable sign.
 COOLING_TYPE_ORDINAL = {"ONAN": 0, "ONAF": 1, "OFAF": 2}  # chosen
 COOLING_TYPE_BY_ORDINAL = {value: name for name, value in COOLING_TYPE_ORDINAL.items()}
+# The segments on the asset page are drawn in FEATURE_STATES order and indexed
+# by the ordinal the model was given, so the two must agree.
+assert [COOLING_TYPE_BY_ORDINAL[i] for i in range(len(COOLING_TYPES))] \
+    == FEATURE_STATES["cooling_type_ordinal"]
 
 # ---------------------------------------------------------------------------
 # Condition flags

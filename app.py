@@ -187,23 +187,49 @@ def percentile_label(share):
     return config.PERCENTILE_BANDS[-1][1]
 
 
+def state_view(contribution):
+    """A categorical feature's levels, with the asset's own marked.
+
+    Two levels for a condition flag, three for cooling type, and the reader can
+    see which it is out of how many. The alternative the page used to show — a
+    green-to-red gradient with a marker on it — asserts that the levels lie on a
+    continuum and that the reading sits somewhere along it, which is true of a
+    temperature and false of a cooling type.
+    """
+    states = config.FEATURE_STATES[contribution["feature"]]
+    return [
+        {"label": label, "is_current": index == contribution["state_index"]}
+        for index, label in enumerate(states)
+    ]
+
+
 def contribution_view(contributions):
     """Add the display-only fields the contribution table needs.
 
     Kept out of the scored JSON because these are presentation choices — a bar
     length and a form of words — and the JSON is the record of what the model
-    computed. `odds_multiplier`, `reading` and `percentile` are in the JSON
-    because they are properties of the fit, not of this page.
+    computed. `odds_multiplier`, `reading`, `percentile` and `state_share` are
+    in the JSON because they are properties of the fit, not of this page.
     """
     widest = max((abs(c["contribution"]) for c in contributions), default=1.0) or 1.0
-    return [
-        {
+    rows = []
+    for c in contributions:
+        is_state = c["feature"] in config.FEATURE_STATES
+        rows.append({
             **c,
-            "percentile_label": percentile_label(c["percentile"]),
+            "is_state": is_state,
+            "states": state_view(c) if is_state else None,
+            # How much of the fleet reads the same way. For a category that is
+            # the share in this state; for everything else it is a band, because
+            # the reference set is 14,400 synthetic asset-event rows and does not
+            # support a claim finer than one.
+            "comparison": (
+                f"{c['state_share']:.0%} of the fleet" if is_state
+                else percentile_label(c["percentile"])
+            ),
             "effect_pct": 100.0 * abs(c["contribution"]) / widest,
-        }
-        for c in contributions
-    ]
+        })
+    return rows
 
 
 def clamp_capacity(value):

@@ -38,10 +38,20 @@
           <td class="factor">{{ c.label }}</td>
           <td class="reading">
             {{ c.reading }}
-            {# Where this reading sits against everything the model was trained on.
-               A temperature means little without the range behind it. #}
-            <span class="rangebar" aria-hidden="true"><span style="left: {{ "%.1f"|format(c.percentile * 100) }}%"></span></span>
-            <span class="rangenote">{{ c.percentile_label }}</span>
+            {% if c.is_state %}
+              {# A category has levels, not a range. The reading above names the
+                 one this asset is at; these show how many there were to be at. #}
+              <span class="states" aria-hidden="true">
+                {% for state in c.states %}
+                  <span class="state{% if state.is_current %} is-current{% endif %}">{{ state.label }}</span>
+                {% endfor %}
+              </span>
+            {% else %}
+              {# Where this reading sits against everything the model was trained on.
+                 A temperature means little without the range behind it. #}
+              <span class="rangebar" aria-hidden="true"><span style="left: {{ "%.1f"|format(c.percentile * 100) }}%"></span></span>
+            {% endif %}
+            <span class="rangenote">{{ c.comparison }}</span>
           </td>
           <td class="num effect">
             <span class="multiplier">×{{ "%.2f"|format(c.odds_multiplier) }}</span>

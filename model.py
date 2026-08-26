@@ -353,6 +353,18 @@ def percentile_of(sorted_values, value):
     return float(np.searchsorted(sorted_values, value, side="right") / len(sorted_values))
 
 
+def state_share(sorted_values, value):
+    """Share of the training set reading exactly this state, 0 to 1.
+
+    The comparator for a category. "At or below" is the wrong question to ask of
+    a cooling type: it puts the lowest of three levels at 0.40 and calls it
+    typical. The same reference set as `percentile_of`, counted differently.
+    """
+    below = np.searchsorted(sorted_values, value, side="left")
+    at_or_below = np.searchsorted(sorted_values, value, side="right")
+    return float((at_or_below - below) / len(sorted_values))
+
+
 def assert_contributions_sum(model, X, probabilities):
     """Contributions must sum to logit(p) minus the intercept, exactly."""
     intercept = float(model["clf"].intercept_[0])
@@ -487,15 +499,26 @@ def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_lab
                 "label": config.FEATURE_LABELS[name],
                 "value": value,
                 "reading": format_reading(name, value, components),
-                # Where this reading sits among everything the model was trained
-                # on. A temperature means little without the range behind it.
-                "percentile": round(percentile_of(training_percentiles[name], value), 4),
                 # The contribution is a log-odds term, which is the honest unit
                 # and an unreadable one. Its exponential is the factor this
                 # feature multiplies the asset's odds of failure by — exactly
                 # equivalent, and a number an operator can act on.
                 "odds_multiplier": round(float(np.exp(contribution)), 4),
                 "contribution": contribution,
+                # A category carries its state and the share of the fleet in it;
+                # everything else carries where the reading sits among all the
+                # model was trained on, because a temperature means little
+                # without the range behind it. A categorical feature gets no
+                # `percentile` key at all rather than a misleading one: a
+                # template reaching for it would fail rather than mislead.
+                **(
+                    {
+                        "state_index": int(round(value)),
+                        "state_share": round(state_share(training_percentiles[name], value), 4),
+                    }
+                    if name in config.FEATURE_STATES else
+                    {"percentile": round(percentile_of(training_percentiles[name], value), 4)}
+                ),
             }
             for name, value, contribution in explain(model, X[row_index])
         ]
