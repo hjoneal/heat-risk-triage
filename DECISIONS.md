@@ -1641,3 +1641,77 @@ that sorts on its own, asserted in `tests/test_interface.py`. Without scripting 
 sort lands at the top of the page exactly as it did before. `form.submit()` does
 not fire a submit event, so the capacity slider stores its position in the same
 handler that submits rather than through a listener that would never run.
+
+## D-048 — The queue says what kind of intervention each asset needs
+
+**Decision:** Every scored asset carries an `intervention_type` of `crew`, `remote` or `monitor`,
+and the `intervention_driver` behind it. The queue badges each row, the capacity line falls after the
+*n*th **crew** row rather than the *n*th row, and the coverage figure counts the crew visits together
+with the load transfers picked up alongside them. Derived entirely from contributions already in the
+scored JSON: no model change, no regeneration, no re-extraction, no LLM call.
+
+**The problem.** The queue implied that every ranked asset needed a truck. It does not. A condition
+flag, an overdue maintenance interval or a fault history is remedied on site; loading is remedied
+from a desk, by transferring load to an adjacent feeder; age, cooling type and the weather are not
+remediable at all inside 72 hours. This became more visible once the interaction terms were added,
+because `load_x_degree_hours` pushes heavily loaded assets up under severe forecasts — which was the
+intent, and which surfaces more assets whose remedy is not a site visit.
+
+**One input decides: the largest positive contribution among the actionable drivers.** Weighting
+across several would need a rationale that does not exist. Where an asset carries both a condition
+flag and a loading term, the larger decides — that is what is putting it where it is.
+
+**Deviation from the note this was built from, and the measurements behind it.** The specification
+was to select over *all* fifteen contributions. Built that way first, it is degenerate, in two
+distinct ways:
+
+* **A hazard feature is constant within an event.** When it is the largest positive contribution it
+  is the largest for every asset at once. In `long-severe`, `degree_hours_above_30` took that place
+  for **all 900 assets**, so the entire fleet classified as `monitor`: a badge carrying no
+  information, and a capacity line that could not be drawn at all. This is the same property already
+  recorded in D-040 — a hazard feature cannot reorder the assets within one event, and so cannot
+  explain why any particular asset ranks where it does.
+* **`cooling_type_ordinal` is not actionable and frequently dominates.** It is the largest positive
+  contribution for 295 of 900 assets in `short-severe`. The top-ranked asset in that scenario,
+  `SUB-SGW-165` — three open defects and 1,448 days since maintenance — was labelled **"Monitor
+  only"**. That is not a debatable ordering of drivers; it is a wrong instruction, and a supervisor
+  would reject the tool over it.
+
+Restricting the pool to `CREW_DRIVERS | REMOTE_DRIVERS` fixes both and preserves everything the rule
+was for. The largest *actionable* contribution still decides alone; a condition flag still beats a
+smaller loading term; and `monitor` now means what the note says it means — nothing about this asset
+can be acted on inside the window — rather than "the largest factor happened to be one of the four
+that cannot be". Measured across the four scenarios, the top 40 splits 6–14 crew and 26–34 load
+transfers, and `monitor` appears 34 times fleet-wide in one scenario, never above rank 394.
+
+**One ranked list with badges, not two lists.** Splitting would raise the question of how the two
+rank against each other, which is not a question this system answers. The badge is a word as well as
+a colour, and its style hook is an index rather than the stored token, so `INTERVENTION_LABELS` is
+the only path from the value to the page — the rule `FEATURE_LABELS` already enforces for feature
+names.
+
+**"Load transfer", never "de-rating" or "load restriction".** Transferring load to an adjacent
+feeder moves demand without interrupting supply. Restricting throughput can mean shedding customers,
+which is the outcome this system exists to avoid. Different actions, different costs, and conflating
+them in an interface an operator reads would be a real error rather than a stylistic one. Asserted
+over the label and note strings; a cited procedure keeps its own vocabulary.
+
+**The capacity line often falls past the visible queue, and the page says so.** At capacity 15 the
+15th crew row is at rank 44 in `short-severe`, 51 in `long-moderate`, 97 in `long-severe` and 42 in
+`baseline-mild` — all beyond the 40 rows shown. Drawing nothing and saying nothing would read as a
+defect, so the queue states where the line fell. That is also the finding: the crew budget reaches
+roughly three times further down the ranking than its own number suggests.
+
+**No metric was adjusted.** Precision and recall at capacity still treat every ranked asset as
+consuming a crew visit, so they understate the coverage a given crew budget achieves. The figures are
+conservative and were left alone; the split is a reading of the queue, not a change to the model, and
+moving a reported number on the strength of it would be tuning to a number. Recorded as a limitation
+instead.
+
+**Retrieval was checked rather than assumed.** The note reasoned that briefs are already appropriate
+to the intervention type, because the query is built from the same contributions. Mostly true and not
+reliably so: of 12 remote-classified assets spot-checked across three scenarios, 11 retrieved
+*MG-021 Loading and de-rating at high ambient temperature*, and `SUB-SGW-340` under `short-severe`
+retrieved three condition documents and no loading document at all, its other positive contributions
+having outscored the loading terms. Nothing conditions retrieval on the intervention type. Recorded
+as a limitation; the brief pipeline is unchanged, as specified.

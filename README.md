@@ -99,6 +99,19 @@ part), D-024, D-026.
 Priority is `risk × customers_served` — expected customers affected — so calibration matters as much
 as discrimination. There is no class weighting, no resampling, and no post-hoc calibration layer.
 
+**Not every ranked asset needs a crew.** Each asset carries an intervention type derived from the
+largest positive contribution among the drivers something can be done about: *crew visit* where that
+is a condition flag, an overdue maintenance interval or a prior fault history; *load transfer* where
+it is loading, which is remedied from the control room by moving demand to an adjacent feeder;
+*monitor only* where nothing actionable is raising its risk. It is a rule over contributions that
+already exist in the scored JSON — no model change, no extra field on the model, and no LLM call.
+
+The consequence is that the crew budget constrains only part of the queue. The capacity line falls
+after the *n*th crew row rather than the *n*th row, which in the `short-severe` scenario is rank 44
+rather than rank 15; the 29 assets above it that carry load-driven risk consume no crew capacity.
+Selecting over all fifteen features instead was tried first and is degenerate — see `DECISIONS.md`
+D-048 for the measurements, which are the reason the pool is restricted.
+
 Explanations are the model's own arithmetic: each contribution is `coefficient × standardised value`,
 and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
 
@@ -486,6 +499,7 @@ Out of scope by decision, not oversight.
 | Load forecasting | Needs real SCADA history to be credible. The risk ranking is useful without it. The generator does model demand rising with temperature, but that is an assumed physical response inside the synthetic world, not a forecast of load from history. | 2–3 years of half-hourly load telemetry per asset |
 | Anomaly detection on telemetry | Complementary, not substitutable. Detects developing faults continuously; this model ranks known condition against forecast stress. | Streaming SCADA integration, labelled fault history |
 | Crew scheduling optimisation | The system ranks; it does not route. Optimisation needs crew locations, skills, shift rules and travel times. | Field operations system integration |
+| Feeder reconfiguration feasibility | The queue labels an asset *load transfer* when loading is the largest actionable driver of its risk. That says what kind of intervention the risk implies, not that the intervention is available: whether load can be moved depends on adjacent feeder headroom and switching state, and adjacent feeders are stressed at the same moment. No control-room capacity is modelled either, so the count of load transfers above the capacity line is not bounded by anything. | Network topology model, real-time switching state, feeder loading telemetry |
 | Spatial / GIS analysis | GIS is a data dependency here, not an AI capability. Location and criticality enter as pre-computed fields. | PostGIS or equivalent, network topology model |
 | Real-time integration | Runs on fixed forecast scenarios against cached data so it is reproducible and demonstrable offline. | Live feed adapters, scheduling, monitoring |
 | LLM-as-judge evaluation of brief quality | Deterministic checks cover the failure modes that change decisions. A judge model would itself need validating. | A labelled set of good and bad briefs, plus human agreement measurement |
@@ -557,6 +571,24 @@ Production MLOps Architecture*, October 2025.
   ranking. The sweep above shows how it moves: 0.063 at 15, 0.134 at 30, 0.158 at 40. A derivation
   from inspection cadence puts realistic capacity nearer 30, and that figure was deliberately not
   adopted in the same change that measured its effect. D-036.
+- **The crew budget constrains only part of the queue.** Assets ranked on loading through sustained
+  heat are remediable from the control room by transferring load to an adjacent feeder, not by a site
+  visit. The reported precision and recall at capacity treat every ranked asset as consuming a crew
+  visit, so they understate the coverage achievable at a given crew budget: at capacity 15 the
+  `short-severe` queue reaches rank 44 before it has spent 15 crew visits. **The figures were not
+  adjusted for this** — the split is a reading of the queue, not a change to the model, and adjusting
+  a metric on the strength of it would be tuning to a number. Load transfer is also not free:
+  adjacent feeders are stressed at the same moment, so headroom is scarcest exactly when it is
+  needed, and the system models no network topology and cannot tell whether a transfer is available.
+  D-048.
+- **A brief is appropriate to the intervention type by coincidence of the query, not by
+  construction.** The retrieval query is built from all of an asset's positive contributions, so a
+  load-driven asset usually retrieves the loading procedure — 11 of the 12 remote-classified assets
+  spot-checked across three scenarios returned *MG-021 Loading and de-rating at high ambient
+  temperature*. One did not: `SUB-SGW-340` under `short-severe` retrieved three condition documents
+  and no loading document, because its other positive contributions outscored the loading terms.
+  Nothing in the pipeline conditions retrieval on the intervention type, and this was checked rather
+  than assumed. D-048.
 - **A brief can still misattribute between two documents it was given.** Citation integrity is
   checked on the `cited_doc_ids` array and on every doc id in the prose, but both are membership
   tests. A brief that takes an instruction from one supplied document and attributes it to another

@@ -37,6 +37,24 @@ def top_asset_id(scenario_id):
     return json.loads(path.read_text())["assets"][0]["asset_id"]
 
 
+def capacity_within_the_visible_queue():
+    """A crew capacity whose line lands among the rows the queue shows.
+
+    The line now falls after the nth *crew* row, which sits further down than
+    rank n — often past the end of the queue. Tests that need to see it drawn
+    have to pick a capacity that puts it on screen rather than assume one.
+    """
+    path = config.OUTPUT_DIR / f"scored_{SCENARIO}.json"
+    if not path.exists():
+        pytest.skip("scored output not present; run model.py first")
+    assets = json.loads(path.read_text())["assets"]
+    for capacity in range(config.CREW_CAPACITY, config.CREW_CAPACITY_MIN - 1, -1):
+        line = app_module.crew_capacity_line(assets, capacity)
+        if line and line <= config.QUEUE_ROWS:
+            return capacity
+    pytest.skip("no capacity in range draws the line within the visible queue")
+
+
 def reading_cells(html):
     """The visible text of every reading cell, tags stripped.
 
@@ -77,12 +95,52 @@ def test_the_rank_column_is_the_dispatch_position_not_the_row_number():
 def test_the_capacity_line_appears_only_in_dispatch_order():
     """Drawn in any other order it would assert that the rows above it get
     visited, which is only true when the queue is in the order the crew works."""
-    assert "capacity-rule" in queue_html()
+    within = capacity_within_the_visible_queue()
+    assert "capacity-rule" in queue_html(f"?capacity={within}")
     for query in ["?sort=customers&direction=desc", "?sort=risk&direction=asc",
                   "?sort=priority&direction=asc", "?sort=criticality&direction=desc"]:
-        html = queue_html(query)
+        html = queue_html(f"{query}&capacity={within}")
         assert "capacity-rule" not in html, f"capacity line drawn for {query}"
         assert "not that order" in html, f"no explanation offered for {query}"
+
+
+def test_the_capacity_line_falls_after_the_nth_crew_row_not_the_nth_row():
+    """The substantive change. A load transfer is made from a desk and consumes
+    no crew capacity, so counting it against the budget drew the line short."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
+    capacity = capacity_within_the_visible_queue()
+    line = app_module.crew_capacity_line(scored["assets"], capacity)
+    above = [a for a in scored["assets"] if a["rank"] <= line]
+    assert sum(1 for a in above if a["intervention_type"] == "crew") == capacity
+    assert above[-1]["intervention_type"] == "crew", "the line falls after a row needing no crew"
+    assert line > capacity, \
+        "no non-crew rows above the line; this scenario cannot demonstrate the change"
+
+    html = queue_html(f"?capacity={capacity}")
+    marked = re.search(r'<tr class="capacity-rule"><td[^>]*>(.*?)</td>', html, re.DOTALL)
+    assert marked, "no capacity line drawn"
+    assert f"rank {line}" in " ".join(marked.group(1).split())
+    # And it sits after that rank's row, not after the capacity-th row.
+    ranks = rank_column(html)
+    drawn_after = html[:html.index('class="capacity-rule"')].count('<td class="num rank">')
+    assert ranks[drawn_after - 1] == line, \
+        f"line drawn after rank {ranks[drawn_after - 1]}, expected {line}"
+
+
+def test_a_capacity_line_beyond_the_queue_is_explained_rather_than_omitted():
+    """Silently drawing nothing looks like a defect. Where it falls is also the
+    finding: the crew budget reaches much further down than its own number."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
+    beyond = next(
+        (c for c in range(config.CREW_CAPACITY_MIN, config.CREW_CAPACITY_MAX + 1)
+         if (app_module.crew_capacity_line(scored["assets"], c) or config.QUEUE_ROWS + 1)
+         > config.QUEUE_ROWS),
+        None)
+    assert beyond, "no capacity puts the line past the visible queue"
+    html = queue_html(f"?capacity={beyond}")
+    assert "capacity-rule" not in html
+    line = app_module.crew_capacity_line(scored["assets"], beyond)
+    assert f"rank {line}" in html, "the page does not say where the line fell"
 
 
 def test_the_forecast_chart_carries_both_axes():
@@ -336,3 +394,83 @@ def test_sorting_a_column_is_a_plain_link_that_works_without_scripting():
     for href in hrefs:
         assert href.startswith(f"/scenario/{SCENARIO}?sort="), href
         assert client.get(href.replace("&amp;", "&")).status_code == 200
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_every_asset_carries_an_intervention_type_backed_by_its_own_contributions(scenario_id):
+    """The label is derived from the contributions on the same page, so it can be
+    checked against them. A driver that is not raising this asset's risk would be
+    an assertion with nothing behind it."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    for asset in scored["assets"]:
+        assert asset["intervention_type"] in config.INTERVENTION_LABELS, asset["intervention_type"]
+        driver = asset["intervention_driver"]
+        if driver is None:
+            assert asset["intervention_type"] == "monitor"
+            continue
+        contribution = next(c for c in asset["contributions"] if c["feature"] == driver)
+        assert contribution["contribution"] > 0, \
+            f"{asset['asset_id']}: {driver} is not raising its risk"
+        assert driver in config.CREW_DRIVERS | config.REMOTE_DRIVERS
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_the_classification_is_reproducible_from_the_stored_contributions(scenario_id):
+    """Re-running the rule over the scored JSON must give back what is stored.
+    A derived field that cannot be re-derived is a second source of truth."""
+    model = pytest.importorskip("model")
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{scenario_id}.json").read_text())
+    for asset in scored["assets"]:
+        recomputed = model.classify_intervention(asset["contributions"])
+        assert recomputed == (asset["intervention_type"], asset["intervention_driver"]), \
+            f"{asset['asset_id']}: stored {asset['intervention_type']}, rule gives {recomputed[0]}"
+
+
+@pytest.mark.parametrize("scenario_id", [s[0] for s in config.SCENARIOS])
+def test_no_raw_intervention_value_reaches_the_screen(scenario_id):
+    """INTERVENTION_LABELS is the only path to the interface, as FEATURE_LABELS
+    is for feature names. The badge's style hook is an index for this reason —
+    a class of `intervention-crew` would put the stored token on the page."""
+    asset_id = top_asset_id(scenario_id)
+    for path in [f"/scenario/{scenario_id}", f"/scenario/{scenario_id}/asset/{asset_id}"]:
+        html = client.get(path).text
+        # "crew" is ordinary prose on this page; a stored value appearing inside
+        # a markup attribute is what would be a leak.
+        attributes = re.findall(r'\w+="([^"]*)"', html)
+        for value in config.INTERVENTION_LABELS:
+            leaked = [a for a in attributes if re.search(rf"\b{value}\b", a)]
+            assert not leaked, f"{path} leaked {value!r} in {leaked}"
+        assert "intervention_type" not in html and "intervention_driver" not in html
+
+
+def test_the_interface_says_load_transfer_and_never_de_rating():
+    """A load transfer moves demand to an adjacent feeder without interrupting
+    supply. Restricting throughput can mean shedding customers, which is the
+    outcome the system exists to avoid. The two must not be conflated in text
+    this project writes — a cited procedure may use its own vocabulary."""
+    written = list(config.INTERVENTION_LABELS.values()) + list(config.INTERVENTION_NOTES.values())
+    written.append(config.INTERVENTION_NO_DRIVER_NOTE)
+    for text in written:
+        lowered = text.lower()
+        for forbidden in ("de-rat", "derat", "load restriction", "load shed", "curtail"):
+            assert forbidden not in lowered, f"{forbidden!r} in {text!r}"
+    assert config.INTERVENTION_LABELS["remote"] == "Load transfer"
+
+
+def test_the_coverage_figure_counts_interventions_not_rows():
+    """It reports the crew visits and the load transfers alongside them. Counting
+    every row above the line would credit the monitor rows, which get nothing."""
+    scored = json.loads((config.OUTPUT_DIR / f"scored_{SCENARIO}.json").read_text())
+    capacity = capacity_within_the_visible_queue()
+    covered = app_module.coverage(scored["assets"], capacity)
+    assert covered["crew_count"] == capacity
+    assert covered["covered_count"] == covered["crew_count"] + covered["remote_count"]
+
+    above = [a for a in scored["assets"] if a["rank"] <= covered["line"]]
+    monitors = [a for a in above if a["intervention_type"] == "monitor"]
+    assert covered["covered_count"] == len(above) - len(monitors)
+    expected = sum(a["risk"] for a in above if a["intervention_type"] != "monitor")
+    assert math.isclose(covered["intercepted"], expected, rel_tol=1e-9)
+
+    html = queue_html(f"?capacity={capacity}")
+    assert f">{covered['remote_count']}</strong> load transfers" in html

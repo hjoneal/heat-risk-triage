@@ -353,6 +353,52 @@ def percentile_of(sorted_values, value):
     return float(np.searchsorted(sorted_values, value, side="right") / len(sorted_values))
 
 
+def classify_intervention(contributions):
+    """What kind of intervention this asset's ranking implies, and what drove it.
+
+    One input: the largest positive contribution among the drivers something can
+    be done about. Weighting across several would need a rationale that does not
+    exist, and a rule with one input is one that can be stated in a sentence —
+    *the largest factor raising this asset's risk that anyone can act on is the
+    one that says what to do about it*. Where an asset carries both a condition
+    flag and a loading driver the larger decides, which is the right answer:
+    that is what is putting it where it is. An asset with no positive actionable
+    contribution is listed for awareness.
+
+    **The pool is CREW_DRIVERS | REMOTE_DRIVERS, not every feature, and that is a
+    deviation from the note this was built from.** Selecting over all fifteen was
+    specified and was measured to be degenerate. Two failures, both in the data
+    rather than in principle:
+
+    * A hazard feature is constant within an event, so when it is the largest
+      positive contribution it is the largest for *every* asset. In the
+      `long-severe` scenario `degree_hours_above_30` took that place for all 900,
+      and the label classified the entire fleet identically — a badge carrying no
+      information and a capacity line that could not be drawn at all.
+    * `cooling_type_ordinal` is the largest positive contribution for 295 of 900
+      assets in `short-severe`, and it is not actionable. So the top-ranked asset
+      in that scenario — three open defects and 1,448 days since maintenance —
+      was labelled "Monitor only". That is not a debatable ranking of drivers, it
+      is a wrong instruction, and a supervisor would reject the tool over it.
+
+    Restricting the pool preserves everything the rule was for and fixes both:
+    the largest *actionable* contribution still decides alone, a condition flag
+    still beats a smaller loading term, and "monitor" now means what it says —
+    nothing about this asset can be acted on inside the window — rather than
+    "the largest factor happened to be one of the four that cannot be". See
+    DECISIONS.md D-048.
+    """
+    actionable = [
+        c for c in contributions
+        if c["contribution"] > 0
+        and c["feature"] in (config.CREW_DRIVERS | config.REMOTE_DRIVERS)
+    ]
+    if not actionable:
+        return "monitor", None
+    driver = max(actionable, key=lambda c: c["contribution"])["feature"]
+    return ("crew" if driver in config.CREW_DRIVERS else "remote"), driver
+
+
 def state_share(sorted_values, value):
     """Share of the training set reading exactly this state, 0 to 1.
 
@@ -522,6 +568,7 @@ def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_lab
             }
             for name, value, contribution in explain(model, X[row_index])
         ]
+        intervention_type, intervention_driver = classify_intervention(contributions)
         scored_assets.append({
             "asset_id": asset_id,
             "name": asset["name"],
@@ -533,6 +580,10 @@ def score_scenario(model, assets, hazard_table, flags, scenario_id, scenario_lab
             "cooling_type": asset["cooling_type"],
             "priority": round(float(priority[row_index]), 2),
             "extraction_status": flag_row["extraction_status"],
+            # What the ranking implies should be done, derived from the
+            # contributions below rather than from anything new.
+            "intervention_type": intervention_type,
+            "intervention_driver": intervention_driver,
             "contributions": contributions,
             "evidence": flag_row["evidence"],
         })

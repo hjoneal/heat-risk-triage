@@ -93,6 +93,10 @@
 
 <section class="brief">
   <h3>Action brief</h3>
+  <p class="intervention">
+    <span class="badge intervention-{{ intervention.step }}">{{ intervention.label }}</span>
+    {{ intervention.note }}
+  </p>
   {% if brief %}
     <p>{{ brief.brief }}</p>
     {% if cited %}

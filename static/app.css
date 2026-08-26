@@ -541,6 +541,24 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
 .effect-bar.raises span { background: var(--heat-4); }
 .effect-bar.lowers span { background: #6E9B57; }
 
+/* What kind of intervention the ranking implies. Three tones from the existing
+   palette; the word beside them is what carries the meaning, so nothing here is
+   communicated by colour alone. */
+.badge {
+  display: inline-block;
+  padding: 2px 7px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.badge.intervention-1 { color: var(--surface); background: var(--accent); }
+.badge.intervention-2 { color: var(--accent); background: #E8F0F5; border-color: #C6D8E4; }
+.badge.intervention-3 { color: var(--text-muted); background: var(--rule); }
+
+.queue td.action { white-space: nowrap; }
+
 .quote { margin: 0 0 16px; }
 
 .quote blockquote {

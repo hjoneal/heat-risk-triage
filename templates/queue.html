@@ -71,17 +71,26 @@
   <button type="submit" data-fallback-submit>Apply</button>
   <p class="control-note">
     The forecast sets the order; capacity decides where the line falls across it.
-    These <strong>{{ crew_capacity }}</strong> assets are
-    <strong>{{ "%.1f"|format(fleet_share * 100) }}%</strong> of the fleet and carry
-    <strong>{{ "%.1f"|format(risk_share * 100) }}%</strong> of its expected failures —
-    <strong>{{ "%.1f"|format(concentration) }}×</strong> the risk of visiting
-    {{ crew_capacity }} at random.
+    Not every ranked asset needs a crew, so working down to the
+    {% if covered.line %}<strong>{{ covered.crew_count }}</strong>th crew visit
+    reaches rank <strong>{{ covered.line }}</strong> and picks up
+    {% else %}end of the ranking finds only <strong>{{ covered.crew_count }}</strong>
+    crew visits, alongside{% endif %}
+    <strong>{{ covered.remote_count }}</strong> load transfers along the way.
+    Those <strong>{{ covered.covered_count }}</strong> assets are
+    <strong>{{ "%.1f"|format(covered.fleet_share * 100) }}%</strong> of the fleet and carry
+    <strong>{{ "%.1f"|format(covered.risk_share * 100) }}%</strong> of its expected failures —
+    <strong>{{ "%.1f"|format(covered.concentration) }}×</strong> the risk of intervening on
+    {{ covered.covered_count }} at random.
   </p>
   <p class="control-note subtle">
-    In absolute terms that is {{ "%.2f"|format(intercepted) }} of the
-    {{ "%.1f"|format(fleet_expected) }} failures expected across all {{ fleet_size }} assets
-    for this forecast. Both numbers are small because no single transformer is likely to fail:
-    the figure measures where the risk is concentrated, not how much of it a visit removes.
+    In absolute terms that is {{ "%.2f"|format(covered.intercepted) }} of the
+    {{ "%.1f"|format(covered.fleet_expected) }} failures expected across all
+    {{ covered.fleet_size }} assets for this forecast. Both numbers are small because no
+    single transformer is likely to fail: the figure measures where the risk is
+    concentrated, not how much of it an intervention removes. A load transfer is counted
+    as an intervention here; whether one is available is a question of network topology,
+    which this system does not model.
   </p>
 </form>
 
@@ -106,6 +115,7 @@
       {{ sort_link('customers', 'Customers') }}
       {{ sort_link('priority', 'Expected impact') }}
       {{ sort_link('criticality', 'Criticality') }}
+      <th scope="col">Action</th>
       <th scope="col"><span class="visually-hidden">Decision</span></th>
     </tr>
   </thead>
@@ -128,15 +138,33 @@
       </td>
       <td class="num">{{ "{:,}".format(row.customers_served) }}</td>
       <td class="num">{{ "{:,.0f}".format(row.priority) }}</td>
-      <td class="num"><span class="criticality">{{ row.criticality }}</span></td>
+      <td class="action">
+        {# Colour distinguishes the three; the word carries the meaning. #}
+        <span class="badge intervention-{{ row.intervention_step }}">{{ row.intervention_label }}</span>
+      </td>
       <td class="decided">{% if row.decision %}<span title="{{ row.decision }}">✓</span>{% endif %}</td>
     </tr>
-    {% if dispatch_order and loop.index == crew_capacity %}
-    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} interventions</td></tr>
+    {# After the nth *crew* row, not the nth row: a load transfer is made from a
+       desk and consumes no crew capacity. #}
+    {% if dispatch_order and capacity_line_row and loop.index == capacity_line_row %}
+    <tr class="capacity-rule"><td colspan="8">Crew capacity: {{ crew_capacity }} crew visits,
+      the last of them at rank {{ covered.line }}</td></tr>
     {% endif %}
   {% endfor %}
   </tbody>
 </table>
+{% if dispatch_order and not capacity_line_row %}
+  <p class="sortbar">
+    {% if covered.line %}
+      The {{ crew_capacity }}th crew visit falls at rank {{ covered.line }}, past the
+      {{ rows | length }} rows shown, so the capacity line is not drawn. Most assets near the
+      top of this ranking are remediable by load transfer and consume no crew capacity.
+    {% else %}
+      Fewer than {{ crew_capacity }} assets in the whole ranking are crew-remediable, so the
+      capacity line is not drawn: the crew budget is not the binding constraint on this forecast.
+    {% endif %}
+  </p>
+{% endif %}
 {% endif %}
 
 <p class="footnote">

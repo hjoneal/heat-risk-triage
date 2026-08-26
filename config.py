@@ -700,6 +700,69 @@ CHART_HOUR_TICK_INTERVAL = 12  # chosen: midnight and midday only
 # page opens in — expected impact, because that is what the crew is dispatched on.
 QUEUE_DEFAULT_SORT = "priority"  # chosen
 
+# ---------------------------------------------------------------------------
+# Intervention type
+# ---------------------------------------------------------------------------
+
+# What kind of intervention a risk driver implies. The queue previously implied
+# that every ranked asset needed a truck, and it does not: an asset ranked on
+# loading through sustained heat is remediable from a desk by transferring load
+# to an adjacent feeder, and one ranked on its age or the forecast is not
+# remediable at all inside 72 hours. Derived entirely from contributions that
+# already exist in the scored JSON — no model change and no LLM call.
+# See DECISIONS.md D-048.
+CREW_DRIVERS = {
+    # Physical repair on site.
+    "flag_cooling_degraded",
+    "flag_ventilation_obstructed",
+    "flag_oil_issue",
+    "flag_overdue_remedial",
+    # Inspection.
+    "days_since_maintenance",
+    "prior_heat_faults",
+}  # chosen
+REMOTE_DRIVERS = {"peak_load_pct", "load_x_degree_hours"}  # chosen
+assert CREW_DRIVERS <= set(FEATURES)
+assert REMOTE_DRIVERS <= set(FEATURES)
+assert not CREW_DRIVERS & REMOTE_DRIVERS
+
+# "Load transfer", never "load restriction" or "de-rating". Transferring load to
+# an adjacent feeder moves demand without interrupting supply; restricting
+# throughput can mean shedding customers, which is the outcome this system exists
+# to avoid. They are different actions with different costs, and an interface an
+# operator reads must not conflate them.
+INTERVENTION_LABELS = {
+    "crew": "Crew visit",
+    "remote": "Load transfer",
+    "monitor": "Monitor only",
+}  # chosen
+
+# The badge's style hook. A number rather than the type's own name, so that the
+# raw value has no path to the page at all — the same rule FEATURE_LABELS
+# enforces for feature names.
+INTERVENTION_STYLE_INDEX = {"crew": 1, "remote": 2, "monitor": 3}
+assert set(INTERVENTION_STYLE_INDEX) == set(INTERVENTION_LABELS)
+
+# One line on the asset page saying what the badge means and what put it there.
+# `{driver}` is the FEATURE_LABELS name of the largest positive contribution.
+INTERVENTION_NOTES = {
+    "crew": "Ranked on {driver}, which is remedied on site.",
+    "remote": "Ranked on {driver} rather than on recorded condition. Remediable "
+              "from the control room by transferring load to an adjacent feeder; "
+              "no site visit required.",
+    "monitor": "Ranked on {driver}, which cannot be acted on inside the forecast "
+               "window. Listed for awareness rather than for dispatch.",
+}  # chosen
+assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS)
+
+# An asset whose every contribution is negative has no driver to classify by. It
+# sits below the fleet's typical risk on every factor at once, and is on the page
+# only because it is ranked among 900.
+INTERVENTION_NO_DRIVER_NOTE = (
+    "No factor raises this asset above the baseline for the fleet. Listed for "
+    "awareness rather than for dispatch."
+)  # chosen
+
 # A reading's place among the 14,400 training asset-event rows, as a phrase. The
 # reference set is synthetic and does not support a claim finer than a band.
 PERCENTILE_BANDS = [

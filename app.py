@@ -187,6 +187,26 @@ def percentile_label(share):
     return config.PERCENTILE_BANDS[-1][1]
 
 
+def intervention_view(asset):
+    """What kind of intervention this asset's ranking implies, in one line.
+
+    The type says what to do; the driver says why it says so. Without the driver
+    the badge is an assertion the reader has to take on trust, and the whole
+    point of the contribution table below it is that they do not have to.
+    """
+    intervention_type = asset["intervention_type"]
+    driver = asset["intervention_driver"]
+    return {
+        "label": config.INTERVENTION_LABELS[intervention_type],
+        "step": config.INTERVENTION_STYLE_INDEX[intervention_type],
+        "note": (
+            config.INTERVENTION_NOTES[intervention_type].format(
+                driver=config.FEATURE_LABELS[driver].lower())
+            if driver else config.INTERVENTION_NO_DRIVER_NOTE
+        ),
+    }
+
+
 def state_view(contribution):
     """A categorical feature's levels, with the asset's own marked.
 
@@ -291,9 +311,66 @@ def queue_rows(scenario_id, sort_key, descending):
             "risk_pct": asset["risk"] * 100,
             "bar_pct": 100.0 * share,
             "heat_step": heat_step,
+            # INTERVENTION_LABELS is the only path from the stored value to the
+            # page, and the style hook is an index rather than the value itself,
+            # so the raw token has no route to the screen at all.
+            "intervention_label": config.INTERVENTION_LABELS[asset["intervention_type"]],
+            "intervention_step": config.INTERVENTION_STYLE_INDEX[asset["intervention_type"]],
             "decision": decision["decision"] if decision else None,
         })
     return rows
+
+
+def crew_capacity_line(assets, crew_capacity):
+    """Where the crew stops, counting only the rows that need a crew.
+
+    The line used to fall after row *n*. Rows whose risk is driven by loading are
+    remedied from a desk and consume no crew capacity, so counting them against
+    the budget drew the line short — often far short. Returns the dispatch rank
+    the *n*th crew row sits at, or None when the ranking does not contain that
+    many, which is a thing the page has to say rather than silently omit.
+    """
+    crew_ranks = [a["rank"] for a in assets if a["intervention_type"] == "crew"]
+    return crew_ranks[crew_capacity - 1] if len(crew_ranks) >= crew_capacity else None
+
+
+def coverage(assets, crew_capacity):
+    """What the crew budget actually reaches, once the queue is read this way.
+
+    Everything above the line that carries an intervention — the crew rows and
+    the load transfers alongside them — not merely the first *n* rows. Monitor
+    rows sit above the line at their correct rank and receive nothing, so they
+    are excluded from the covered set and from the count it is compared against.
+
+    All sums of already-scored probabilities. No model runs here.
+    """
+    line = crew_capacity_line(assets, crew_capacity)
+    # With fewer crew rows than the budget, the crew never stops: the whole
+    # ranking is within reach and the covered set is every actionable row in it.
+    covered = [a for a in assets
+               if (line is None or a["rank"] <= line)
+               and a["intervention_type"] in ("crew", "remote")]
+    crew = [a for a in covered if a["intervention_type"] == "crew"]
+    remote = [a for a in covered if a["intervention_type"] == "remote"]
+
+    intercepted = sum(a["risk"] for a in covered)
+    fleet_expected = sum(a["risk"] for a in assets)
+    fleet_size = len(assets)
+    risk_share = intercepted / fleet_expected if fleet_expected else 0.0
+    fleet_share = len(covered) / fleet_size if fleet_size else 0.0
+    return {
+        "line": line,
+        "crew_count": len(crew),
+        "remote_count": len(remote),
+        "covered_count": len(covered),
+        "intercepted": intercepted,
+        "fleet_expected": fleet_expected,
+        "fleet_size": fleet_size,
+        "risk_share": risk_share,
+        "fleet_share": fleet_share,
+        # How much better than choosing the same number of assets at random.
+        "concentration": risk_share / fleet_share if fleet_share else 0.0,
+    }
 
 
 @app.get("/")
@@ -327,13 +404,7 @@ def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_S
     # it is the arithmetic of visiting 2.8% of a fleet whose mean risk is under
     # 1%. What the ranking can be judged on is how much better than 2.8% of the
     # risk those visits carry.
-    visited = sorted(scored["assets"], key=lambda a: -a["priority"])[:crew_capacity]
-    intercepted = sum(a["risk"] for a in visited)
-    fleet_expected = sum(a["risk"] for a in scored["assets"])
-    fleet_size = len(scored["assets"])
-    risk_share = intercepted / fleet_expected if fleet_expected else 0.0
-    fleet_share = crew_capacity / fleet_size
-    concentration = risk_share / fleet_share if fleet_share else 0.0
+    covered = coverage(scored["assets"], crew_capacity)
 
     return templates.TemplateResponse("queue.html", {
         "request": request,
@@ -348,12 +419,13 @@ def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_S
         "crew_capacity": crew_capacity,
         "capacity_min": config.CREW_CAPACITY_MIN,
         "capacity_max": config.CREW_CAPACITY_MAX,
-        "intercepted": intercepted,
-        "fleet_expected": fleet_expected,
-        "fleet_size": fleet_size,
-        "risk_share": risk_share,
-        "fleet_share": fleet_share,
-        "concentration": concentration,
+        "covered": covered,
+        # The line falls after the nth crew row, which is usually further down
+        # than the nth row. Beyond the visible queue it cannot be drawn, and the
+        # page says where it fell instead.
+        "capacity_line_row": next(
+            (i for i, row in enumerate(rows, start=1) if row["position"] == covered["line"]),
+            None),
     })
 
 
@@ -376,6 +448,7 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str,
         "scenario_id": scenario_id,
         "scenarios": SCENARIO_LINKS,
         "asset": {**asset, "contributions": contribution_view(asset["contributions"])},
+        "intervention": intervention_view(asset),
         "brief": brief,
         "cited": cited,
         "decision": decision,
