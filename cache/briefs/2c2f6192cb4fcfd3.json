@@ -1,0 +1,10 @@
+{
+  "brief": "Run the available cooling continuously through the overnight period to assist thermal recovery, rather than allowing the thermostat to drop the stages out [MG-025]. Address the active seepage at the lower gasket face, complete the deferred bushing inspection, and resolve the fan contactor chattering under load. Apply the loading reduction specified in MG-021 from the third day of the event onward [MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1767,
+  "output_tokens": 130,
+  "status": "ok"
+}

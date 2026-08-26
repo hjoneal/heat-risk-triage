@@ -1,0 +1,11 @@
+{
+  "brief": "Run the cooling fans continuously through the overnight period to aid thermal recovery, and treat the cooling control as one stage unavailable under MG-021 because the cooling fans failed to start on manual test at the control cabinet. Apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit under MG-023. Additionally, replace the leaking gasket, re-test the oil dielectric strength, and pump transformer oil to bring the oil level sight glass back above the minimum mark.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1815,
+  "output_tokens": 157,
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the bird nesting material found packed into the upper ventilation grille and clean the radiator fins heavily fouled with dust and pollen before the heat event begins, as directed by SOP-011 and SOP-016. In addition, address the deferred bushing inspection that remains outstanding at this visit. Cite SOP-011, SOP-016, and MG-023.",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016",
+    "MG-023"
+  ],
+  "input_tokens": 1710,
+  "output_tokens": 113,
+  "status": "ok"
+}

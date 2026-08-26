@@ -1,0 +1,10 @@
+{
+  "brief": "Because the radiator fins are heavily fouled with dust and pollen and airflow is visibly reduced, clean the radiator fins to restore cooling before the forecast heat event. As specified in MG-021, reduce the permissible load by the ambient de-rating factor, and apply any further required reductions for reduced cooling until the condition is corrected and verified. Where forced cooling is available, run it continuously through the overnight period to assist thermal recovery as detailed in MG-025.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1654,
+  "output_tokens": 119,
+  "status": "ok"
+}

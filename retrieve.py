@@ -129,8 +129,15 @@ transformers due for attention before a forecast heat event.
 Constraints:
 - Three or four sentences. No headings, no bullets, no salutation.
 - Lead with the action the crew should take.
-- Use only the supplied asset facts and the supplied procedure documents. Do not \
-introduce any procedure, threshold or figure that is not in them.
+- Where the inspection notes record a specific defect, name the defect. "Attend \
+to the recorded condition" is not usable by a crew; "the oil sight glass reads \
+below minimum" is.
+- Use only the supplied asset facts, the supplied inspection findings and the \
+supplied procedure documents. Do not introduce any procedure, threshold or \
+figure that is not in them.
+- The inspection findings are observations about this asset, not procedure \
+content: they record what was found, not what to do about it. Do not attach a \
+doc_id to one and do not present one as the source of an instruction.
 - Cite the doc_id of every document you draw on.
 - Refer only to the doc_ids supplied below. A supplied document may itself \
 mention another procedure by id; do not pass that id on as though it were \
@@ -142,12 +149,61 @@ Return a single JSON object with keys "brief" (string) and "cited_doc_ids" \
 (array of strings). Output the JSON only. No markdown fences, no commentary."""
 
 
+def build_condition_block(asset):
+    """What the last inspections actually recorded, in the inspector's words.
+
+    This was missing from the prompt entirely, and it is the most concrete thing
+    the system holds. The extraction layer reads 1,800 free-text notes to find
+    exactly these observations, the asset page shows them beside the brief, and
+    the brief was written without them — so a unit whose sight glass reads below
+    minimum and whose ventilation grille is packed with nesting material got a
+    brief about the general management of ageing assets. Measured before the
+    change: 150 of the 160 briefed assets carried evidence the model never saw.
+    See DECISIONS.md D-049.
+
+    Quotes are verbatim and already checked against the source note by
+    `extract.parse_and_validate`, so nothing here is a paraphrase.
+    """
+    if asset["extraction_status"] == "failed":
+        # Distinct from having no defects. A failed read is an absence of
+        # knowledge, and a brief that treats it as a clean asset is wrong.
+        return ("Recorded condition: the inspection notes for this asset could not be "
+                "read reliably, so no condition findings are available. Do not treat "
+                "this as an asset in good condition.")
+    if not asset["evidence"]:
+        return "Recorded condition: no outstanding defects at the last inspections."
+    # The inspection id is deliberately absent. Supplied in v3, it was written
+    # into 13 of 160 briefs as though it were a procedure reference — "clear the
+    # radiator fins, as specified in INS-340-2" — which inverts what an
+    # inspection is: it recorded the defect, it did not specify the remedy. The
+    # v3 system prompt forbade this in as many words and the model did it anyway,
+    # so the token is withheld rather than discouraged. Same reasoning as the
+    # applicability filter in D-037: remove it from the candidate set rather than
+    # rank it and hope. The date carries what the id was useful for — that a
+    # finding was recorded at a particular visit — and the asset page shows the
+    # ids beside the quotes regardless.
+    lines = [
+        f"- {e['flag'].replace('_', ' ')}, recorded {e['date']} — \"{e['text']}\""
+        for e in asset["evidence"]
+    ]
+    return "Recorded condition, from the last inspections:\n" + "\n".join(lines)
+
+
 def build_brief_prompt(asset, contributions, retrieved, documents_by_id):
-    """Asset facts, then why it ranked, then the documents in full."""
-    top_reasons = [
-        f"- {c['label']} (value {c['value']:.4g})"
+    """Asset facts, recorded condition, why it ranked, then the documents in full."""
+    # Every positive contribution, not the leading few. Truncating this list was
+    # cutting a condition flag out of 149 of the 160 briefs — the flags sit below
+    # cooling type and the maintenance interval in contribution order, so the
+    # actionable findings were reliably the ones dropped. Ordered by effect, so
+    # the ordering carries the priority instead of a cut-off doing it.
+    # `reading` rather than `value`, for the same reason the asset page shows it:
+    # "value 0" for a cooling type and "value 20.34" for an interaction are not
+    # readings of anything, and a brief written from them cannot state a figure a
+    # supervisor could check against the unit.
+    reasons = [
+        f"- {c['label']}: {c['reading']}"
         for c in contributions if c["contribution"] > 0
-    ][:config.BM25_TOP_K]
+    ]
 
     document_blocks = []
     for hit in retrieved:
@@ -161,7 +217,9 @@ def build_brief_prompt(asset, contributions, retrieved, documents_by_id):
         f"Age: {int(_age_of(contributions))} years\n"
         f"Customers served: {asset['customers_served']:,}\n"
         f"Criticality: {asset['criticality']} of 5\n\n"
-        f"Why this asset ranked where it did:\n" + "\n".join(top_reasons) + "\n\n"
+        + build_condition_block(asset) + "\n\n"
+        f"Why this asset ranked where it did, in descending order of effect:\n"
+        + "\n".join(reasons) + "\n\n"
         f"Procedure documents:\n\n" + "\n\n---\n\n".join(document_blocks)
     )
 
@@ -181,9 +239,17 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
         return {"brief": config.NO_MATCH_BRIEF, "cited_doc_ids": [], "status": "no_match",
                 "input_tokens": 0, "output_tokens": 0}
 
-    doc_ids = "".join(hit["doc_id"] for hit in retrieved)
-    key = llm.cache_key(asset["asset_id"] + scenario_id + doc_ids
-                        + config.BRIEF_PROMPT_VERSION + model)
+    # Keyed on the prompt itself, as extraction is keyed on the note text. The
+    # key used to be asset + scenario + doc ids + version, which named the
+    # *inputs to selection* rather than the content sent — so a change to what
+    # the prompt says about an asset, its recorded condition included, produced
+    # the same key and silently served a brief written without it. Content
+    # addressing removes that failure mode rather than relying on remembering to
+    # bump a version. The version stays in the key because the system prompt is
+    # not part of `prompt`, and the model because two models must not share an
+    # answer. See DECISIONS.md D-049.
+    prompt = build_brief_prompt(asset, contributions, retrieved, documents_by_id)
+    key = llm.cache_key(prompt + config.BRIEF_PROMPT_VERSION + model)
     cached = llm.read_cache(config.BRIEF_CACHE_DIR, key)
     if cached is not None:
         return cached
@@ -194,7 +260,6 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
             f"(key {key}). Run without --offline and with an API key to populate the cache."
         )
 
-    prompt = build_brief_prompt(asset, contributions, retrieved, documents_by_id)
     retrieved_ids = {hit["doc_id"] for hit in retrieved}
 
     input_tokens = 0

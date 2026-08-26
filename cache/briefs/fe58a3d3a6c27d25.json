@@ -1,0 +1,10 @@
+{
+  "brief": "Crews must repair the fan contactor chattering under load and the cooling stage cycling intermittently, and address the weeping observed around the radiator header gasket before the heat event. The outstanding defect notice from the last inspection round must also be reviewed and prioritized in accordance with the pre-event heat procedures. These actions are required because the asset exhibits degraded cooling, an oil issue, and outstanding remedial work, all of which affect its ability to shed heat under load.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "SOP-012"
+  ],
+  "input_tokens": 1730,
+  "output_tokens": 138,
+  "status": "ok"
+}

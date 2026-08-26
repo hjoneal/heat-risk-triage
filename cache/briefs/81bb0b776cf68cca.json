@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the stacked pallets left inside the compound that obstruct the ventilation grilles [REG-042]. Repair the seized cooling fan and top up the oil level sight glass reading below the minimum mark at ambient [MG-021]. Where the unit cannot be attended before the heat event, apply the loading restriction in MG-021 [MG-023].",
+  "cited_doc_ids": [
+    "REG-042",
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1685,
+  "output_tokens": 126,
+  "status": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Reduce permissible load in proportion to the lost cooling capacity because one of three cooling fans has seized, and apply the additional ambient and sustained-event reductions required by MG-021. Run the remaining cooling continuously through the overnight period as directed by MG-025. Address the light oil film on the bund floor consistent with a slow leak.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1669,
+  "output_tokens": 110,
+  "status": "ok"
+}

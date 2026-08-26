@@ -1,0 +1,10 @@
+{
+  "brief": "Clear bird nesting material packed into the upper ventilation grille and address the cooling fans failed to start on manual test at the control cabinet before the heat event, as cooling control in manual or unproven must be treated as one stage unavailable under [MG-021]. Where forced cooling is available, run it continuously through the overnight period as directed in [MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1716,
+  "output_tokens": 117,
+  "status": "ok"
+}

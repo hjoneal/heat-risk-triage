@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect Camden Green 230/34kV (SUB-SGW-567) to address the conservator level low and radiator fins heavily fouled with dust and pollen, airflow visibly reduced, and clear the overdue remedial actions carried forward from the prior report [MG-021, MG-023, MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1773,
+  "output_tokens": 123,
+  "status": "ok"
+}

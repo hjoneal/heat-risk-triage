@@ -1,0 +1,10 @@
+{
+  "brief": "Clear bird nesting material packed into the upper ventilation grille before the heat event, as clearance work takes precedence over other remedial activity when a ventilation obstruction defect is outstanding [SOP-011]. Complete work order WO-3182 for the cooling controller, which remains open from last season, along with remedial actions for the scale build-up across the lower third of the radiator bank and the low conservator oil level [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1763,
+  "output_tokens": 136,
+  "status": "ok"
+}

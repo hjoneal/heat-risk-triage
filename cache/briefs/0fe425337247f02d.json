@@ -1,9 +1,0 @@
-{
-  "brief": "Review the open defect register for asset SUB-SGW-553 and re-prioritise outstanding work against its effect on the unit's ability to shed heat, per SOP-016. Complete any work concerning forced cooling, ventilation or airflow, oil level below minimum, or an active leak before the event begins wherever crew capacity allows, as directed in SOP-016. If category 4 oil condition defects cannot be completed, apply a loading restriction instead in accordance with SOP-016.",
-  "cited_doc_ids": [
-    "SOP-016"
-  ],
-  "input_tokens": 1496,
-  "output_tokens": 125,
-  "status": "ok"
-}

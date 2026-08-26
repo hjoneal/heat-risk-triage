@@ -1,0 +1,10 @@
+{
+  "brief": "Clear bird nesting material found packed into the upper ventilation grille and address the cooling fans failed to start on manual test at the control cabinet before the forecast event. Treat cooling control in manual or unproven as one stage unavailable and reduce permissible load in proportion to the cooling capacity lost according to MG-021. Apply the loading restriction in MG-021 where this ageing unit cannot be attended before the event in accordance with MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1768,
+  "output_tokens": 131,
+  "status": "ok"
+}

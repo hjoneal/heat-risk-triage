@@ -1,0 +1,11 @@
+{
+  "brief": "Apply the loading reduction specified in MG-021 from the third day onward, as this unit is experiencing an event extending beyond 48 hours with overnight minima above 24 degrees [MG-021, MG-025]. Consider emergency load transfer in accordance with ERP-032 if the unit approaches its temperature limit, confirming the receiving asset's available capacity with MG-021 applied and verifying its condition [ERP-032].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "ERP-032"
+  ],
+  "input_tokens": 1565,
+  "output_tokens": 147,
+  "status": "ok"
+}

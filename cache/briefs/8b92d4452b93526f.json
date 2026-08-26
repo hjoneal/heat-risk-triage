@@ -1,0 +1,10 @@
+{
+  "brief": "Clear bird nesting material packed into the upper ventilation grille and site storage placed against the ventilation opening on the east side prior to the heat event. Because this is an ageing unit of 50 years with warm nights, apply the loading reduction in MG-021 in preference to accepting the exposure if it cannot be attended before the event as instructed in MG-023. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1708,
+  "output_tokens": 141,
+  "status": "ok"
+}

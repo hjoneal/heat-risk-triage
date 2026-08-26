@@ -1,0 +1,10 @@
+{
+  "brief": "Clear bird nesting material packed into the upper ventilation grille and address the stiff louvre dampers not opening fully on the thermostat call pursuant to SOP-011 and SOP-016. Ensure the deferred bushing inspection is also reviewed in accordance with SOP-016. Because the supplied documents do not cover the remaining items, no further actions are prescribed.",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 3510,
+  "output_tokens": 278,
+  "status": "ok"
+}

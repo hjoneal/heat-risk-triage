@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the ventilation grilles obstructed by stacked pallets left inside the compound and top up the oil level sight glass reading below the minimum mark at ambient [MG-021, MG-023, MG-025]. Because this 53-year-old asset is operating under sustained heat with warm nights and a top oil temperature running above the seasonal norm with fans called, apply the loading reductions in MG-021 [MG-021, MG-023, MG-025]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1762,
+  "output_tokens": 197,
+  "status": "ok"
+}

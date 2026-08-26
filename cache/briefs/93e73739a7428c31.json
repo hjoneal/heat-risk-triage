@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect Camden Green (SUB-SGW-567) to address the recorded conservator level low, radiator fins heavily fouled with dust and pollen, airflow visibly reduced, and remedial actions from the prior report carried forward again, no work done. Because this unit is aged 52 years, apply the loading restriction in MG-021 in preference to accepting the exposure if it cannot be attended before the event [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1721,
+  "output_tokens": 155,
+  "status": "ok"
+}

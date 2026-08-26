@@ -1,0 +1,10 @@
+{
+  "brief": "Attend to the fan contactor chattering under load and the cooling stage cycling intermittently before the forecast heat event. Reduce permissible load in proportion to the cooling capacity lost and apply ambient de-rating as specified in MG-021. Apply the further 5 percent reduction from the third day onward as required by MG-021 and MG-025.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1617,
+  "output_tokens": 119,
+  "status": "ok"
+}

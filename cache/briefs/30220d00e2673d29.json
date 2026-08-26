@@ -1,0 +1,11 @@
+{
+  "brief": "Complete the previously raised gasket repair before the forecast heat event begins, as it is an outstanding work order that must be addressed under SOP-016. If this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure as instructed in MG-023. This unit of advanced age with a history of high loading has a reduced margin against mechanical failure under the thermal cycling of a multi-day heat event [MG-023, SOP-016, MG-021].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-016",
+    "MG-021"
+  ],
+  "input_tokens": 1688,
+  "output_tokens": 149,
+  "status": "ok"
+}

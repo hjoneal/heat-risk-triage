@@ -1,0 +1,10 @@
+{
+  "brief": "Remove the site storage that has been placed against the ventilation opening on the east side in accordance with SOP-011. Address the weeping observed around the radiator header gasket and the cooling fans failing to start on manual test at the control cabinet. Apply the loading restrictions specified in MG-021 because cooling control is in manual or unproven and the unit has cooling fans failed to start.",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011"
+  ],
+  "input_tokens": 1734,
+  "output_tokens": 120,
+  "status": "ok"
+}

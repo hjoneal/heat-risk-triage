@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the site storage placed against the ventilation opening on the east side and clean the radiator fins heavily fouled with dust and pollen [SOP-011]. Apply the loading restriction in MG-021 where an ageing unit cannot be attended before an event [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1657,
+  "output_tokens": 138,
+  "status": "ok"
+}

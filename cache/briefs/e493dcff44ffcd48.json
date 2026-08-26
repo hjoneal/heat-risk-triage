@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material found packed into the upper ventilation grille before the forecast heat event, in accordance with SOP-015. Address the active seepage at the lower gasket face. Because the time since last maintenance is 1,095 days and exceeds the annual interval in REG-042, bring the detailed inspection forward to verify the cooling system and condition.",
+  "cited_doc_ids": [
+    "SOP-015",
+    "REG-042"
+  ],
+  "input_tokens": 1631,
+  "output_tokens": 102,
+  "status": "ok"
+}

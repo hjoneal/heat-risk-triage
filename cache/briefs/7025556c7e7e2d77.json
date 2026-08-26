@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect and repair the fan contactor chattering under load and the weeping observed around the radiator header gasket before the heat event [MG-021, MG-023, MG-025]. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1709,
+  "output_tokens": 152,
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "brief": "Crews must complete the cooling fans failed to start on manual test at the control cabinet, the previously raised gasket repair has not been completed, and the oil level sight glass reading below the minimum mark at ambient before the event begins, as directed by SOP-016. For the oil sample returned marginal dielectric strength on the last test round, apply a loading restriction if the work cannot be completed, per SOP-016. MG-023 and REG-042 were also consulted for context.",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-016",
+    "REG-042"
+  ],
+  "input_tokens": 1709,
+  "output_tokens": 159,
+  "status": "ok"
+}

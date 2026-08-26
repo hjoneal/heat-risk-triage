@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the ventilation grilles obstructed by stacked pallets left inside the compound, replace the cooling fan seized in the bank of three, and replenish the oil level sight glass reading below the minimum mark at ambient [MG-021]. Run the remaining forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025]. Reduce permissible load in proportion to the cooling capacity lost by applying an 8 percent reduction for the single failed fan, in addition to ambient de-rating [MG-021]. Apply a further 5 percent reduction from the third day onward because the event extends beyond 48 hours with overnight minima above 24 degrees [MG-021, MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1754,
+  "output_tokens": 178,
+  "status": "ok"
+}

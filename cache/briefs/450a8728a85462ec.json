@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille at Jessup Water 138/13kV (SUB-SGW-442) before the forecast heat event. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends. Apply the loading restriction in MG-021 in preference to accepting the exposure if the unit cannot be attended before the event.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1669,
+  "output_tokens": 126,
+  "status": "ok"
+}

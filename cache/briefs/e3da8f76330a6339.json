@@ -1,0 +1,11 @@
+{
+  "brief": "Complete the deferred bushing inspection before the forecast heat event, as instructed by SOP-016. Because this unit has advanced age and a history of high loading, apply the loading restriction in MG-021 if the outstanding work cannot be completed prior to the event, as outlined in MG-023.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1673,
+  "output_tokens": 97,
+  "status": "ok"
+}

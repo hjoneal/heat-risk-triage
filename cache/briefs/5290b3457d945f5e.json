@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille and clean the radiator fins heavily fouled with dust and pollen before the heat event, as the supplied documents do not cover the deferred bushing inspection. Restore the full rating only when the underlying condition has been corrected and verified in accordance with MG-021. Apply the loading restrictions specified in MG-021 in preference to accepting exposure, as outlined in MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1774,
+  "output_tokens": 133,
+  "status": "ok"
+}

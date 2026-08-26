@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the site storage placed against the ventilation opening on the east side, as obstructed ventilation is to be cleared in preference to deferring it to restore the cooling margin for the forecast heat event (SOP-015, SOP-011).",
+  "cited_doc_ids": [
+    "SOP-015",
+    "SOP-011"
+  ],
+  "input_tokens": 1633,
+  "output_tokens": 79,
+  "status": "ok"
+}

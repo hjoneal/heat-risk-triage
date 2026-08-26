@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille and repair the active seepage at the lower gasket face before the heat event [MG-021, ERP-032, SOP-013]. If these cooling and oil defects cannot be cleared before the event, consider load transfer to reduce thermal stress, ensuring the receiving asset's capacity is assessed with MG-021 de-rating applied [ERP-032].",
+  "cited_doc_ids": [
+    "MG-021",
+    "ERP-032",
+    "SOP-013"
+  ],
+  "input_tokens": 1718,
+  "output_tokens": 142,
+  "status": "ok"
+}

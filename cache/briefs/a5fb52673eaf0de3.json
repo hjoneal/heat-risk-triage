@@ -1,0 +1,9 @@
+{
+  "brief": "Complete the work in categories 1 to 3 before the heat event begins, addressing the cooling fans that failed to start on manual test at the control cabinet, the weeping around the radiator header gasket, and the light oil film on the bund floor consistent with a slow leak [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1831,
+  "output_tokens": 95,
+  "status": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Reduce the permissible load by 8 percent of rating because one of three cooling fans has seized, and apply any further reductions required by MG-021. Run the remaining cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as instructed in MG-025. Record the de-rating, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1683,
+  "output_tokens": 110,
+  "status": "ok"
+}

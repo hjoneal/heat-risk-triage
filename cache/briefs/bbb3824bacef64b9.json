@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the stacked pallets from the compound to remove the ventilation obstruction, top up the oil sight glass which is reading below the minimum mark, and repair the seized cooling fan. Reduce permissible load in accordance with MG-021 for the partially unavailable forced cooling and the ambient conditions, and apply the further 5 percent reduction from the third day onward as required by MG-021 for extended events with warm overnight minima. Reference documents: MG-021, MG-023, MG-025.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1806,
+  "output_tokens": 155,
+  "status": "ok"
+}

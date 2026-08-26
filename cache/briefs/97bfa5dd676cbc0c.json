@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect and repair the fan contactor chattering under load and the cooling stage cycling intermittently [MG-021]. As the unit is an ageing asset with warm nights, apply the loading restrictions in MG-021 where cooling capacity is impaired [MG-023, MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1627,
+  "output_tokens": 104,
+  "status": "ok"
+}

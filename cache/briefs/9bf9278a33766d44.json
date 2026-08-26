@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the intake louvres on the north wall partially blocked by wind-blown debris and remove the stacked pallets left inside the compound, as clearance work takes precedence over other remedial activity ahead of a forecast heat event [SOP-011]. Since the corrective work raised two rounds ago has not been actioned, review the open defect register to establish why it was deferred and re-prioritise it against the unit's ability to shed heat [SOP-016]. As a unit of advanced age with a history of high loading has a reduced margin against mechanical failure, prioritise this unit for pre-event attention [MG-023].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1712,
+  "output_tokens": 168,
+  "status": "ok"
+}

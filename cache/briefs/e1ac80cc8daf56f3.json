@@ -1,0 +1,9 @@
+{
+  "brief": "Perform the deferred bushing inspection that remains outstanding at Harrowgate Ridge. Ensure the crew attends to this recorded condition before the forecast heat event. Cite MG-023 regarding prioritisation of ageing units.",
+  "cited_doc_ids": [
+    "MG-023"
+  ],
+  "input_tokens": 1666,
+  "output_tokens": 76,
+  "status": "ok"
+}

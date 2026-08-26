@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille, refill the low conservator, and clear the scale build-up across the lower third of the radiator bank, as clearance work takes precedence over other remedial activity [SOP-011]. Since the cooling control remains in manual or unproven, treat it as one stage unavailable and apply the required de-rating [MG-021].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "MG-021"
+  ],
+  "input_tokens": 1788,
+  "output_tokens": 129,
+  "status": "ok"
+}

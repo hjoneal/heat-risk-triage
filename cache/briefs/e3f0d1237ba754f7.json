@@ -1,0 +1,11 @@
+{
+  "brief": "Complete the work order WO-3182 for the cooling controller, repair the active seepage at the lower gasket face, and service the louvre dampers that are stiff and not opening fully on the thermostat call [SOP-016]. Clear any stored material or obstructions from the ventilation openings and radiator bank [SOP-011]. Since the unit is 35 years old and insulation ageing is cumulative and irreversible, verify all forced cooling equipment is fully operational before the heat event [MG-023, SOP-016].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1837,
+  "output_tokens": 148,
+  "status": "ok"
+}

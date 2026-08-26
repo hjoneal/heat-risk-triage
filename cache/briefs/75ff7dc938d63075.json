@@ -1,0 +1,10 @@
+{
+  "brief": "Crews must repair the active seepage at the lower gasket face and address the radiator bank scale build-up across the lower third before the forecast heat event, in accordance with SOP-016. Because the unit is 38 years old with a history of high loading and has a reduced margin against mechanical failure under thermal cycling, also prioritize attention ahead of the event pursuant to MG-023. If these outstanding items cannot be completed before the event, the supplied documents do not cover the situation.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023"
+  ],
+  "input_tokens": 1759,
+  "output_tokens": 143,
+  "status": "ok"
+}

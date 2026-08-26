@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the stored material placed against the ventilation opening on the east side, as site storage obstructing a ventilation opening takes precedence over other remedial activity. Complete the previously raised gasket repair corresponding to the light oil film on the bund floor consistent with a slow leak and the low conservator level. These actions address the obstructed ventilation and oil issues before the forecast heat event.",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1746,
+  "output_tokens": 98,
+  "status": "ok"
+}

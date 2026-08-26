@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the intake louvres on the north wall partially blocked by wind-blown debris and the ventilation grilles obstructed by stacked pallets left inside the compound as instructed in [MG-021] for reduced cooling. Because this is a sustained event extending beyond 48 hours with overnight minima above 24 degrees, apply the further 5 percent reduction from the third day onward in accordance with [MG-021]. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure per [MG-023]. Record every de-rating applied, the reason, the value and the period as required by [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1724,
+  "output_tokens": 187,
+  "status": "ok"
+}

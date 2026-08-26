@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille before the forecast heat event [SOP-015]. Apply the loading restriction in MG-021 where the unit cannot be attended before the event [MG-023].",
+  "cited_doc_ids": [
+    "SOP-015",
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1633,
+  "output_tokens": 101,
+  "status": "ok"
+}

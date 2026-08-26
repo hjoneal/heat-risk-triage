@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect Stonebridge Lock to address the oil level sight glass reading below the minimum mark at ambient and the outstanding defect notice, as documented in the inspection notes. Because the supplied documents do not cover pre-event actions for these specific defects, no further procedure-based guidance can be given [MG-023, MG-021, SOP-013].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021",
+    "SOP-013"
+  ],
+  "input_tokens": 1719,
+  "output_tokens": 131,
+  "status": "ok"
+}

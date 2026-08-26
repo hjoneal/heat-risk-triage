@@ -1,0 +1,9 @@
+{
+  "brief": "Remove the stacked pallets left inside the compound obstructing the ventilation grilles, and address the conservator level low and the radiator fins heavily fouled with dust and pollen, airflow visibly reduced before the heat event [SOP-011]. Clearance work takes precedence over other remedial activity where an obstruction defect is outstanding [SOP-011].",
+  "cited_doc_ids": [
+    "SOP-011"
+  ],
+  "input_tokens": 1645,
+  "output_tokens": 102,
+  "status": "ok"
+}

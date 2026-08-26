@@ -1,0 +1,10 @@
+{
+  "brief": "Dispatch a crew before the heat event begins to address the active seepage at the lower gasket face and the weeping observed around the radiator header gasket, as these oil leak items take priority ahead of a heat event [SOP-016]. Also complete the deferred bushing inspection that remains outstanding at this visit [SOP-016]. Since this unit has advanced age with a history of high loading, prioritise it ahead of younger units in otherwise similar condition [MG-023].",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023"
+  ],
+  "input_tokens": 1692,
+  "output_tokens": 125,
+  "status": "ok"
+}

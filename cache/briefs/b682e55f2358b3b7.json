@@ -1,0 +1,11 @@
+{
+  "brief": "Reduce the permissible load by 8 percent of rating because one of three cooling fans has seized, and apply the additional de-rating required by MG-021 and MG-025 for sustained events with warm overnight minima [MG-021, MG-025]. Address the overdue remedial work raised two rounds ago and the seized cooling fan identified in the recent inspection findings. Where an ageing unit with a history of high loading cannot be attended before the event, apply the loading restriction in MG-021 [MG-023].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1747,
+  "output_tokens": 147,
+  "status": "ok"
+}

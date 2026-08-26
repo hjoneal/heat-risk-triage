@@ -1,9 +1,0 @@
-{
-  "brief": "Prioritise the ageing unit for pre-event attention, as a unit of advanced age with a history of high loading has a reduced margin against mechanical failure under thermal cycling [MG-023]. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
-  "cited_doc_ids": [
-    "MG-023"
-  ],
-  "input_tokens": 1448,
-  "output_tokens": 106,
-  "status": "ok"
-}

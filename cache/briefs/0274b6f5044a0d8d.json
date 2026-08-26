@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the overgrown shrub cover restricting the airflow path to the rear of the unit and the vegetation encroaching on the compound fence within a metre of the radiators, as clearance work takes precedence over other remedial activity [SOP-011]. Complete work order WO-3182 for the cooling controller, which remains open from last season, as items relating to degraded forced cooling are to be finished before a forecast heat event wherever crew capacity allows [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1793,
+  "output_tokens": 140,
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille and remove the overgrown shrub cover restricting the airflow path to the rear of the unit [MG-025]. Treat the oil sample that returned marginal dielectric strength on the last test round [MG-023]. Apply the loading reductions in MG-021 if these conditions cannot be corrected before the heat event.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1717,
+  "output_tokens": 108,
+  "status": "ok"
+}

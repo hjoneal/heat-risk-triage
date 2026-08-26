@@ -1,0 +1,11 @@
+{
+  "brief": "Review the open work order recorded on 2025-05-13 for deferred repair parts under SOP-016, and escalate or re-prioritise it against the unit's ability to shed heat before the forecast heat event. As an ageing unit with a history of high loading and an unaddressed deferred defect, apply the loading restriction in MG-021 in preference to accepting the exposure if it cannot be attended beforehand, in accordance with MG-023. Record every de-rating applied, the reason, the value and the period as required by MG-021.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1671,
+  "output_tokens": 159,
+  "status": "ok"
+}

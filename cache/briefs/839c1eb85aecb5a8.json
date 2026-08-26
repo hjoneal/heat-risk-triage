@@ -1,0 +1,11 @@
+{
+  "brief": "Crews must clean the radiator fins, which are heavily fouled with dust and pollen and causing visibly reduced airflow, as required by SOP-016. Because a dissolved gas result has been flagged for review following the annual sample, crews must also investigate the dissolved gas finding and take action in accordance with SOP-013. Finally, crews must address the corrective work raised two rounds ago that has not been actioned, following the prioritisation rules in SOP-016. Because the unit is 35 years old and experiencing cumulative insulation ageing, crews must also account for the ageing indicators and thermal exposure limits detailed in MG-023.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "SOP-013",
+    "MG-023"
+  ],
+  "input_tokens": 1769,
+  "output_tokens": 183,
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "brief": "Attend to the Northcott Bend 230/34kV substation transformer to repair the previously raised gasket repair and fix the fan contactor chattering under load where the cooling stage cycles intermittently [SOP-016]. Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025]. Apply the loading reduction in MG-021 from the third day [MG-021, MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025",
+    "SOP-016"
+  ],
+  "input_tokens": 1702,
+  "output_tokens": 155,
+  "status": "ok"
+}

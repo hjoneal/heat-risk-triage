@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect and repair the oil level sight glass reading below the minimum mark at ambient, the previously raised gasket repair that has not been completed, and the cooling fans that failed to start on manual test at the control cabinet, as required prior to the heat event. Because the cooling control is in manual or unproven, apply the loading reduction specified in MG-021 in addition to ambient de-rating. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified per MG-021.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "input_tokens": 1763,
+  "output_tokens": 151,
+  "status": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "brief": "Clear the vegetation encroaching on the compound fence within a metre of the radiators, clean the radiator fins heavily fouled with dust and pollen where airflow is visibly reduced, and replace the seized cooling fan where one of three fans is seized. Clearance work takes precedence over other remedial activity before a heat event. [SOP-011]",
+  "cited_doc_ids": [
+    "SOP-011"
+  ],
+  "input_tokens": 1701,
+  "output_tokens": 104,
+  "status": "ok"
+}

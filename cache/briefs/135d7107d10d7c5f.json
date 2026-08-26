@@ -1,0 +1,11 @@
+{
+  "brief": "Fix the fan contactor chattering under load and the previously raised gasket repair that has not been completed before the heat event [SOP-016]. Because this unit's cooling type is ONAN, reduce permissible load in proportion to the lost cooling capacity [MG-021]. For this 24-year-old ageing unit, apply the loading restriction in MG-021 if it cannot be attended before the event [MG-023].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "input_tokens": 1730,
+  "output_tokens": 131,
+  "status": "ok"
+}

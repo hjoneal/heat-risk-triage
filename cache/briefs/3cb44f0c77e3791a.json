@@ -1,0 +1,9 @@
+{
+  "brief": "Complete the previously raised gasket repair before the forecast heat event begins, as directed by SOP-016. The supplied documents do not cover any further action for this asset.",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1639,
+  "output_tokens": 54,
+  "status": "ok"
+}

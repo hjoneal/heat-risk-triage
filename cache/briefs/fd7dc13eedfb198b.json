@@ -1,0 +1,10 @@
+{
+  "brief": "Perform the deferred bushing inspection that is still outstanding at this visit [MG-023]. Since the unit is an ageing ONAN transformer exposed to sustained heat without forced cooling to run continuously, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023, MG-021]. Record every de-rating applied, including the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1658,
+  "output_tokens": 118,
+  "status": "ok"
+}

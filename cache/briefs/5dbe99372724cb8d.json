@@ -1,0 +1,11 @@
+{
+  "brief": "Clear site storage placed against the ventilation opening on the east side and bird nesting material packed into the upper ventilation grille before the heat event [SOP-011, SOP-015]. Because the unit is 50 years old with a history of heavy loading [MG-023], restoring unobstructed airflow is essential to regain the cooling margin required during sustained temperatures [SOP-011, SOP-015].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-011",
+    "SOP-015"
+  ],
+  "input_tokens": 1673,
+  "output_tokens": 125,
+  "status": "ok"
+}

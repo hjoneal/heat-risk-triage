@@ -1,0 +1,11 @@
+{
+  "brief": "Where the cooling stage cycling intermittently, apply the loading reduction in MG-021 in preference to accepting the exposure [MG-023]. Where forced cooling is available, run it continuously through the overnight period rather than allowing the thermostat to drop the stages out [MG-025]. Reduce permissible load in proportion to the cooling capacity lost, treating cooling control in manual or unproven as one stage unavailable [MG-021]. Record every de-rating applied, the reason, the value and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1757,
+  "output_tokens": 167,
+  "status": "ok"
+}

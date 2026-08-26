@@ -1,0 +1,10 @@
+{
+  "brief": "As the unit has an ONAN cooling system and cannot be derated for reduced cooling under MG-021, and as the supplied documents do not cover active seepage at the lower gasket face, deferred bushing inspection still outstanding at this visit, or a fan contactor chattering under load where cooling stage cycles intermittently, no guidance is provided in the documents for these inspection findings. Apply the loading reduction in MG-021 from the third day onward as required by MG-023 for an ageing unit under heat exposure that cannot be attended before an event.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1715,
+  "output_tokens": 159,
+  "status": "ok"
+}

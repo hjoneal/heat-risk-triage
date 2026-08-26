@@ -1,0 +1,10 @@
+{
+  "brief": "Remove the bird nesting material packed into the upper ventilation grille and remove the site storage placed against the ventilation opening on the east side, as clearance work takes precedence over other remedial activity ahead of a heat event [SOP-011]. Also address the weeping observed around the radiator header gasket. Restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "MG-021"
+  ],
+  "input_tokens": 1718,
+  "output_tokens": 122,
+  "status": "ok"
+}

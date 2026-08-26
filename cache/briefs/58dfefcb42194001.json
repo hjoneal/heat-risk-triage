@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the vegetation encroaching on the compound fence within a metre of the radiators before the heat event, as vegetation clearance takes precedence over other remedial activity [SOP-011]. Address the fan contactor chattering under load and the radiator bank scale build-up, and repair the light oil film on the bund floor consistent with a slow leak [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1816,
+  "output_tokens": 126,
+  "status": "ok"
+}

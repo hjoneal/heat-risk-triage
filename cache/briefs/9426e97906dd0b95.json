@@ -1,0 +1,10 @@
+{
+  "brief": "Run the forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, as instructed in MG-025, to address bird nesting material found packed into the upper ventilation grille and overgrown shrub cover restricting the airflow path to the rear of the unit. Furthermore, apply the loading reduction in MG-021 from the third day on events forecast to run beyond 48 hours with warm overnight minima.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1769,
+  "output_tokens": 132,
+  "status": "ok"
+}

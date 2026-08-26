@@ -1,9 +1,0 @@
-{
-  "brief": "Where the Camden Works transformer has an outstanding vegetation or obstruction defect, perform clearance work as it takes precedence over other remedial activity [SOP-011]. Ensure a minimum clearance of two metres between any growth and the radiator face, and one metre between growth and the compound fence line [SOP-011]. Keep ground cover within the compound below 150mm [SOP-011].",
-  "cited_doc_ids": [
-    "SOP-011"
-  ],
-  "input_tokens": 2804,
-  "output_tokens": 266,
-  "status": "ok"
-}

@@ -1,0 +1,9 @@
+{
+  "brief": "Repair the active seepage at the lower gasket face before the event begins, as work addressing an active leak is a priority category 3 item under SOP-016. The supplied documents do not cover any other required action for this asset's specific condition prior to the heat event.",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1691,
+  "output_tokens": 89,
+  "status": "ok"
+}

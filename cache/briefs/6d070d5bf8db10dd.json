@@ -1,0 +1,10 @@
+{
+  "brief": "Remove the stored material from the ventilation opening on the east side [SOP-011]. Rectify the weeping around the radiator header gasket [MG-021]. Investigate and repair the cooling fans that failed to start on manual test at the control cabinet [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "SOP-011"
+  ],
+  "input_tokens": 1717,
+  "output_tokens": 103,
+  "status": "ok"
+}

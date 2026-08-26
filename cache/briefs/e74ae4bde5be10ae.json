@@ -1,0 +1,11 @@
+{
+  "brief": "Before the heat event, address the active seepage at the lower gasket face, repair the fan contactor chattering under load where the cooling stage cycles intermittently, and complete the deferred bushing inspection [SOP-016]. As the supplied documents do not cover ONAN cooling configuration limits beyond these priority categories, no additional procedures apply [MG-023, SOP-013].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-013",
+    "SOP-016"
+  ],
+  "input_tokens": 1737,
+  "output_tokens": 114,
+  "status": "ok"
+}

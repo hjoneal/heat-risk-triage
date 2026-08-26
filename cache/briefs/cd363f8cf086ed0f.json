@@ -1,0 +1,10 @@
+{
+  "brief": "Prior to the forecast heat event, the crew must replace the seized cooling fan and clear the overdue remedial work where one of three cooling fans is seized, as set out in SOP-016. Because forced cooling is partially unavailable, apply a permissible load reduction of 8 percent of rating in accordance with MG-021. For this 47-year-old unit operating at 86 percent peak load, also apply the ambient de-rating requirements in MG-021.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-021"
+  ],
+  "input_tokens": 1698,
+  "output_tokens": 147,
+  "status": "ok"
+}

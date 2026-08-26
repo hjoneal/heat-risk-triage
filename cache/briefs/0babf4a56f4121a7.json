@@ -1,0 +1,11 @@
+{
+  "brief": "Clear vegetation and growth encroaching on the compound fence within a metre of the radiators, as clearance work takes precedence over other remedial activity when a unit is identified for pre-event attention [SOP-011]. Since this ageing unit cannot be attended before the heat event to correct all issues, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-011"
+  ],
+  "input_tokens": 1829,
+  "output_tokens": 157,
+  "status": "ok"
+}

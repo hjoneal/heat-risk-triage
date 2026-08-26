@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the stacked pallets left inside the compound that obstruct the ventilation grilles [SOP-011]. Repair or replace the seized cooling fan so the unit is no longer running on reduced forced cooling [SOP-011]. Top up the oil level where the sight glass reads below the minimum mark at ambient [REG-042].",
+  "cited_doc_ids": [
+    "REG-042",
+    "SOP-011"
+  ],
+  "input_tokens": 1682,
+  "output_tokens": 118,
+  "status": "ok"
+}

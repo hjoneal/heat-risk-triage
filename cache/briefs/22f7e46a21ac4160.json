@@ -1,0 +1,9 @@
+{
+  "brief": "Remove the site storage that has been placed against the ventilation opening on the east side, as clearance work takes precedence over other remedial activity before a forecast heat event. Airflow to radiator banks and ventilation openings must remain unobstructed at all times. Pallets, drums and cable reels left against the building are to be removed at the time of discovery.",
+  "cited_doc_ids": [
+    "SOP-011"
+  ],
+  "input_tokens": 1633,
+  "output_tokens": 100,
+  "status": "ok"
+}

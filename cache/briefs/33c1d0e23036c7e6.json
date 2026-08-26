@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect and rectify the active seepage at the lower gasket face, as staining is visible on the plinth [MG-021, MG-023, SOP-013]. Additionally, address the scale build-up across the lower third of the radiator bank [MG-021, MG-023, SOP-013]. Since the supplied procedures do not provide specific remedial instructions for these recorded gasket and cooling defects, apply the loading restriction in MG-021 pending completion of the work [MG-021, MG-023, SOP-013].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-013"
+  ],
+  "input_tokens": 1706,
+  "output_tokens": 177,
+  "status": "ok"
+}

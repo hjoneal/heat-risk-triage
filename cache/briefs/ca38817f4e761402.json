@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the intake louvres on the north wall partially blocked by wind-blown debris and remove the stacked pallets left inside the compound obstructing the ventilation grilles [SOP-011]. Since this ageing unit cannot be attended to correct the cooling reduction before the heat event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-011"
+  ],
+  "input_tokens": 1789,
+  "output_tokens": 152,
+  "status": "ok"
+}

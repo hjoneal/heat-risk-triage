@@ -1,0 +1,9 @@
+{
+  "brief": "Complete the work order WO-3182 for the cooling controller, repair the cooling fans that failed to start on manual test at the control cabinet, and top up the oil level sight glass reading below the minimum mark at ambient before the heat event begins [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1694,
+  "output_tokens": 79,
+  "status": "ok"
+}

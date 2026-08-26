@@ -1,0 +1,10 @@
+{
+  "brief": "Reduce the permissible load in proportion to the lost cooling capacity by applying an 8 percent reduction because one of three cooling fans has seized, and combine this with any applicable ambient de-rating as specified in MG-021. For the light oil film on the bund floor consistent with a slow leak, the supplied documents do not cover the situation. Apply the loading restriction in MG-021 in preference to accepting the exposure as directed in MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1645,
+  "output_tokens": 120,
+  "status": "ok"
+}

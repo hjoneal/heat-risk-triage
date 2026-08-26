@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the overgrown shrub cover restricting the airflow path to the rear of the unit and the vegetation encroaching on the compound fence within a metre of the radiators, complete the work order for the cooling controller, and apply the loading restriction in MG-021 until the oil with marginal dielectric strength is reconditioned or replaced and retested. Cite doc_ids MG-021, MG-023, SOP-013.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-013"
+  ],
+  "input_tokens": 1892,
+  "output_tokens": 122,
+  "status": "ok"
+}

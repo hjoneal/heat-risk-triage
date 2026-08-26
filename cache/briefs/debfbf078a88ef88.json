@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille, repair the louvre dampers that are stiff and not opening fully on the thermostat call, and complete the deferred bushing inspection before the heat event begins [SOP-016]. Clearance work takes precedence over other remedial activity where an obstruction defect is outstanding [SOP-011]. Record the clearance work against the originating defect and close it out at the time of completion [SOP-011].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1751,
+  "output_tokens": 138,
+  "status": "ok"
+}

@@ -1,0 +1,11 @@
+{
+  "brief": "Apply the loading restriction in MG-021 because the oil level sight glass reads below the minimum mark at ambient and an outstanding defect notice from the last inspection round is still current [MG-023, MG-021, SOP-013].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021",
+    "SOP-013"
+  ],
+  "input_tokens": 1771,
+  "output_tokens": 89,
+  "status": "ok"
+}

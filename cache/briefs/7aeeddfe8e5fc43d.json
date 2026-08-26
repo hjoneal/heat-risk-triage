@@ -1,0 +1,11 @@
+{
+  "brief": "Dispatch a crew to repair the fan contactor chattering under load and the cooling stage cycling intermittently, as well as the weeping observed around the radiator header gasket, before the heat event begins [SOP-016]. If this outstanding remedial work cannot be completed before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "input_tokens": 1712,
+  "output_tokens": 137,
+  "status": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect and rectify the cooling fans that failed to start on manual test at the control cabinet, as cooling control in manual or unproven must be treated as one stage unavailable under MG-021. Because forced cooling is partially unavailable, reduce permissible load in proportion to the cooling capacity lost according to MG-021. As an ageing unit with a history of high loading, prioritise the asset for pre-event attention ahead of a younger unit in otherwise similar condition in accordance with MG-023.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1615,
+  "output_tokens": 142,
+  "status": "ok"
+}

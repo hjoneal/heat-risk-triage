@@ -1,9 +1,0 @@
-{
-  "brief": "Prior to the forecast heat event, review the asset's open defect register as outlined in SOP-016. Because the supplied documents do not cover the specific remediation steps for this 51-year-old ONAN unit beyond this open work order review and the prioritisation of heat-shedding defects, no further physical intervention is instructed here.",
-  "cited_doc_ids": [
-    "SOP-016"
-  ],
-  "input_tokens": 1500,
-  "output_tokens": 104,
-  "status": "ok"
-}

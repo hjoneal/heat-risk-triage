@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect the deferred bushing as recorded in the outstanding remedial work before the forecast heat event. Where this ageing unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. This action follows the guidance in SOP-016 and MG-023.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1661,
+  "output_tokens": 113,
+  "status": "ok"
+}

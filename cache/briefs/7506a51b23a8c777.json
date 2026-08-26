@@ -1,0 +1,9 @@
+{
+  "brief": "Clear bird nesting material found packed into the upper ventilation grille from the upper ventilation grille before the heat event [MG-023]. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "cited_doc_ids": [
+    "MG-023"
+  ],
+  "input_tokens": 1661,
+  "output_tokens": 79,
+  "status": "ok"
+}

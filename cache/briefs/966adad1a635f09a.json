@@ -1,0 +1,11 @@
+{
+  "brief": "Inspect and rectify the fan contactor chattering under load, the cooling stage cycling intermittently, the weeping observed around the radiator header gasket, and the outstanding defect notice, as required by the procedure documents. Run forced cooling continuously through the overnight period rather than allowing the thermostat to drop the stages out, and apply the loading restriction in MG-021 in preference to accepting the exposure [MG-021, MG-023, MG-025].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1761,
+  "output_tokens": 145,
+  "status": "ok"
+}

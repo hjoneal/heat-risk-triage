@@ -1,0 +1,11 @@
+{
+  "brief": "Brief generation failed. Applicable procedures: MG-023 Insulation ageing and end-of-life indicators; SOP-016 Outstanding work order review and defect close-out; REG-042 Maintenance interval compliance.",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-016",
+    "REG-042"
+  ],
+  "input_tokens": 3252,
+  "output_tokens": 244,
+  "status": "fallback"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the intake louvres on the north wall partially blocked by wind-blown debris and remove the stacked pallets left inside the compound obstructing the ventilation grilles. Because the unit is an ageing asset with warm nights, if it cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023]. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1854,
+  "output_tokens": 139,
+  "status": "ok"
+}

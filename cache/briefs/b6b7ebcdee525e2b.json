@@ -1,0 +1,10 @@
+{
+  "brief": "Reduce permissible load in accordance with MG-021 due to the cooling fan seizure, and run forced cooling continuously through the overnight period per MG-025. Inspect the bund floor to address the light oil film consistent with a slow leak.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1721,
+  "output_tokens": 75,
+  "status": "ok"
+}

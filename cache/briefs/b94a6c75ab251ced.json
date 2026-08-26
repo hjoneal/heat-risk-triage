@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the radiator fins heavily fouled with dust and pollen, remove the bird nesting material packed into the upper ventilation grille, and complete the deferred bushing inspection. Where the unit cannot be attended before the heat event, apply the loading reduction in MG-021 in accordance with MG-023. Cite documents MG-021, MG-023, and MG-025.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "MG-025"
+  ],
+  "input_tokens": 1722,
+  "output_tokens": 130,
+  "status": "ok"
+}

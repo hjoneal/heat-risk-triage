@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect the cooling fans failed to start on manual test at the control cabinet and the oil level sight glass reading below the minimum mark at ambient, and treat the cooling control in manual or unproven as one stage unavailable according to MG-021. Where an ageing unit cannot be attended before an event, apply the loading restriction in MG-021 in preference to accepting the exposure as specified in MG-023. Record every de-rating applied, the reason, the value and the period following MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1732,
+  "output_tokens": 148,
+  "status": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Conduct a load transfer to reduce demand on the Kingsley Green 138/13kV transformer, as the unit is approaching its temperature limit during the heat event [ERP-032]. Assess the receiving asset's available capacity by applying the ambient de-rating set out in MG-021 to both assets [ERP-032]. Ensure the receiving asset is confirmed to be free of known cooling or oil defects prior to switching [ERP-032]. Monitor top oil temperature on the receiving asset for the following six hours after the transfer [ERP-032].",
+  "cited_doc_ids": [
+    "ERP-032",
+    "MG-021"
+  ],
+  "input_tokens": 1557,
+  "output_tokens": 147,
+  "status": "ok"
+}

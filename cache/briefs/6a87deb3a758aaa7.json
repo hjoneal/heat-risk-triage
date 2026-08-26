@@ -1,0 +1,10 @@
+{
+  "brief": "Prioritise Camden Green for pre-event attention before the forecast heat event by addressing the radiator fins heavily fouled with dust and pollen with airflow visibly reduced, and the conservator level low [SOP-016]. As an ageing unit with a history of high loading and deferred remedial work carried forward from the prior report with no work done, ensure these heat-shedding and oil-level defects are completed ahead of the event [MG-023, SOP-016].",
+  "cited_doc_ids": [
+    "MG-023",
+    "SOP-016"
+  ],
+  "input_tokens": 1667,
+  "output_tokens": 142,
+  "status": "ok"
+}

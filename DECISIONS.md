@@ -1715,3 +1715,84 @@ reliably so: of 12 remote-classified assets spot-checked across three scenarios,
 retrieved three condition documents and no loading document at all, its other positive contributions
 having outscored the loading terms. Nothing conditions retrieval on the intervention type. Recorded
 as a limitation; the brief pipeline is unchanged, as specified.
+
+## D-049 — The action brief is written from the inspection findings, not around them
+
+**Decision:** `build_brief_prompt` supplies the asset's extracted condition findings verbatim, with
+their inspection ids and dates, and lists every positive contribution rather than the leading three.
+The brief system prompt rises to v3 and requires that a recorded defect be named. The brief cache key
+is now a hash of the prompt itself rather than of the identifiers that selected it.
+
+**What was wrong.** The brief prompt contained asset facts, the top three positive contributions, and
+three procedure documents in full. It did not contain the inspection findings — the output of the
+extraction layer, the thing this project reads 1,800 free-text notes to obtain, and the content the
+asset page prints directly beside the brief. So the top-ranked asset in `short-severe`, whose notes
+record an oil sight glass below the minimum mark, a deferred bushing inspection and nesting material
+packed into the ventilation grille, received a brief about prioritising ageing units and applying a
+loading restriction. Everything in it was true and none of it was what a crew would go and do.
+
+**Two independent causes, both measured before the change.**
+
+* The findings were never in the prompt at all. **150 of the 160 briefed assets** carried evidence
+  the model was not shown.
+* The driver list was truncated with `[:config.BM25_TOP_K]` — a constant meaning *as many procedures
+  as a supervisor will read*, reused to decide how many risk drivers to state. The two quantities
+  have nothing to do with each other. Because the condition flags sit below cooling type, the
+  maintenance interval and peak load in contribution order, the truncation reliably cut the
+  actionable findings: **149 of 160 briefs lost at least one positive condition flag.**
+
+The second is the more instructive: a magic number avoided by borrowing an unrelated named constant
+is still a magic number, and it read as principled while doing damage. The list is no longer
+truncated at all. Ordering by effect carries the priority; a cut-off was doing it silently and
+wrongly.
+
+Contributions are also passed as their `reading` rather than their raw `value`, for the reason
+D-046 gives for the asset page: `Cooling system type (value 0)` and an interaction's centred product
+are not readings of anything, and a brief written from them cannot state a figure that can be checked
+against the unit.
+
+**The cache key was keyed on the wrong thing.** It hashed `asset_id + scenario_id + doc_ids +
+version + model` — the inputs to *selection*, not the content sent. A change to what the prompt says
+about an asset therefore produced the same key, and the cache would have served a brief written
+without the findings as though it had seen them. It now hashes the prompt, as extraction has always
+hashed the note text. `BRIEF_PROMPT_VERSION` stays in the key because the system prompt is not part
+of the user prompt, and the model stays because two models must not share an answer. This closes the
+class of bug rather than the instance: no future prompt change can go stale by being forgotten.
+
+**Citation integrity is unaffected and now asserted directly.** `DOC_ID_PATTERN` matches
+`SOP|MG|ERP|REG` followed by three digits, so an inspection id such as `INS-165-1` cannot pass the
+membership check. The v3 system prompt states that the findings are observations about the asset
+rather than procedure content, that no doc id attaches to one, and that an inspection id is never a
+citation. A test asserts every citation matches the doc-id pattern and that no inspection id appears
+in any brief's prose.
+
+**Cost.** The version bump invalidates all 160 cached briefs and they were regenerated. This is the
+recurring layer identified in D-045 — briefs are keyed on the forecast and are not durable across
+runs — so the figure is the per-forecast cost, not a one-off.
+
+**Amendment, v3 → v4: the inspection id is withheld, not forbidden.** v3 supplied
+`(INS-165-1, 2024-05-16)` alongside each quote and instructed the model that findings are
+observations rather than procedure content and that an inspection id is never a citation. **13 of the
+160 v3 briefs used one as a procedure reference anyway** — *"Clear the radiator fins heavily fouled
+with dust and pollen … as specified in INS-340-2"*, *"top up the oil level … [INS-213-2]"* — which
+inverts what an inspection is: it recorded the defect, it did not specify the remedy.
+
+Neither existing citation check saw it. `DOC_ID_PATTERN` matches `SOP|MG|ERP|REG` plus three digits,
+so an inspection id is invisible to both the array check and the in-text check, and both reported
+100.00% clean across all 160 while an eighth of the corpus misattributed instructions. That is the
+third time in this project a check has passed on something it was not looking at (D-044, D-046), and
+the pattern is the same each time: the check asks whether a known-bad *form* appears, not whether
+what is there is right.
+
+v4 withholds the id. The date carries what it was useful for — that a finding was recorded at a
+particular visit — and the asset page shows the ids beside the quotes regardless, so nothing is lost
+to the reader. Same reasoning as the applicability filter in D-037: remove the thing from the
+candidate set rather than rank it and hope. Measured after regeneration: **0 of 160**. A prompt
+instruction that the model declines to follow 8% of the time is not a control.
+
+**Cost of the two regenerations.** 320 briefs, since v3 was measured and then superseded. The v2 and
+v3 cache entries were left orphaned by the version bumps — unreachable by any code path, but 320
+committed files implying a corpus three times its real size — and were deleted once v4 was verified
+to reproduce offline from its own 160. Measured for v4: 160 calls, 287,166 input and 21,559 output
+tokens, 1,552 to 3,596 in per brief. Input per brief rose about 4% against v2, output fell about 17%:
+the findings add tokens, and a brief that names a defect is shorter than one reasoning around one.

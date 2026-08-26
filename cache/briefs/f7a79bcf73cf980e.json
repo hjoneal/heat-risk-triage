@@ -1,0 +1,11 @@
+{
+  "brief": "Complete the outstanding remedial work for the cooling stage cycling intermittently and the conservator level low before the heat event begins, as required by SOP-016. Because the cooling system is ONAN and cooling is degraded, reduce the permissible load to the ONAN rating per SOP-016 and apply the loading restriction in MG-021 in preference to accepting the exposure for this ageing unit under MG-023. Record every de-rating applied, the reason, the value, and the period in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "input_tokens": 1708,
+  "output_tokens": 145,
+  "status": "ok"
+}

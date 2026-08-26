@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect and rectify the oil level sight glass reading below the minimum mark at ambient before the forecast heat event begins, as directed by SOP-016. Because dissolved gas results have been flagged for review following the annual sample, also follow the interpretation and action requirements in SOP-013. Address the unactioned corrective work raised two rounds ago in accordance with the review and close-out provisions of SOP-016.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "SOP-013"
+  ],
+  "input_tokens": 3514,
+  "output_tokens": 290,
+  "status": "ok"
+}

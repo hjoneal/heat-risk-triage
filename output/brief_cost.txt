@@ -1,12 +1,12 @@
 Brief generation
 model: gemini-3.5-flash-lite
-prompt version: v2
+prompt version: v4
 scenarios: 4
 briefs: 160 (40 per scenario)
 reaching the no_match path, so making no call: 0
 
 Cost of building the brief corpus, whether or not this run paid it.
 briefs with token counts recorded: 160 of 160
-input tokens: 275907
-output tokens: 26128
+input tokens: 287166
+output tokens: 21559
 calls to rebuild from empty: 160

@@ -1,0 +1,10 @@
+{
+  "brief": "Crews must clean the radiator fins, which are heavily fouled with dust and pollen with airflow visibly reduced, and top up the oil where the conservator level is low. Because this ageing 44-year-old unit cannot be attended before the event with its outstanding defect notice still current, apply the loading restriction in MG-021 in preference to accepting the exposure [MG-023].",
+  "cited_doc_ids": [
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1782,
+  "output_tokens": 128,
+  "status": "ok"
+}

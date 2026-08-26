@@ -1,0 +1,10 @@
+{
+  "brief": "Conduct the deferred bushing inspection that remains outstanding at this asset. Where the unit cannot be attended before the event, apply the loading restriction in MG-021 in preference to accepting the exposure. This action is required due to the deferred bushing inspection still outstanding at this visit.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1678,
+  "output_tokens": 80,
+  "status": "ok"
+}

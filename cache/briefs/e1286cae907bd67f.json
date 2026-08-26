@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the bird nesting material packed into the upper ventilation grille before the heat event, as ventilation clearance takes precedence over other remedial activity [SOP-011]. Next, address the oil level sight glass reading below the minimum mark at ambient [SOP-016]. Finally, address the deferred bushing inspection still outstanding [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-011",
+    "SOP-016"
+  ],
+  "input_tokens": 1749,
+  "output_tokens": 101,
+  "status": "ok"
+}

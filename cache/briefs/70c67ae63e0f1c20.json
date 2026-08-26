@@ -1,0 +1,11 @@
+{
+  "brief": "Clear the overgrown shrub cover restricting the airflow path to the rear of the unit and the vegetation encroaching on the compound fence within a metre of the radiators, as specified in SOP-013 for handling a marginal dielectric strength oil sample. Because work order WO-3182 for the cooling controller remains open and the cooling control is unproven, treat as one stage unavailable and apply the loading restriction in MG-021 in accordance with MG-021 and SOP-013. Additionally, apply the loading restriction in MG-021 because the deferred bushing inspection remains outstanding and the oil sample returned marginal dielectric strength [MG-021, MG-023, SOP-013].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-013"
+  ],
+  "input_tokens": 1840,
+  "output_tokens": 204,
+  "status": "ok"
+}

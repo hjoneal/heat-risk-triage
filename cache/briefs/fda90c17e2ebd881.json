@@ -1,0 +1,9 @@
+{
+  "brief": "Clean the radiator fins heavily fouled with dust and pollen where airflow is visibly reduced, top up the conservator level low, and resolve the outstanding defect notice from the last inspection round before the forecast heat event begins [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 3352,
+  "output_tokens": 214,
+  "status": "ok"
+}

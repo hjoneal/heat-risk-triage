@@ -1,0 +1,10 @@
+{
+  "brief": "Before the heat event, address the oil level sight glass reading below the minimum mark at ambient, as instructed in SOP-016. Because the outstanding defect notice from the last inspection round is still current, review and address the deferred work in accordance with SOP-016. Furthermore, note that the unit's 33-year age and thermal exposure indicate irreversible cellulose insulation ageing per MG-023. Cited documents: SOP-016, MG-023.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023"
+  ],
+  "input_tokens": 1714,
+  "output_tokens": 127,
+  "status": "ok"
+}

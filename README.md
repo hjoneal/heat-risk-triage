@@ -424,6 +424,26 @@ the invented reference. `BRIEF_PROMPT_VERSION` moved to v2, which forbids passin
 inside a supplied document, and all 160 briefs were regenerated. Both offenders are gone.
 `DECISIONS.md` D-038.
 
+**The brief is written from the inspection findings.** Until v3 it was not: the prompt carried asset
+facts, the top three positive contributions and three procedure documents, and never the extracted
+condition findings — the output of the layer this project reads 1,800 free-text notes to obtain, and
+the content the asset page prints directly beside the brief. Two causes, both measured. The findings
+were absent entirely, affecting the **150 of 160** briefed assets that carry evidence. And the driver
+list was truncated with `BM25_TOP_K` — a constant meaning *how many procedures a supervisor will
+read*, reused to decide how many risk drivers to state — which cut a positive condition flag out of
+**149 of 160** briefs, because the flags sit below cooling type and the maintenance interval in
+contribution order. The highest-ranked asset in `short-severe`, whose notes record an oil sight glass
+below minimum, a deferred bushing inspection and nesting material in the ventilation grille, was
+given a brief about the general management of ageing units.
+
+v4 supplies each finding verbatim with its flag and date, and every positive contribution as its
+reading rather than its raw value. The inspection **id** is deliberately withheld: v3 supplied it and
+forbade its misuse in as many words, and **13 of 160** briefs wrote it as though it were a procedure
+reference — *"clear the radiator fins, as specified in INS-340-2"* — which inverts what an inspection
+is. Withholding the token makes that impossible rather than discouraged, and 0 of 160 v4 briefs name
+one. The existing citation checks never saw this: `DOC_ID_PATTERN` does not match an inspection id,
+so both reported clean throughout. `DECISIONS.md` D-049.
+
 **LLM cost, measured.** Both layers record the tokens their cached results cost to produce, so a
 run that makes no calls still reports what the corpus was worth. `output/extraction_cost.txt` and
 `output/brief_cost.txt`.
@@ -431,12 +451,12 @@ run that makes no calls still reports what the corpus was worth. `output/extract
 | Layer | Calls from empty | Input tokens | Output tokens | Per call (in / out) |
 |---|---|---|---|---|
 | Extraction | 1,298 | 1,005,218 | 144,882 | 774 / 111 |
-| Briefs | 160 | 275,907 | 26,128 | 1,724 / 163 |
-| **Total** | **1,458** | **1,281,125** | **171,010** | |
+| Briefs | 160 | 287,166 | 21,559 | 1,795 / 135 |
+| **Total** | **1,458** | **1,292,384** | **166,441** | |
 
-A brief costs about 2.2× the input of an extraction, because it carries three procedure documents in
-full — 1,408 to 3,010 input tokens depending on which documents were retrieved, against
-60 to 437 output.
+A brief costs about 2.3× the input of an extraction, because it carries three procedure documents in
+full alongside the asset's inspection findings — 1,552 to 3,596 input tokens depending on which
+documents were retrieved and how much the notes recorded, against 54 to 313 output.
 
 **The two layers have different cost models, and only one is a one-off.** Extraction is keyed on note
 text, which never changes once an inspector has written it, so the entry is durable and the cost
@@ -444,9 +464,10 @@ tracks inspection cadence rather than tool usage — scoring the same fleet agai
 makes zero extraction calls. Briefs are keyed on the forecast, so **every forecast run regenerates
 them**, including the same event re-scored at 72h, 48h and 24h as it firms up. That is not an
 artefact of the key: of the 63 assets appearing in any scenario's top 40, only 24 retrieve the same
-document set across the scenarios they appear in, and the prompt embeds each asset's leading
-contributions with their values, which move with the weather. Caching a brief across forecasts would
-serve the right procedures for the wrong reasons.
+document set across the scenarios they appear in, and the prompt embeds every positive contribution
+with its reading, which moves with the weather. Caching a brief across forecasts would serve the
+right procedures for the wrong reasons. The key is a hash of the prompt itself, so this is enforced
+rather than assumed: a brief cannot be served for a prompt it was not written from. D-049.
 
 In production, then, budget extraction against new notes and briefs against
 `events × forecast updates × 40`. The risk model and the web application make no

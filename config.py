@@ -648,7 +648,7 @@ BRIEF_MODEL = "gemini-3.5-flash-lite"  # measured
 # Bumping either version invalidates every cache key built with it, which is how
 # a prompt change is forced to re-run rather than silently reuse old output.
 PROMPT_VERSION = "v1"  # chosen
-BRIEF_PROMPT_VERSION = "v2"  # chosen: v2 forbids naming an unsupplied doc in the prose
+BRIEF_PROMPT_VERSION = "v4"  # chosen: v3 supplied the findings, v4 withholds the inspection id
 
 LLM_TEMPERATURE = 0.0  # chosen: deterministic decoding
 EXTRACTION_MAX_TOKENS = 1024  # chosen: four flags with short quotes

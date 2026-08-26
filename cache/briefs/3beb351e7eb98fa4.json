@@ -1,0 +1,9 @@
+{
+  "brief": "Because the cooling control is in manual or unproven, reduce the permissible load to the ONAN rating in accordance with MG-021. This action is required due to the recorded condition where cooling fans failed to start on manual test at the control cabinet. Apply the de-rating in addition to any ambient de-rating before the forecast heat event.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "input_tokens": 1605,
+  "output_tokens": 107,
+  "status": "ok"
+}

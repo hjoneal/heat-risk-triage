@@ -1,0 +1,10 @@
+{
+  "brief": "Clear the radiator fins heavily fouled with dust and pollen, airflow visibly reduced, and remove the site storage placed against the ventilation opening on the east side [MG-021]. The supplied documents do not provide procedural guidance for addressing the radiator fouling or ventilation obstruction beyond restoring full cooling capacity [MG-021]. Because this ageing unit cannot be restored to full cooling prior to the heat event, apply the loading restriction in MG-021 [MG-023].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1684,
+  "output_tokens": 123,
+  "status": "ok"
+}

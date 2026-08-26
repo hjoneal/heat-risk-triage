@@ -1,0 +1,9 @@
+{
+  "brief": "Prioritise attention on Westmarch Park 230/34kV ahead of the forecast heat event by addressing the outstanding corrective work and the seized cooling fan where one of three cooling fans has seized and the unit is running on reduced forced cooling [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1653,
+  "output_tokens": 91,
+  "status": "ok"
+}

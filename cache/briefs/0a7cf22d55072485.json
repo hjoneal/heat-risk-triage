@@ -1,0 +1,9 @@
+{
+  "brief": "Inspect and rectify the cooling control cabinet where cooling fans failed to start on manual test, and top up the oil until the level sight glass reading is above the minimum mark at ambient [MG-021]. Where forced cooling is partially unavailable or unproven, treat as one stage unavailable and reduce permissible load in proportion to the cooling capacity lost [MG-021]. As the supplied documents do not cover oil level top-up procedures, no further guidance for that specific task is provided.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "input_tokens": 1687,
+  "output_tokens": 135,
+  "status": "ok"
+}

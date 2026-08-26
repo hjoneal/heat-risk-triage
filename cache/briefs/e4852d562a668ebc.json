@@ -1,0 +1,11 @@
+{
+  "brief": "Attend to the Northcott Bend 230/34kV transformer before the heat event to resolve the fan contactor chattering under load and cooling stage cycling intermittently, as well as the previously raised gasket repair that has not been completed. Because the unit is 24 years old with an ONAN cooling type and prior heat-related faults, apply the loading restriction in MG-021 if these defects cannot be attended before the event. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified [MG-021, MG-023, SOP-016].",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023",
+    "SOP-016"
+  ],
+  "input_tokens": 1720,
+  "output_tokens": 198,
+  "status": "ok"
+}

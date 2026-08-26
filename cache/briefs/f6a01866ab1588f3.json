@@ -1,0 +1,9 @@
+{
+  "brief": "Treat the cooling control as one stage unavailable because the cooling fans failed to start on manual test at the control cabinet, and apply the required de-rating as specified in MG-021. Top up the transformer oil because the oil level sight glass is reading below the minimum mark at ambient. Record every de-rating applied, the reason, the value, and the period, and restore the full rating only when the underlying condition has been corrected and verified, in accordance with MG-021.",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "input_tokens": 1633,
+  "output_tokens": 119,
+  "status": "ok"
+}

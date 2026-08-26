@@ -1,0 +1,9 @@
+{
+  "brief": "Reduce permissible load in accordance with MG-021 because the cooling control in manual or unproven is treated as one stage unavailable, noting that the cooling fans failed to start on manual test at the control cabinet [MG-021]. Record every de-rating applied, the reason, the value, and the period [MG-021]. Restore the full rating only when the underlying condition has been corrected and verified, not when the event ends [MG-021].",
+  "cited_doc_ids": [
+    "MG-021"
+  ],
+  "input_tokens": 1674,
+  "output_tokens": 131,
+  "status": "ok"
+}

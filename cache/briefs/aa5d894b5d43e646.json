@@ -1,0 +1,10 @@
+{
+  "brief": "Inspect and rectify the cooling fans that failed to start on manual test at the control cabinet and top up the oil level where the sight glass reads below the minimum mark at ambient, citing MG-021. Because cooling control is in manual or unproven, treat as one stage unavailable and reduce permissible load in proportion to the cooling capacity lost in accordance with MG-021. Furthermore, apply the loading restrictions set out in MG-021 and MG-023 to manage the risks of this ageing unit during the heat event.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-023"
+  ],
+  "input_tokens": 1680,
+  "output_tokens": 150,
+  "status": "ok"
+}

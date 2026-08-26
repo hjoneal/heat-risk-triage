@@ -1,0 +1,11 @@
+{
+  "brief": "Complete the deferred bushing inspection still outstanding at this visit prior to the heat event, as instructed in SOP-016. Because this unit is 35 years old with degraded insulation, apply the loading restriction in MG-021 if it cannot be attended before the event as required by MG-023. Record every de-rating applied, the reason, the value, and the period pursuant to MG-021.",
+  "cited_doc_ids": [
+    "SOP-016",
+    "MG-023",
+    "MG-021"
+  ],
+  "input_tokens": 1672,
+  "output_tokens": 139,
+  "status": "ok"
+}

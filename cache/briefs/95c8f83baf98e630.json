@@ -1,0 +1,9 @@
+{
+  "brief": "Address the active seepage at the lower gasket face before the heat event begins, as active leaks rank in priority three for pre-event heat triage [SOP-016].",
+  "cited_doc_ids": [
+    "SOP-016"
+  ],
+  "input_tokens": 1703,
+  "output_tokens": 69,
+  "status": "ok"
+}

@@ -1,0 +1,10 @@
+{
+  "brief": "Run the fan bank continuously through the overnight period and apply the loading reduction in MG-021 from the third day, as fan bank 2 is not running on inspection and an outstanding defect notice from the last inspection round is still current. The supplied documents do not cover the specific action required for the outstanding defect notice.",
+  "cited_doc_ids": [
+    "MG-021",
+    "MG-025"
+  ],
+  "input_tokens": 1733,
+  "output_tokens": 105,
+  "status": "ok"
+}

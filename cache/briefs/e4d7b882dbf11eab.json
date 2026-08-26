@@ -1,0 +1,10 @@
+{
+  "brief": "Because the fan contactor is chattering under load and the cooling stage is cycling intermittently, consider emergency load transfer to an adjacent asset in accordance with ERP-032. Confirm the receiving asset's available capacity by applying the de-rating in MG-021 to both assets and verifying its condition before switching. Execute the transfer to the approved switching schedule with the operations desk in attendance, and monitor top oil temperature on the receiving asset for the following six hours as directed in ERP-032.",
+  "cited_doc_ids": [
+    "ERP-032",
+    "MG-021"
+  ],
+  "input_tokens": 1609,
+  "output_tokens": 128,
+  "status": "ok"
+}
