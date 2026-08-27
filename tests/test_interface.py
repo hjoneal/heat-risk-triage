@@ -504,7 +504,7 @@ def test_the_coverage_figure_counts_interventions_not_rows():
     assert math.isclose(covered["intercepted"], expected, rel_tol=1e-9)
 
     html = queue_html(f"?capacity={capacity}")
-    assert f">{covered['remote_count']}</strong> ranked on loading" in html
+    assert f">{covered['remote_count']}</strong> assets ranked on loading" in html
 
 
 @pytest.mark.parametrize("view", ["all"] + list(config.INTERVENTION_LABELS))

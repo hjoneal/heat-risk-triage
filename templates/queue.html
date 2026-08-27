@@ -80,29 +80,26 @@
   {# Submits itself while dragging when scripting is available; the button is the
      fallback and is hidden by the same script that makes it redundant. #}
   <button type="submit" data-fallback-submit>Apply</button>
+  {# The topology caveat stays inline. Without it the page asserts that a
+     load-ranked asset needs no visit, which is the one thing here the system
+     cannot check: it models no network and cannot tell whether an adjacent
+     feeder has the headroom to take the load. #}
   <p class="control-note">
     The forecast sets the order; capacity decides where the line falls across it.
-    An asset ranked on loading is assumed to be relieved from the control room rather than
-    by a visit, so working down to the
-    {% if covered.line %}<strong>{{ covered.crew_count }}</strong>th asset ranked on condition
-    reaches rank <strong>{{ covered.line }}</strong>, passing
-    {% else %}end of the ranking finds only <strong>{{ covered.crew_count }}</strong>
-    ranked on condition, alongside{% endif %}
-    <strong>{{ covered.remote_count }}</strong> ranked on loading.
+    {% if covered.line %}
+      <strong>{{ covered.crew_count }}</strong> crew visits reach
+      <strong>rank {{ covered.line }}</strong>, passing
+      <strong>{{ covered.remote_count }}</strong> assets ranked on loading —
+    {% else %}
+      The whole ranking holds only <strong>{{ covered.crew_count }}</strong> assets ranked on
+      condition, alongside <strong>{{ covered.remote_count }}</strong> ranked on loading —
+    {% endif %}
+    assumed relieved from the control room, which this system cannot verify.
     Those <strong>{{ covered.covered_count }}</strong> assets are
     <strong>{{ "%.1f"|format(covered.fleet_share * 100) }}%</strong> of the fleet and carry
-    <strong>{{ "%.1f"|format(covered.risk_share * 100) }}%</strong> of its expected failures —
-    <strong>{{ "%.1f"|format(covered.concentration) }}×</strong> the risk of intervening on
-    {{ covered.covered_count }} at random.
-  </p>
-  <p class="control-note subtle">
-    In absolute terms that is {{ "%.2f"|format(covered.intercepted) }} of the
-    {{ "%.1f"|format(covered.fleet_expected) }} failures expected across all
-    {{ covered.fleet_size }} assets for this forecast. Both numbers are small because no
-    single transformer is likely to fail: the figure measures where the risk is
-    concentrated, not how much of it an intervention removes. An asset ranked on loading is
-    counted as intervened on here; whether a transfer is available is a question of network
-    topology, which this system does not model.
+    <strong>{{ "%.1f"|format(covered.risk_share * 100) }}%</strong> of its expected failures:
+    <strong>{{ "%.1f"|format(covered.concentration) }}×</strong> a random
+    {{ covered.covered_count }}.
   </p>
 </form>
 
