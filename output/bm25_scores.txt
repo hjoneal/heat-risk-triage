@@ -6,7 +6,7 @@ triggered on: 0 of 160 queries
 The floor is per term because a BM25 total scales with query length:
 measured, the total correlates +0.87 with the number of terms. A short
 query is not a bad one, and an absolute floor would reject it for being
-short. See DECISIONS.md D-041.
+short.
 
 total score   minimum 12.0317  median 21.4088  maximum 36.5603
 per-term      minimum 0.5887  median 0.8445  maximum 1.3601

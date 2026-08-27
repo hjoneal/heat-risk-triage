@@ -580,8 +580,9 @@ def parse_front_matter(text):
 def validate_procedures():
     """Check the committed procedure corpus rather than generating it.
 
-    The corpus is fixed content with nothing stochastic about it; see DECISIONS.md
-    for why it is authored on disk instead of emitted from this script.
+    The corpus is fixed content with nothing stochastic about it, so it is
+    authored on disk and read rather than emitted from a generator that would
+    only ever produce the same 25 files.
     """
     paths = sorted(config.PROCEDURES_DIR.glob("*.md"))
     assert len(paths) == config.N_PROCEDURES, \

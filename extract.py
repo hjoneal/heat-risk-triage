@@ -282,7 +282,6 @@ def main():
     # keyed on the text, so duplicate notes share an entry and share its token
     # counts — summing across inspections counted the duplicates again and
     # overstated the corpus by 38% on input. Deduplicated by cache key here.
-    # See DECISIONS.md D-045.
     billed = {}
     for inspection, record in zip(inspections.itertuples(), records):
         billed[build_cache_key(inspection.note_text, model)] = record

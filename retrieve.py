@@ -74,7 +74,7 @@ def build_query(contributions, peak_temp_c):
     The asset's cooling type used to be appended here. It is a filter now, applied
     in `retrieve` against each document's `applies_to`, because as a query term it
     could not do the job: `applies_to` is not indexed, so it only ever matched
-    cooling types written into a document's prose. See DECISIONS.md D-037.
+    cooling types written into a document's prose.
     """
     terms = []
     for contribution in contributions:
@@ -159,7 +159,6 @@ def build_condition_block(asset):
     minimum and whose ventilation grille is packed with nesting material got a
     brief about the general management of ageing assets. Measured before the
     change: 150 of the 160 briefed assets carried evidence the model never saw.
-    See DECISIONS.md D-049.
 
     Quotes are verbatim and already checked against the source note by
     `extract.parse_and_validate`, so nothing here is a paraphrase.
@@ -178,7 +177,7 @@ def build_condition_block(asset):
     # inspection is: it recorded the defect, it did not specify the remedy. The
     # v3 system prompt forbade this in as many words and the model did it anyway,
     # so the token is withheld rather than discouraged. Same reasoning as the
-    # applicability filter in D-037: remove it from the candidate set rather than
+    # applicability filter: remove it from the candidate set rather than
     # rank it and hope. The date carries what the id was useful for — that a
     # finding was recorded at a particular visit — and the asset page shows the
     # ids beside the quotes regardless.
@@ -247,7 +246,7 @@ def generate_brief(asset, contributions, retrieved, documents_by_id,
     # addressing removes that failure mode rather than relying on remembering to
     # bump a version. The version stays in the key because the system prompt is
     # not part of `prompt`, and the model because two models must not share an
-    # answer. See DECISIONS.md D-049.
+    # answer.
     prompt = build_brief_prompt(asset, contributions, retrieved, documents_by_id)
     key = llm.cache_key(prompt + config.BRIEF_PROMPT_VERSION + model)
     cached = llm.read_cache(config.BRIEF_CACHE_DIR, key)
@@ -324,7 +323,7 @@ def write_score_distribution(all_top_scores, path):
         "The floor is per term because a BM25 total scales with query length:",
         "measured, the total correlates +0.87 with the number of terms. A short",
         "query is not a bad one, and an absolute floor would reject it for being",
-        "short. See DECISIONS.md D-041.",
+        "short.",
         "",
         f"total score   minimum {totals[0]:.4f}  median {totals[len(totals) // 2]:.4f}  "
         f"maximum {totals[-1]:.4f}",
@@ -443,7 +442,7 @@ def main():
     # Build spec section 5.4 asks that the floor trigger on at least one asset.
     # It does not, and the value was not raised into the main cluster to make it.
     # Reported here and in output/bm25_scores.txt so the fact is visible rather
-    # than implied by an assertion that quietly passes. See DECISIONS.md D-018.
+    # than implied by an assertion that quietly passes.
     if no_match_count == 0:
         print(f"note: the floor of {config.BM25_FLOOR_PER_TERM} per term did not trigger "
               f"on any of {len(totals)} queries (lowest per-term {min(per_term):.3f}); "

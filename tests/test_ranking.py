@@ -8,8 +8,8 @@ argument about the model's structure, so it is demonstrated rather than
 asserted — fit the same data with and without the three terms and compare.
 
 A gate was specified on top of this (at least three of the top fifteen must
-differ between any two scenarios) and dropped once measured as unreachable; see
-DECISIONS.md D-026. These tests check the mechanism, not a magnitude.
+differ between any two scenarios) and dropped once measured as unreachable.
+These tests check the mechanism, not a magnitude.
 """
 
 import sys

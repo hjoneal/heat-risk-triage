@@ -15,4 +15,4 @@ Priority divergence runs 3 to 8 against 5 to 13 by risk. Priority is damped beca
 customers_served spans 45x across the fleet, far more than the forecast
 re-weights any asset's risk, so the queue is stabler than the ranking
 underneath it. It is no longer frozen: an earlier build measured 0 here,
-with three scenarios and uncentred interaction products. See D-026, D-031.
+with three scenarios and uncentred interaction products.

@@ -558,7 +558,7 @@ def test_a_recommendation_never_stands_alone_where_the_other_action_also_applies
     """The badge names the leading action. All 900 `short-severe` assets have both
     a crew-addressable and a loading-addressable positive factor, so left alone it
     reads as the whole plan — which is how "Load transfer" came to sit above a
-    brief instructing a crew to replace a seized fan. See DECISIONS.md D-053."""
+    brief instructing a crew to replace a seized fan."""
     assets = scored()["assets"]
     checked = 0
     for asset in assets[:60]:

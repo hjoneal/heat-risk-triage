@@ -113,7 +113,7 @@ def top_n_by_scenario(model, assets, hazard_table, flags, scenario_id, feature_n
     Both are returned because they answer different questions. Risk is what the
     model predicts and what the interaction features act on; priority is
     risk x customers_served, the order the crew actually works down. They diverge
-    sharply, which is the finding recorded in D-026.
+    sharply, which is the finding this measurement records.
 
     `feature_names` selects the columns to fit and score on, so the same function
     serves the reported measurement and the tests that compare the ranking with
@@ -162,7 +162,7 @@ def write_ranking_divergence(pairs, path):
     Across five scenario configurations spanning the whole historical envelope,
     and with customers_served removed from the ranking entirely, the pairwise
     maximum was two. Setting a threshold the system cannot meet, or lowering one
-    until it passes, would both be worse than recording what happens. See D-026.
+    until it passes, would both be worse than recording what happens.
     """
     lines = [
         "Ranking divergence across forecast scenarios",
@@ -186,7 +186,7 @@ def write_ranking_divergence(pairs, path):
         "customers_served spans 45x across the fleet, far more than the forecast",
         "re-weights any asset's risk, so the queue is stabler than the ranking",
         "underneath it. It is no longer frozen: an earlier build measured 0 here,",
-        "with three scenarios and uncentred interaction products. See D-026, D-031.",
+        "with three scenarios and uncentred interaction products.",
     ]
     path.write_text("\n".join(lines) + "\n")
 
@@ -222,7 +222,7 @@ def capacity_sweep(scores, labels, groups, fleet_size):
     Capacity is a client operating parameter, not a property of the system, and
     the single figure the build reports it at was chosen rather than derived.
     Reporting the curve makes the reader's own capacity the input rather than
-    asking them to accept this one. See DECISIONS.md D-036.
+    asking them to accept this one.
     """
     rows = []
     for capacity in config.CAPACITY_SWEEP:
@@ -385,8 +385,7 @@ def classify_intervention(contributions):
     the largest *actionable* contribution still decides alone, a condition flag
     still beats a smaller loading term, and "monitor" now means what it says —
     nothing about this asset can be acted on inside the window — rather than
-    "the largest factor happened to be one of the four that cannot be". See
-    DECISIONS.md D-048.
+    "the largest factor happened to be one of the four that cannot be".
     """
     actionable = [
         c for c in contributions
@@ -455,7 +454,6 @@ def calibration_plot(labels, predictions, path):
     and a rate near 0.3% the interval is wide, and a point sitting off the
     diagonal inside its own interval is noise. Predictions span three orders of
     magnitude, so the axes are logarithmic; the diagonal stays a straight line.
-    See DECISIONS.md D-042.
     """
     order = np.argsort(predictions)
     mean_predicted, observed, counts, lows, highs = [], [], [], [], []
@@ -794,7 +792,7 @@ def main():
     full_result = evaluate(predictions, labels, groups)
 
     # Build spec section 9: anything above this line is evidence of leakage, not
-    # of a good model. See DECISIONS.md D-006.
+    # of a good model.
     assert full_result["auc"] < config.LEAKAGE_AUC_THRESHOLD, (
         f"out-of-fold AUC {full_result['auc']:.4f} is above "
         f"{config.LEAKAGE_AUC_THRESHOLD}, which indicates leakage. Investigate before accepting."

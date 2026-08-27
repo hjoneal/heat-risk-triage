@@ -41,7 +41,7 @@ TEMPLATES_DIR = REPO_ROOT / "templates"
 # The whole SGW substation transformer fleet, derived from the client brief
 # rather than assumed: 8M residents / ~2.5 per household ~= 3.2M customer
 # accounts; / ~8,000 customers per substation ~= 400 distribution substations;
-# x ~2.2 transformers each ~= 900. See DECISIONS.md D-011.
+# x ~2.2 transformers each ~= 900.
 N_ASSETS = 900  # derived
 ASSET_ID_PREFIX = "SUB-SGW-"  # chosen
 
@@ -67,7 +67,7 @@ PEAK_LOAD_PCT_MAX = 0.95  # assumed: unit running close to nameplate
 # is sized to carry the full substation load alone — so customers per transformer
 # sit well below what rated capacity alone suggests. 92 per MVA against a mean
 # rating of 38.5 MVA gives a mean near 3,555, and 900 x 3,555 ~= 3.2M customers
-# fleet-wide, which matches the derivation above. See DECISIONS.md D-013.
+# fleet-wide, which matches the derivation above.
 CUSTOMERS_PER_MVA = 92  # derived
 CUSTOMERS_NOISE_SD = 0.35  # assumed: lognormal sigma on the per-MVA figure
 CUSTOMERS_MIN = 400  # assumed
@@ -129,7 +129,7 @@ FORECAST_DATE = "2026-08-25"  # chosen
 # One hourly temperature series applies to all 900 assets, so the scenario names
 # carry no geography: a single series covering both coastal and inland areas
 # would not be coherent. Hazard uniform across the fleet is a stated limitation,
-# and it is why the forecast cannot reorder the queue by district. See D-026.
+# and it is why the forecast cannot reorder the queue by district.
 SCENARIOS = [
     # (scenario_id, label, event_type, days, peak_temp_c, amplitude_c)
     ("short-severe", "2-day severe spike", "short-severe", 2, 41.0, 8.0),
@@ -224,7 +224,7 @@ SPEC_COEF_INTERACTION = 0.30  # build spec section 2.5
 # Both lower-bound checks turn on single-figure failure counts, so the band moves
 # with the generator's random stream: an earlier sweep that drew failures from a
 # fresh stream rather than continuing the pipeline's own reported a band that did
-# not exist, and concluded no value satisfied every gate. See DECISIONS.md D-027.
+# not exist, and concluded no value satisfied every gate.
 HAZARD_SCALE = 1.14  # measured
 
 FAILURE_COEF_THERMAL_STRESS = SPEC_COEF_THERMAL_STRESS * HAZARD_SCALE
@@ -239,7 +239,7 @@ FAILURE_LOAD_REFERENCE = 0.70  # chosen: mid-fleet load, so the term is centred
 # four events a year. At that rate 14,400 rows would carry about a dozen
 # positives, too few to fit 15 features, so this is inflated about twelvefold to
 # roughly 144 positives. That scales predicted probabilities but preserves
-# ranking, and the system consumes a ranking. See DECISIONS.md D-012.
+# ranking, and the system consumes a ranking.
 TARGET_FAILURE_RATE = 0.01  # chosen
 # The failure intercept is solved for by bisection rather than hardcoded, so the
 # base rate stays at target if any upstream coefficient changes.
@@ -295,7 +295,7 @@ LOW_CONDITION_FAILURE_SHARE_MIN = 0.20  # chosen: gate 6
 # It is left dropped rather than reinstated at a threshold the system now happens
 # to clear, because the reachable value was not known when the number was chosen
 # and picking one afterwards is choosing a threshold to fit the data. The
-# measurement is reported in output/ranking_divergence.txt. See D-026.
+# measurement is reported in output/ranking_divergence.txt.
 
 # ---------------------------------------------------------------------------
 # Features
@@ -311,7 +311,6 @@ FEATURES = [
     # cannot reorder the assets in one — while taking the model's worst VIF to
     # 3.6. It is still computed and still shown on the forecast strip, because it
     # is a real property of the weather; it is no longer a model input.
-    # See DECISIONS.md D-040.
     "peak_temp_c",
     "degree_hours_above_30",
     "consecutive_warm_nights",
@@ -340,7 +339,7 @@ assert len(FEATURES) == 15
 # rescales each asset's logit rather than offsetting all of them equally, and is
 # the only way an additive model can represent "heavily loaded assets suffer more
 # in a severe event". Each of the three corresponds to a mechanism now present in
-# the generator. See DECISIONS.md D-024.
+# the generator.
 INTERACTION_FEATURES = [
     "load_x_degree_hours",
     "condition_x_degree_hours",
@@ -360,7 +359,7 @@ assert set(INTERACTION_FEATURES) <= set(FEATURES)
 # convenience of a raw product. Measured: centring takes the count of
 # wrong-signed hazard and age coefficients from 5 to 2, moves degree-hours from
 # -0.2388 to +1.0920, costs 0.014 of within-event AUC, and *increases* the
-# forecast's effect on the ranking. See DECISIONS.md D-031.
+# forecast's effect on the ranking.
 #
 # The centres are fixed rather than recomputed per call. A scenario matrix holds
 # one event, so its own degree-hours mean is that event's value and a
@@ -434,7 +433,7 @@ assert set(FEATURE_UNITS) == set(FEATURES)
 # asset's odds most — was "about typical", because 40% of the fleet sits at or
 # below it on the ordinal encoding. A cumulative share is the wrong statistic
 # for a category. These are shown as the states they are, with the share of the
-# fleet in the asset's own state. See DECISIONS.md D-046.
+# fleet in the asset's own state.
 #
 # Order matters for cooling type: it is the order of COOLING_TYPE_ORDINAL, which
 # is what the model was given, so the segments read left to right in the same
@@ -526,7 +525,7 @@ C_SWEEP = [0.01, 0.1, 1.0, 10.0]  # chosen: one decade either side of the defaul
 # It stays at 15 regardless. Raising it to the derived figure would roughly double
 # reported recall, which is the reason not to raise it in the same change that
 # discovered the derivation. 15 is the conservative reported case and the range is
-# reported beside it as a sweep. See DECISIONS.md D-036.
+# reported beside it as a sweep.
 CREW_CAPACITY = 15  # chosen
 
 # Reported across a range rather than at a single value, because pre-event
@@ -537,7 +536,7 @@ CAPACITY_SWEEP = [10, 15, 20, 25, 30, 40]  # chosen
 # of the rows in the first tenth of the axis and left a single asset-event
 # plotted as its own point, which read as the model collapsing at high
 # probability and was one coin flip. Equal frequency puts the same number of rows
-# behind every point. See DECISIONS.md D-042.
+# behind every point.
 CALIBRATION_BINS = 10  # chosen: equal-frequency bins over the predictions
 WILSON_Z = 1.96  # chosen: 95% interval on each bin's observed rate
 CALIBRATION_AXIS_MARGIN = 1.15  # chosen: headroom above the largest value plotted
@@ -578,7 +577,6 @@ TOKEN_PATTERN = r"[a-z0-9]+(?:-[a-z0-9]+)*"  # chosen
 #
 # Per-term score across the 160 queries runs 0.589 to 1.360, median 0.845. 0.45
 # sits 24% below the observed minimum and does not move when query length does.
-# See DECISIONS.md D-018 and D-041.
 BM25_FLOOR_PER_TERM = 0.45  # measured
 
 # Covers the top of CAPACITY_SWEEP, so every row reachable at any reported
@@ -620,7 +618,7 @@ HIGH_AMBIENT_QUERY_TERMS = ["de-rating", "high", "ambient", "temperature"]  # ch
 # did not do this job. `applies_to` is not indexed, so the term could only match
 # cooling types written into a document's prose: "onan" appears in exactly one
 # document and "onaf"/"ofaf" in none, making the term inert for 81 of 200 assets
-# and a high-IDF accident for the rest. See DECISIONS.md D-037.
+# and a high-IDF accident for the rest.
 FILTER_BY_COOLING_TYPE = True  # chosen
 
 # Doc ids as they appear in a brief's prose, so a reference the model wrote into
@@ -676,7 +674,7 @@ LLM_TRANSPORT_BACKOFF_S = 2.0  # chosen: doubles each attempt
 # The queue shows the whole fleet. It used to show the top 40, on the invariant
 # that every visible row carried an action brief — but truncating it also meant
 # the crew-capacity line frequently fell past the last row, since the line moved
-# to the nth *crew* row (D-048) and that sits around rank 44 to 97. A queue that
+# to the nth *crew* row and that sits around rank 44 to 97. A queue that
 # cannot show where its own capacity line falls is answering a narrower question
 # than the one being asked of it.
 #
@@ -723,7 +721,7 @@ QUEUE_DEFAULT_SORT = "priority"  # chosen
 # to an adjacent feeder, and one ranked on its age or the forecast is not
 # remediable at all inside 72 hours. Derived entirely from contributions that
 # already exist in the scored JSON — no model change and no LLM call.
-# See DECISIONS.md D-048.
+#
 # The two driver classes the badge distinguishes: what a site visit could change,
 # and what the control room could change. A feature belongs in neither unless an
 # action inside the 72-hour window moves it.
@@ -734,7 +732,7 @@ QUEUE_DEFAULT_SORT = "priority"  # chosen
 # out. It drove 118 of 366 crew labels in `short-severe` and 168 of 507 in
 # `long-severe`. `days_since_maintenance` stays, because a visit does reset it
 # and because a long gap is the statement that the recorded condition is stale —
-# which is a reason to send someone. See DECISIONS.md D-051.
+# which is a reason to send someone.
 CREW_DRIVERS = {
     # Physical repair on site.
     "flag_cooling_degraded",
@@ -766,8 +764,8 @@ assert not CREW_DRIVERS & REMOTE_DRIVERS
 # labelled "Load transfer" directly above a brief reading "the crew must replace
 # the seized cooling fan", with nothing on the page to reconcile them. The
 # contribution table's "Addressable by" column now reconciles them factor by
-# factor (D-052), which is what makes a single-valued recommendation legible
-# rather than misleading. See DECISIONS.md D-051 and D-053.
+# factor, which is what makes a single-valued recommendation legible
+# rather than misleading.
 INTERVENTION_LABELS = {
     "crew": "Crew visit",
     "remote": "Load transfer",
@@ -816,7 +814,7 @@ assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS) - {"monitor"}
 # What a single factor can be acted on by, shown against each row of the
 # contribution table.
 #
-# These are the words the badge stopped using (D-051), and the table is where
+# These are the words the badge stopped using, and the table is where
 # they belong. "A seized cooling fan is addressed by a site visit" is a claim
 # about a factor, which CREW_DRIVERS and REMOTE_DRIVERS do support. "This asset
 # does not need a visit" is a claim about an asset, which one argmax over

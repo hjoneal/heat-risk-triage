@@ -6,7 +6,7 @@ directories are committed.
 
 One provider: Gemini, which is the one that produced the committed cache. An
 Anthropic path existed earlier and was removed rather than left in place
-unexercised — see DECISIONS.md D-015.
+unexercised.
 
 `app.py` never imports this module.
 """

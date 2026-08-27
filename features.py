@@ -87,7 +87,7 @@ def asset_condition_flags(extractions):
     outstanding. The two notes per asset are independent observations of the same
     latent condition rather than a time series of a changing asset, so taking the
     union uses both; taking only the later one would discard half the evidence
-    for no gain. See DECISIONS.md D-007.
+    for no gain.
 
     An asset whose extraction failed on any note carries `extraction_status` of
     "failed": the flags for that asset are not trustworthy and the interface says
@@ -135,8 +135,7 @@ def build_feature_matrix(assets, hazard_table, flags, pairs):
 
     # Condition features describe the asset as recorded on the register, not as
     # it stood on the date of each historical event: the register holds a single
-    # maintenance date and the notes are undated relative to past events. See
-    # DECISIONS.md D-008.
+    # maintenance date and the notes are undated relative to past events.
     reference_date = max(
         date.fromisoformat(event.start_date)
         for event in events.itertuples() if not event.is_scenario
@@ -174,7 +173,7 @@ def build_feature_matrix(assets, hazard_table, flags, pairs):
     # Both sides are centred on a fixed training mean before multiplying. A raw
     # product is collinear enough with its own components to drive their
     # coefficients negative, which makes the asset page claim that heat lowered
-    # an asset's risk; see config.INTERACTION_CENTRE_* and DECISIONS.md D-031.
+    # an asset's risk; see config.INTERACTION_CENTRE_*.
     # The centres are constants rather than column means because a scenario
     # matrix holds a single event, whose own mean degree-hours is that event's
     # value — self-centring would zero the term for every asset.

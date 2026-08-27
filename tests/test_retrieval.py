@@ -173,7 +173,7 @@ def test_no_match_branch_fires_on_a_degenerate_query():
     """Exercise the floor's branch directly, since no real query reaches it.
 
     `BM25_FLOOR_PER_TERM` is set below the whole observed distribution and never
-    fires on any generated query (DECISIONS.md D-018), so without this the branch
+    fires on any generated query, so without this the branch
     and its fixed text would be unexecuted code. A one-term query against
     vocabulary the corpus barely contains is the cheap way to reach it without
     moving the production threshold to manufacture a trigger.

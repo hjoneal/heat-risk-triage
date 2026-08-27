@@ -6,7 +6,7 @@ across every brief rather than sampled.
 
 Two checks: the `cited_doc_ids` array, and every doc id written into the prose.
 The second exists because the first reported 100% clean while two briefs named a
-procedure in a sentence that had never been supplied. See DECISIONS.md D-038.
+procedure in a sentence that had never been supplied.
 """
 
 import json
