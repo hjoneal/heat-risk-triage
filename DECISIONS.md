@@ -1834,3 +1834,58 @@ Action rightwards rendered under the wrong heading. Nothing caught it, because e
 individually correct and the count was never checked. `test_the_queue_has_one_cell_per_column` now
 checks it. Criticality remains on the asset page, where it is a register field worth reading; it was
 never a model input and never will be — it ranks, it does not predict.
+
+## D-051 — The badge says what put an asset in the queue, not what to do about it
+
+`INTERVENTION_LABELS` said "Crew visit", "Load transfer" and "Monitor only". One argmax over log-odds
+contributions does not support any of those. It establishes which factor is driving an asset's
+position in the ranking; it does not establish that a truck is unnecessary.
+
+The two claims diverged constantly. In `short-severe`, **400 of the 534 assets labelled "Load
+transfer" carried a recorded condition defect**, and Westmarch Park (`SUB-SGW-354`, rank 4) displayed
+the badge directly above an action brief reading *"the crew must replace the seized cooling fan and
+clear the overdue remedial work"*. Two instructions, opposite, one page. A supervisor reading that
+would be right to distrust everything else on it.
+
+**No better rule is available in this data, and the search for one is the finding.** Three were built
+and measured before the labels were changed:
+
+*Any recorded defect implies a visit.* 735 of 900 assets carry at least one, and 38 of the top 40 do.
+The rule labels effectively the whole queue crew and discriminates nothing.
+
+*Compare what each action would actually save.* The principled version: clear all four condition flags
+and recompute; reduce `peak_load_pct` by a transfer and recompute; take the larger reduction in
+expected customers affected, which is already the ranking unit. This is the right question, and its
+answer is set by an assumption the system cannot verify — how much load an adjacent feeder can absorb,
+where network topology is a listed exclusion. Crew counts in `short-severe`, over settings all equally
+defensible:
+
+| assumed transfer | 2 pp | 5 pp | 10 pp | 20 pp |
+|---|---|---|---|---|
+| visit clears defects | 567 | 381 | 270 | 0 |
+| visit also resets the maintenance clock | 875 | 815 | 700 | 377 |
+
+Zero to 875 out of 900. `LOAD_TRANSFER_PCT` would have been the most load-bearing constant in the
+repository with nothing behind it. Recorded, not adopted.
+
+*A threshold on the log-odds reduction.* The unit is meaningless to a reader, and the underlying
+problem is not where the threshold sits: `flag_cooling_degraded` and `flag_overdue_remedial` carry
+fitted coefficients of 0.037 and 0.036 against 0.568 for `peak_load_pct`. Clearing **every** recorded
+defect on the median `short-severe` asset saves 0.32 expected customers. No threshold rescues a signal
+that weak.
+
+So the labels now name the driver class — "Condition", "Loading", "Nothing actionable" — under a
+column headed "Ranked on". What to do is the action brief's job, which is written from the retrieved
+procedures and the asset's own inspection findings and can say *transfer load and repair the fan*.
+That is frequently the true answer, and no single-valued badge can express it.
+
+**`prior_heat_faults` is removed from `CREW_DRIVERS`.** It is a count of faults that have already
+happened; no crew action reduces it. It was driving 118 of 366 crew labels in `short-severe` and 168
+of 507 in `long-severe` — a recommendation nothing could carry out. The handover's table listed it
+under "Inspection", which conflated *fixable on site* with *the recorded condition is stale*.
+`days_since_maintenance` stays for the second reason. A test now asserts that neither driver set
+contains an immutable feature. Crew/loading/nothing-actionable is 297/603/0 in `short-severe` and
+460/376/64 in `long-severe`.
+
+**No metric moved and none was adjusted.** The classification is a label over contributions that
+already existed; the model, the features, the briefs and the cached extractions are untouched.

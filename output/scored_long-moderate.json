@@ -497,8 +497,8 @@
       "cooling_type": "ONAN",
       "priority": 295.36,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -2538,7 +2538,7 @@
       "priority": 148.79,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -3410,8 +3410,8 @@
       "cooling_type": "ONAN",
       "priority": 130.39,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -4643,7 +4643,7 @@
       "priority": 109.77,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -5013,7 +5013,7 @@
       "priority": 107.39,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -5711,7 +5711,7 @@
       "priority": 92.52,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -7591,8 +7591,8 @@
       "cooling_type": "ONAF",
       "priority": 74.18,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -9369,8 +9369,8 @@
       "cooling_type": "ONAN",
       "priority": 62.55,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -11093,7 +11093,7 @@
       "priority": 55.0,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -11269,7 +11269,7 @@
       "priority": 54.9,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -14832,8 +14832,8 @@
       "cooling_type": "ONAN",
       "priority": 46.91,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -15846,7 +15846,7 @@
       "priority": 45.61,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -16016,7 +16016,7 @@
       "priority": 45.4,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -16538,7 +16538,7 @@
       "priority": 44.51,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -17558,7 +17558,7 @@
       "priority": 43.23,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -18832,7 +18832,7 @@
       "priority": 40.5,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -19008,7 +19008,7 @@
       "priority": 40.44,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -19372,7 +19372,7 @@
       "priority": 39.17,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -19712,7 +19712,7 @@
       "priority": 39.03,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -20045,7 +20045,7 @@
       "priority": 38.76,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -20730,7 +20730,7 @@
       "priority": 37.31,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -22483,8 +22483,8 @@
       "cooling_type": "ONAN",
       "priority": 35.12,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -24176,7 +24176,7 @@
       "priority": 32.58,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -25038,7 +25038,7 @@
       "priority": 31.54,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -26233,7 +26233,7 @@
       "priority": 30.61,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -27755,7 +27755,7 @@
       "priority": 29.2,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -28100,8 +28100,8 @@
       "cooling_type": "ONAN",
       "priority": 29.09,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -29472,7 +29472,7 @@
       "priority": 27.5,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -29642,7 +29642,7 @@
       "priority": 27.13,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -31002,7 +31002,7 @@
       "priority": 25.62,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -31518,7 +31518,7 @@
       "priority": 25.29,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -31681,8 +31681,8 @@
       "cooling_type": "ONAF",
       "priority": 25.18,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -32877,7 +32877,7 @@
       "priority": 24.55,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -34278,7 +34278,7 @@
       "priority": 23.28,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -34460,7 +34460,7 @@
       "priority": 23.17,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -34800,7 +34800,7 @@
       "priority": 23.03,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -37196,7 +37196,7 @@
       "priority": 21.94,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -38372,8 +38372,8 @@
       "cooling_type": "OFAF",
       "priority": 21.41,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -39611,7 +39611,7 @@
       "priority": 21.07,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -39781,7 +39781,7 @@
       "priority": 20.89,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -41474,8 +41474,8 @@
       "cooling_type": "ONAN",
       "priority": 20.08,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -42650,7 +42650,7 @@
       "priority": 19.31,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -43548,7 +43548,7 @@
       "priority": 18.8,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -47018,8 +47018,8 @@
       "cooling_type": "ONAF",
       "priority": 17.52,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -48584,7 +48584,7 @@
       "priority": 16.84,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -50784,8 +50784,8 @@
       "cooling_type": "ONAF",
       "priority": 15.89,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -52683,7 +52683,7 @@
       "priority": 15.25,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -54525,8 +54525,8 @@
       "cooling_type": "ONAF",
       "priority": 14.75,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -54859,7 +54859,7 @@
       "priority": 14.63,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -56437,7 +56437,7 @@
       "priority": 13.8,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -56612,8 +56612,8 @@
       "cooling_type": "ONAN",
       "priority": 13.75,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -56794,8 +56794,8 @@
       "cooling_type": "ONAN",
       "priority": 13.72,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -56970,8 +56970,8 @@
       "cooling_type": "ONAN",
       "priority": 13.72,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -57468,7 +57468,7 @@
       "priority": 13.63,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -58504,8 +58504,8 @@
       "cooling_type": "ONAF",
       "priority": 13.42,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -60556,7 +60556,7 @@
       "priority": 12.83,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -60738,7 +60738,7 @@
       "priority": 12.79,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -61223,7 +61223,7 @@
       "priority": 12.72,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -62719,8 +62719,8 @@
       "cooling_type": "ONAN",
       "priority": 12.12,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -65244,7 +65244,7 @@
       "priority": 11.37,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -66942,7 +66942,7 @@
       "priority": 11.16,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -68628,8 +68628,8 @@
       "cooling_type": "ONAF",
       "priority": 10.72,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -68792,8 +68792,8 @@
       "cooling_type": "ONAF",
       "priority": 10.62,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -70327,7 +70327,7 @@
       "priority": 10.15,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -70503,7 +70503,7 @@
       "priority": 10.13,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -71364,8 +71364,8 @@
       "cooling_type": "ONAN",
       "priority": 9.98,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -72334,7 +72334,7 @@
       "priority": 9.86,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -72861,8 +72861,8 @@
       "cooling_type": "ONAF",
       "priority": 9.76,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -73018,8 +73018,8 @@
       "cooling_type": "ONAN",
       "priority": 9.66,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -73698,7 +73698,7 @@
       "priority": 9.56,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -75227,7 +75227,7 @@
       "priority": 9.33,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -75566,8 +75566,8 @@
       "cooling_type": "OFAF",
       "priority": 9.31,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -75918,8 +75918,8 @@
       "cooling_type": "OFAF",
       "priority": 9.27,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -76622,8 +76622,8 @@
       "cooling_type": "ONAN",
       "priority": 9.19,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -77780,8 +77780,8 @@
       "cooling_type": "ONAN",
       "priority": 9.07,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -78109,7 +78109,7 @@
       "priority": 8.99,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -78794,7 +78794,7 @@
       "priority": 8.94,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -81158,8 +81158,8 @@
       "cooling_type": "ONAF",
       "priority": 8.66,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -81977,7 +81977,7 @@
       "priority": 8.53,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -82467,7 +82467,7 @@
       "priority": 8.46,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -83995,7 +83995,7 @@
       "priority": 8.28,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -87605,7 +87605,7 @@
       "priority": 7.61,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -88466,8 +88466,8 @@
       "cooling_type": "ONAN",
       "priority": 7.49,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -88623,8 +88623,8 @@
       "cooling_type": "ONAF",
       "priority": 7.48,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -88976,7 +88976,7 @@
       "priority": 7.41,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -89474,7 +89474,7 @@
       "priority": 7.31,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -90305,7 +90305,7 @@
       "priority": 7.25,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -90983,8 +90983,8 @@
       "cooling_type": "ONAN",
       "priority": 7.16,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -92358,8 +92358,8 @@
       "cooling_type": "ONAN",
       "priority": 7.02,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -92534,8 +92534,8 @@
       "cooling_type": "ONAN",
       "priority": 7.01,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -92705,7 +92705,7 @@
       "priority": 6.99,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -93711,7 +93711,7 @@
       "priority": 6.79,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -94233,7 +94233,7 @@
       "priority": 6.74,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -95423,7 +95423,7 @@
       "priority": 6.48,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -95932,7 +95932,7 @@
       "priority": 6.34,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -96102,7 +96102,7 @@
       "priority": 6.34,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -96272,7 +96272,7 @@
       "priority": 6.29,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -96447,8 +96447,8 @@
       "cooling_type": "ONAF",
       "priority": 6.28,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -97795,7 +97795,7 @@
       "priority": 6.19,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -98463,7 +98463,7 @@
       "priority": 6.12,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -100167,8 +100167,8 @@
       "cooling_type": "ONAN",
       "priority": 5.77,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -101511,8 +101511,8 @@
       "cooling_type": "ONAF",
       "priority": 5.6,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -103233,8 +103233,8 @@
       "cooling_type": "ONAF",
       "priority": 5.47,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -103390,8 +103390,8 @@
       "cooling_type": "ONAN",
       "priority": 5.47,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -104554,8 +104554,8 @@
       "cooling_type": "ONAF",
       "priority": 5.34,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -104711,8 +104711,8 @@
       "cooling_type": "ONAN",
       "priority": 5.34,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -106076,7 +106076,7 @@
       "priority": 5.1,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -107410,7 +107410,7 @@
       "priority": 4.92,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -108417,7 +108417,7 @@
       "priority": 4.86,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -108774,8 +108774,8 @@
       "cooling_type": "OFAF",
       "priority": 4.81,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -108932,7 +108932,7 @@
       "priority": 4.8,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -109277,8 +109277,8 @@
       "cooling_type": "ONAF",
       "priority": 4.77,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -109604,8 +109604,8 @@
       "cooling_type": "ONAN",
       "priority": 4.69,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -110429,7 +110429,7 @@
       "priority": 4.57,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -111781,8 +111781,8 @@
       "cooling_type": "ONAF",
       "priority": 4.36,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -112443,7 +112443,7 @@
       "priority": 4.25,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -112612,8 +112612,8 @@
       "cooling_type": "ONAN",
       "priority": 4.23,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -113116,7 +113116,7 @@
       "priority": 4.15,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -113638,7 +113638,7 @@
       "priority": 4.07,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -114316,8 +114316,8 @@
       "cooling_type": "OFAF",
       "priority": 4.01,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -116856,8 +116856,8 @@
       "cooling_type": "ONAN",
       "priority": 3.78,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -117348,8 +117348,8 @@
       "cooling_type": "OFAF",
       "priority": 3.75,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -118832,8 +118832,8 @@
       "cooling_type": "ONAF",
       "priority": 3.62,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -120313,7 +120313,7 @@
       "priority": 3.41,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -120659,7 +120659,7 @@
       "priority": 3.4,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_ventilation_obstructed",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -122805,8 +122805,8 @@
       "cooling_type": "OFAF",
       "priority": 3.1,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -126336,7 +126336,7 @@
       "priority": 2.81,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -126858,7 +126858,7 @@
       "priority": 2.76,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -127366,8 +127366,8 @@
       "cooling_type": "OFAF",
       "priority": 2.72,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "peak_load_pct",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -128580,7 +128580,7 @@
       "priority": 2.61,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -128920,7 +128920,7 @@
       "priority": 2.5,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -129102,7 +129102,7 @@
       "priority": 2.5,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -129435,8 +129435,8 @@
       "cooling_type": "ONAN",
       "priority": 2.48,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -129605,8 +129605,8 @@
       "cooling_type": "ONAF",
       "priority": 2.47,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -130254,7 +130254,7 @@
       "priority": 2.41,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -131940,7 +131940,7 @@
       "priority": 2.27,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -132431,7 +132431,7 @@
       "priority": 2.21,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -132927,8 +132927,8 @@
       "cooling_type": "ONAN",
       "priority": 2.14,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -133965,7 +133965,7 @@
       "priority": 2.09,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -134147,7 +134147,7 @@
       "priority": 2.05,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -134467,8 +134467,8 @@
       "cooling_type": "ONAN",
       "priority": 2.03,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -136084,7 +136084,7 @@
       "priority": 1.87,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -136600,7 +136600,7 @@
       "priority": 1.85,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -136934,7 +136934,7 @@
       "priority": 1.83,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -138105,7 +138105,7 @@
       "priority": 1.69,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -138627,7 +138627,7 @@
       "priority": 1.68,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -138961,7 +138961,7 @@
       "priority": 1.63,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -139131,7 +139131,7 @@
       "priority": 1.6,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -139797,8 +139797,8 @@
       "cooling_type": "ONAF",
       "priority": 1.53,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -140132,7 +140132,7 @@
       "priority": 1.5,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -140660,7 +140660,7 @@
       "priority": 1.44,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -142684,8 +142684,8 @@
       "cooling_type": "ONAF",
       "priority": 1.32,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -143364,7 +143364,7 @@
       "priority": 1.29,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -143691,7 +143691,7 @@
       "priority": 1.28,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_overdue_remedial",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -143855,7 +143855,7 @@
       "priority": 1.28,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -144030,8 +144030,8 @@
       "cooling_type": "ONAF",
       "priority": 1.26,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -144690,8 +144690,8 @@
       "cooling_type": "ONAN",
       "priority": 1.15,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -144855,7 +144855,7 @@
       "priority": 1.1,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -145529,7 +145529,7 @@
       "priority": 1.08,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_cooling_degraded",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -146177,7 +146177,7 @@
       "priority": 1.06,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -147881,7 +147881,7 @@
       "priority": 0.92,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -148056,8 +148056,8 @@
       "cooling_type": "OFAF",
       "priority": 0.89,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -148535,7 +148535,7 @@
       "priority": 0.86,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -150823,7 +150823,7 @@
       "priority": 0.63,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "days_since_maintenance",
       "contributions": [
         {
           "feature": "prior_heat_faults",
@@ -150986,8 +150986,8 @@
       "cooling_type": "ONAF",
       "priority": 0.58,
       "extraction_status": "ok",
-      "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_type": "remote",
+      "intervention_driver": "load_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -151988,7 +151988,7 @@
       "priority": 0.43,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "prior_heat_faults",
+      "intervention_driver": "flag_oil_issue",
       "contributions": [
         {
           "feature": "prior_heat_faults",

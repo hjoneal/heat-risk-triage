@@ -724,6 +724,17 @@ QUEUE_DEFAULT_SORT = "priority"  # chosen
 # remediable at all inside 72 hours. Derived entirely from contributions that
 # already exist in the scored JSON — no model change and no LLM call.
 # See DECISIONS.md D-048.
+# The two driver classes the badge distinguishes: what a site visit could change,
+# and what the control room could change. A feature belongs in neither unless an
+# action inside the 72-hour window moves it.
+#
+# `prior_heat_faults` was in this set and was removed. It is a count of faults
+# that have already happened: no crew action reduces it, so classifying an asset
+# as crew-remediable on the strength of it is a recommendation nothing can carry
+# out. It drove 118 of 366 crew labels in `short-severe` and 168 of 507 in
+# `long-severe`. `days_since_maintenance` stays, because a visit does reset it
+# and because a long gap is the statement that the recorded condition is stale —
+# which is a reason to send someone. See DECISIONS.md D-051.
 CREW_DRIVERS = {
     # Physical repair on site.
     "flag_cooling_degraded",
@@ -732,23 +743,40 @@ CREW_DRIVERS = {
     "flag_overdue_remedial",
     # Inspection.
     "days_since_maintenance",
-    "prior_heat_faults",
 }  # chosen
 REMOTE_DRIVERS = {"peak_load_pct", "load_x_degree_hours"}  # chosen
 assert CREW_DRIVERS <= set(FEATURES)
 assert REMOTE_DRIVERS <= set(FEATURES)
 assert not CREW_DRIVERS & REMOTE_DRIVERS
 
-# "Load transfer", never "load restriction" or "de-rating". Transferring load to
-# an adjacent feeder moves demand without interrupting supply; restricting
-# throughput can mean shedding customers, which is the outcome this system exists
-# to avoid. They are different actions with different costs, and an interface an
-# operator reads must not conflate them.
+# The badge names the largest factor that put the asset in the queue and whether
+# anything could change it — not what to do about the asset.
+#
+# It said "Crew visit" / "Load transfer" and that was a claim the rule cannot
+# support. One argmax over log-odds contributions establishes what is driving the
+# ranking; it does not establish that a truck is unnecessary. The two diverged
+# constantly: 400 of 534 "Load transfer" rows in `short-severe` carried a
+# recorded defect, and one of them displayed the badge directly above a brief
+# reading "the crew must replace the seized cooling fan". Two instructions, one
+# page. There is also no better rule available in this data — 735 of 900 assets
+# carry a recorded defect, so "crew visit if a defect exists" labels the whole
+# queue, and a counterfactual rule comparing what each action would save is
+# governed by an assumption about network topology the system does not model.
+# See DECISIONS.md D-051.
+#
+# What to do is the action brief's job. It is written from the retrieved
+# procedures and the asset's own inspection findings, and it can say "transfer
+# load and repair the fan", which is often the true answer and which no
+# single-valued badge can express.
 INTERVENTION_LABELS = {
-    "crew": "Crew visit",
-    "remote": "Load transfer",
-    "monitor": "Monitor only",
+    "crew": "Condition",
+    "remote": "Loading",
+    "monitor": "Nothing actionable",
 }  # chosen
+
+# The column heading the badges sit under. A phrase rather than a noun, because
+# "Action" is what the badge stopped claiming to be.
+INTERVENTION_COLUMN_HEADING = "Ranked on"  # chosen
 
 # The badge's style hook. A number rather than the type's own name, so that the
 # raw value has no path to the page at all — the same rule FEATURE_LABELS
@@ -758,22 +786,34 @@ assert set(INTERVENTION_STYLE_INDEX) == set(INTERVENTION_LABELS)
 
 # One line on the asset page saying what the badge means and what put it there.
 # `{driver}` is the FEATURE_LABELS name of the largest positive contribution.
+#
+# "Transferring load", never "load restriction" or "de-rating". Moving demand to
+# an adjacent feeder does not interrupt supply; restricting throughput can mean
+# shedding customers, which is the outcome this system exists to avoid. They are
+# different actions with different costs and an operator interface must not
+# conflate them.
+#
+# There is no "monitor" entry: that type is returned only when no actionable
+# contribution exists, which is exactly the case with no driver to name, and
+# INTERVENTION_NO_DRIVER_NOTE covers it. A rule change that produced a monitor
+# label with a driver would raise KeyError here rather than print a wrong line.
 INTERVENTION_NOTES = {
-    "crew": "Ranked on {driver}, which is remedied on site.",
-    "remote": "Ranked on {driver} rather than on recorded condition. Remediable "
-              "from the control room by transferring load to an adjacent feeder; "
-              "no site visit required.",
-    "monitor": "Ranked on {driver}, which cannot be acted on inside the forecast "
-               "window. Listed for awareness rather than for dispatch.",
+    "crew": "The largest factor raising this asset's odds is {driver}, which a "
+            "site visit could change. What to do about it is in the brief below.",
+    "remote": "The largest factor raising this asset's odds is {driver}, which "
+              "the control room could change by transferring load to an adjacent "
+              "feeder. Any recorded defects are listed below and are not what "
+              "put this asset where it is in the ranking.",
 }  # chosen
-assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS)
+assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS) - {"monitor"}
 
 # An asset whose every contribution is negative has no driver to classify by. It
 # sits below the fleet's typical risk on every factor at once, and is on the page
 # only because it is ranked among 900.
 INTERVENTION_NO_DRIVER_NOTE = (
-    "No factor raises this asset above the baseline for the fleet. Listed for "
-    "awareness rather than for dispatch."
+    "Nothing that raises this asset's odds can be changed inside the forecast "
+    "window. It is ranked on age, cooling type and the weather, and is listed "
+    "for awareness."
 )  # chosen
 
 # A reading's place among the 14,400 training asset-event rows, as a phrase. The

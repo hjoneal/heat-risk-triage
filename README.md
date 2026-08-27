@@ -112,10 +112,17 @@ still cover the top 40 by expected impact; rows below that are ranked and explai
 carrying no brief. See `DECISIONS.md` D-050.
 
 The consequence is that the crew budget constrains only part of the queue. The capacity line falls
-after the *n*th crew row rather than the *n*th row, which in the `short-severe` scenario is rank 44
-rather than rank 15; the 29 assets above it that carry load-driven risk consume no crew capacity.
-Selecting over all fifteen features instead was tried first and is degenerate — see `DECISIONS.md`
-D-048 for the measurements, which are the reason the pool is restricted.
+after the *n*th condition-ranked row rather than the *n*th row, which in the `short-severe` scenario
+is rank 52 rather than rank 15; the 37 assets above it that are ranked on loading consume no crew
+capacity. Selecting over all fifteen features instead was tried first and is degenerate — see
+`DECISIONS.md` D-048 for the measurements, which are the reason the pool is restricted.
+
+**The badge names the driver, not the remedy.** It read "Crew visit" / "Load transfer" and was
+changed: one argmax establishes what is driving an asset's position, not that a truck is
+unnecessary, and 400 of 534 load-ranked assets in `short-severe` carried a recorded defect. What to
+do is the action brief's job, which can say *transfer load and repair the fan* where a single-valued
+badge cannot. Three alternative rules were built and measured before the labels were changed; all
+three fail, and how they fail is recorded in `DECISIONS.md` D-051.
 
 Explanations are the model's own arithmetic: each contribution is `coefficient × standardised value`,
 and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
@@ -597,11 +604,22 @@ Production MLOps Architecture*, October 2025.
   ranking. The sweep above shows how it moves: 0.063 at 15, 0.134 at 30, 0.158 at 40. A derivation
   from inspection cadence puts realistic capacity nearer 30, and that figure was deliberately not
   adopted in the same change that measured its effect. D-036.
+- **The condition flags carry almost no weight, so no rule can split the queue by remedy.** The
+  fitted coefficients are 0.037 for `flag_cooling_degraded` and 0.036 for `flag_overdue_remedial`
+  against 0.568 for `peak_load_pct`; only `flag_oil_issue` (0.157) is comparable to the register
+  features. Clearing *every* recorded defect on the median `short-severe` asset saves 0.32 expected
+  customers. The ablation says the same from the other side: the notes buy 0.013 of within-event AUC
+  over a register-only model (0.647 → 0.660). Three rules for deciding whether an asset needs a site
+  visit were built and measured against this — a defect test, a counterfactual comparison of what
+  each action would save, and a threshold on the log-odds reduction — and all three fail, one of
+  them by swinging from 0 to 875 crew assets out of 900 across equally defensible settings of an
+  assumption about network topology the system does not model. The queue therefore reports what is
+  driving each asset's rank and leaves the remedy to the brief. D-051.
 - **The crew budget constrains only part of the queue.** Assets ranked on loading through sustained
   heat are remediable from the control room by transferring load to an adjacent feeder, not by a site
   visit. The reported precision and recall at capacity treat every ranked asset as consuming a crew
   visit, so they understate the coverage achievable at a given crew budget: at capacity 15 the
-  `short-severe` queue reaches rank 44 before it has spent 15 crew visits. **The figures were not
+  `short-severe` queue reaches rank 52 before it has spent 15 crew visits. **The figures were not
   adjusted for this** — the split is a reading of the queue, not a change to the model, and adjusting
   a metric on the strength of it would be tuning to a number. Load transfer is also not free:
   adjacent feeders are stressed at the same moment, so headroom is scarcest exactly when it is

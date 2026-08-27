@@ -485,7 +485,7 @@ def test_the_interface_says_load_transfer_and_never_de_rating():
         lowered = text.lower()
         for forbidden in ("de-rat", "derat", "load restriction", "load shed", "curtail"):
             assert forbidden not in lowered, f"{forbidden!r} in {text!r}"
-    assert config.INTERVENTION_LABELS["remote"] == "Load transfer"
+    assert "transferring load to an adjacent feeder" in config.INTERVENTION_NOTES["remote"]
 
 
 def test_the_coverage_figure_counts_interventions_not_rows():
@@ -504,7 +504,7 @@ def test_the_coverage_figure_counts_interventions_not_rows():
     assert math.isclose(covered["intercepted"], expected, rel_tol=1e-9)
 
     html = queue_html(f"?capacity={capacity}")
-    assert f">{covered['remote_count']}</strong> load transfers" in html
+    assert f">{covered['remote_count']}</strong> ranked on loading" in html
 
 
 @pytest.mark.parametrize("view", ["all"] + list(config.INTERVENTION_LABELS))
@@ -552,3 +552,26 @@ def test_an_unknown_filter_falls_back_rather_than_erroring():
     assert '<p class="empty">' not in html
     assert len(re.findall(r'/asset/SUB-SGW-\d+', html.split("<tbody>")[1])) \
         == len(scored()["assets"])
+
+
+def test_no_badge_claims_a_dispatch_action():
+    """The badge names what put the asset in the queue. It said "Crew visit" and
+    "Load transfer", which one argmax over contributions cannot establish: 400 of
+    534 remote-labelled assets in this scenario carried a recorded defect, and one
+    displayed "Load transfer" directly above a brief instructing a crew to replace
+    a seized fan. What to do is the brief's job. See DECISIONS.md D-051."""
+    for label in config.INTERVENTION_LABELS.values():
+        lowered = label.lower()
+        for claim in ("visit", "transfer", "dispatch", "crew", "monitor"):
+            assert claim not in lowered, f"{label!r} names an action, not a driver"
+
+
+def test_no_driver_class_contains_a_feature_nothing_can_change():
+    """`prior_heat_faults` was in CREW_DRIVERS and is a count of faults that have
+    already happened. No crew action reduces it, so a crew label resting on it was
+    an instruction nothing could carry out — 118 of 366 crew labels in this
+    scenario. Neither set may contain an immutable feature."""
+    immutable = {"prior_heat_faults", "age_years", "cooling_type_ordinal",
+                 "peak_temp_c", "degree_hours_above_30", "consecutive_warm_nights",
+                 "age_x_warm_nights"}
+    assert not (config.CREW_DRIVERS | config.REMOTE_DRIVERS) & immutable

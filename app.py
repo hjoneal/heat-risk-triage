@@ -189,11 +189,13 @@ def percentile_label(share):
 
 
 def intervention_view(asset):
-    """What kind of intervention this asset's ranking implies, in one line.
+    """What put this asset in the queue, in one line.
 
-    The type says what to do; the driver says why it says so. Without the driver
-    the badge is an assertion the reader has to take on trust, and the whole
-    point of the contribution table below it is that they do not have to.
+    Not what to do about it — that is the brief's job, and the brief can say
+    "transfer load and repair the fan" where this cannot. The badge names the
+    driver class; the note names the driver itself, because without it the badge
+    is an assertion the reader has to take on trust and the whole point of the
+    contribution table below is that they do not have to.
     """
     intervention_type = asset["intervention_type"]
     driver = asset["intervention_driver"]
@@ -444,6 +446,7 @@ def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_S
         "direction": "desc" if descending else "asc",
         "view": view,
         "filters": queue_filters(scored["assets"]),
+        "intervention_heading": config.INTERVENTION_COLUMN_HEADING,
         "brief_top_n": config.BRIEF_TOP_N,
         "dispatch_order": dispatch_order,
         "sparkline": sparkline(scored["hourly_temps"]),
