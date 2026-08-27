@@ -6845,8 +6845,8 @@
       "cooling_type": "ONAN",
       "priority": 16.64,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -18632,8 +18632,8 @@
       "cooling_type": "ONAN",
       "priority": 9.84,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "peak_load_pct",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -36022,8 +36022,8 @@
       "cooling_type": "ONAN",
       "priority": 6.28,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "peak_load_pct",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -41616,8 +41616,8 @@
       "cooling_type": "ONAF",
       "priority": 5.43,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",
@@ -49235,7 +49235,7 @@
       "priority": 4.49,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_ventilation_obstructed",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",
@@ -85464,8 +85464,8 @@
       "cooling_type": "ONAN",
       "priority": 2.08,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -100546,8 +100546,8 @@
       "cooling_type": "ONAN",
       "priority": 1.55,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -110192,8 +110192,8 @@
       "cooling_type": "OFAF",
       "priority": 1.28,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",
@@ -115297,8 +115297,8 @@
       "cooling_type": "ONAF",
       "priority": 1.18,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "peak_load_pct",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",
@@ -127981,7 +127981,7 @@
       "priority": 0.83,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_ventilation_obstructed",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",
@@ -128144,8 +128144,8 @@
       "cooling_type": "ONAN",
       "priority": 0.82,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -131484,7 +131484,7 @@
       "priority": 0.74,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "days_since_maintenance",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -146957,8 +146957,8 @@
       "cooling_type": "ONAF",
       "priority": 0.37,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "peak_temp_c",

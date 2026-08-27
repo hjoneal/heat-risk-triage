@@ -575,3 +575,54 @@ def test_no_driver_class_contains_a_feature_nothing_can_change():
                  "peak_temp_c", "degree_hours_above_30", "consecutive_warm_nights",
                  "age_x_warm_nights"}
     assert not (config.CREW_DRIVERS | config.REMOTE_DRIVERS) & immutable
+
+
+def test_the_contribution_table_has_one_cell_per_column():
+    """The queue carried eight headers and seven cells for two commits because a
+    column was added to the header and not to every row. The same table has a
+    baseline row that is not part of the loop, which is exactly where the next
+    one would go missing."""
+    assets = scored()["assets"]
+    for asset_id in (assets[0]["asset_id"], assets[-1]["asset_id"]):
+        html = client.get(f"/scenario/{SCENARIO}/asset/{asset_id}").text
+        table = html.split('<table class="contrib">')[1].split("</table>")[0]
+        headers = re.findall(r"<th\b", table.split("</thead>")[0])
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", table.split("<tbody>")[1], re.DOTALL)
+        assert rows
+        for row in rows:
+            assert len(re.findall(r"<td\b", row)) == len(headers)
+
+
+def test_only_a_factor_raising_the_odds_offers_a_remedy():
+    """A condition flag reading "no" sits in CREW_DRIVERS and lowers the odds.
+    Marking it addressable would offer a repair for a defect that is not there."""
+    scored_assets = scored()["assets"]
+    for asset in (scored_assets[0], scored_assets[len(scored_assets) // 2], scored_assets[-1]):
+        for row in app_module.contribution_view(asset["contributions"]):
+            addressable = (row["contribution"] > 0
+                           and row["feature"] in (config.CREW_DRIVERS | config.REMOTE_DRIVERS))
+            assert (row["remedy"] is not None) == addressable, row["feature"]
+
+
+def test_every_remedy_shown_matches_the_driver_set_it_came_from():
+    asset_id = top_asset_id(SCENARIO)
+    asset = next(a for a in scored()["assets"] if a["asset_id"] == asset_id)
+    shown = {r["feature"]: r["remedy"]["label"]
+             for r in app_module.contribution_view(asset["contributions"]) if r["remedy"]}
+    assert shown, "the top-ranked asset has no addressable factor at all"
+    for feature, label in shown.items():
+        expected = "crew" if feature in config.CREW_DRIVERS else "remote"
+        assert label == config.REMEDY_LABELS[expected]
+    html = client.get(f"/scenario/{SCENARIO}/asset/{asset_id}").text
+    assert config.REMEDY_COLUMN_HEADING in html
+    for label in shown.values():
+        assert f">{label}</span>" in html
+
+
+def test_the_capacity_readout_names_crew_visits():
+    """The slider budgets crew visits. "interventions" also covered the load
+    transfers it does not constrain."""
+    html = queue_html("?capacity=15")
+    assert "15 crew visits</output>" in html
+    assert "interventions" not in html
+    assert '|| "crew visits"' in (config.REPO_ROOT / "static" / "app.js").read_text()

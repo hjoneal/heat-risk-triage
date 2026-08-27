@@ -1889,3 +1889,35 @@ contains an immutable feature. Crew/loading/nothing-actionable is 297/603/0 in `
 
 **No metric moved and none was adjusted.** The classification is a label over contributions that
 already existed; the model, the features, the briefs and the cached extractions are untouched.
+
+## D-052 — Each factor says what could act on it
+
+The badge names the one driver that put an asset in the queue (D-051). The contribution table now
+answers the same question of every factor: a **Crew visit** or **Load transfer** badge where the
+factor is raising this asset's odds and something can be done about it, an em-dash where nothing can.
+
+The vocabulary the badge stopped using is correct here. *"A seized cooling fan is addressed by a site
+visit"* is a claim about a factor, which `CREW_DRIVERS` and `REMOTE_DRIVERS` do support. *"This asset
+does not need a visit"* is a claim about an asset, which one argmax over contributions does not. Same
+words, different scope, and only one of them was ever supported.
+
+**Only where the factor raises the odds.** Six of the fifteen features sit in a driver set, and a
+condition flag reading "no" sits there too while lowering the odds. Marking it addressable would
+offer a repair for a defect that is not there.
+
+The honest half is the em-dashes. On the rank-4 asset in `short-severe`, four factors carry a badge
+and eleven carry a dash: the weather, the asset's age, its cooling design and its fault history are
+between them most of the score, and no crew budget touches any of them. That is worth showing on the
+page rather than leaving to the README.
+
+**`condition_x_degree_hours` joins `CREW_DRIVERS`.** Its twin `load_x_degree_hours` was already in
+`REMOTE_DRIVERS`, and leaving this one out told 389 assets in `short-severe` that "known defects
+through sustained heat" could not be addressed — when clearing the defects is exactly what moves it.
+6 assets reclassify in `short-severe`, none in `long-severe`.
+
+**The capacity readout says "crew visits", not "interventions".** The slider budgets crew visits and
+constrains nothing else; "interventions" also covered the load transfers it does not constrain.
+
+The baseline row needed a fourth cell and did not have one, which is the eight-headers-seven-cells
+failure of D-050 in a second table — this time caught before it shipped, because the row sits outside
+the loop that renders the others. `test_the_contribution_table_has_one_cell_per_column` now guards it.

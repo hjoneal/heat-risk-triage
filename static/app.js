@@ -57,7 +57,7 @@
 
   /* Keep the wording identical to the server's, so the number the reader sees
      mid-drag reads the same as the one that comes back. */
-  var suffix = readout.textContent.replace(/^\s*\d+\s*/, "") || "interventions";
+  var suffix = readout.textContent.replace(/^\s*\d+\s*/, "") || "crew visits";
 
   slider.addEventListener("input", function () {
     readout.textContent = slider.value + " " + suffix;

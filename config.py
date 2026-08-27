@@ -743,6 +743,12 @@ CREW_DRIVERS = {
     "flag_overdue_remedial",
     # Inspection.
     "days_since_maintenance",
+    # The interaction the four flags feed. Its twin `load_x_degree_hours` is in
+    # REMOTE_DRIVERS, and leaving this one out told 389 assets in `short-severe`
+    # that "known defects through sustained heat" could not be addressed — when
+    # clearing the defects is the thing that moves it. 6 assets reclassify in
+    # `short-severe` and none in `long-severe`.
+    "condition_x_degree_hours",
 }  # chosen
 REMOTE_DRIVERS = {"peak_load_pct", "load_x_degree_hours"}  # chosen
 assert CREW_DRIVERS <= set(FEATURES)
@@ -806,6 +812,23 @@ INTERVENTION_NOTES = {
               "put this asset where it is in the ranking.",
 }  # chosen
 assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS) - {"monitor"}
+
+# What a single factor can be acted on by, shown against each row of the
+# contribution table.
+#
+# These are the words the badge stopped using (D-051), and the table is where
+# they belong. "A seized cooling fan is addressed by a site visit" is a claim
+# about a factor, which CREW_DRIVERS and REMOTE_DRIVERS do support. "This asset
+# does not need a visit" is a claim about an asset, which one argmax over
+# contributions does not. Same vocabulary, a claim the evidence carries.
+REMEDY_LABELS = {"crew": "Crew visit", "remote": "Load transfer"}  # chosen
+assert set(REMEDY_LABELS) == {"crew", "remote"}
+
+# Shown only against a factor that is *raising* this asset's odds. A condition
+# flag reading "no" sits in CREW_DRIVERS and lowers the odds: marking it
+# addressable would offer a repair for a defect that is not there.
+REMEDY_COLUMN_HEADING = "Addressable by"  # chosen
+REMEDY_NONE_LABEL = "Not addressable inside the forecast window"  # chosen
 
 # An asset whose every contribution is negative has no driver to classify by. It
 # sits below the fleet's typical risk on every factor at once, and is on the page

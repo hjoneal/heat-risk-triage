@@ -30,6 +30,7 @@
           <th scope="col">Factor</th>
           <th scope="col">Reading</th>
           <th scope="col" class="num">Effect on odds</th>
+          <th scope="col">{{ remedy_heading }}</th>
         </tr>
       </thead>
       <tbody>
@@ -60,6 +61,17 @@
               <span style="width: {{ "%.1f"|format(c.effect_pct) }}%"></span>
             </span>
           </td>
+          {# Only against a factor raising the odds. A blank cell is a real
+             answer here — nothing addresses the weather — so it carries the
+             words rather than leaving a screen reader with an empty cell. #}
+          <td class="remedy">
+            {% if c.remedy %}
+              <span class="badge intervention-{{ c.remedy.step }}">{{ c.remedy.label }}</span>
+            {% else %}
+              <span class="remedy-none" aria-hidden="true">—</span>
+              <span class="visually-hidden">{{ remedy_none }}</span>
+            {% endif %}
+          </td>
         </tr>
       {% endfor %}
         <tr class="intercept">
@@ -67,6 +79,9 @@
           <td class="reading">{{ "%.2f"|format(baseline_pct) }}% — the failure rate the model
             starts every asset at, before anything above is taken into account</td>
           <td class="num effect"><span class="multiplier">—</span></td>
+          {# The baseline is not a factor, so it is not unaddressable — it is
+             out of scope for the question the column asks. #}
+          <td class="remedy"><span class="remedy-none" aria-hidden="true">—</span></td>
         </tr>
       </tbody>
     </table>

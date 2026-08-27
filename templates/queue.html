@@ -76,7 +76,7 @@
     <input type="range" name="capacity" min="{{ capacity_min }}" max="{{ capacity_max }}"
            step="1" value="{{ crew_capacity }}" aria-describedby="capacity-readout">
   </label>
-  <output id="capacity-readout" class="capacity-readout">{{ crew_capacity }} interventions</output>
+  <output id="capacity-readout" class="capacity-readout">{{ crew_capacity }} crew visits</output>
   {# Submits itself while dragging when scripting is available; the button is the
      fallback and is hidden by the same script that makes it redundant. #}
   <button type="submit" data-fallback-submit>Apply</button>

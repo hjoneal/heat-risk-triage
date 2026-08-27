@@ -21416,7 +21416,7 @@
       "priority": 198.57,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -69514,7 +69514,7 @@
       "priority": 45.45,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -76113,7 +76113,7 @@
       "priority": 37.77,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -85625,7 +85625,7 @@
       "priority": 29.35,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -86984,7 +86984,7 @@
       "priority": 28.24,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -93721,7 +93721,7 @@
       "priority": 23.67,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -111420,7 +111420,7 @@
       "priority": 13.23,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -117314,7 +117314,7 @@
       "priority": 10.54,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -133405,7 +133405,7 @@
       "priority": 5.1,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -135581,7 +135581,7 @@
       "priority": 4.58,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -137461,7 +137461,7 @@
       "priority": 4.14,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -141273,7 +141273,7 @@
       "priority": 3.2,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -143104,7 +143104,7 @@
       "priority": 2.83,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "days_since_maintenance",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -143954,7 +143954,7 @@
       "priority": 2.68,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",
@@ -148623,7 +148623,7 @@
       "priority": 1.66,
       "extraction_status": "ok",
       "intervention_type": "crew",
-      "intervention_driver": "flag_cooling_degraded",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "degree_hours_above_30",

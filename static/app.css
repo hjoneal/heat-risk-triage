@@ -680,3 +680,9 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
   .columns { grid-template-columns: 1fr; }
   .hazard-figures, .asset-figures { gap: 24px; }
 }
+
+/* The contribution table's fourth column. A badge where the factor can be acted
+   on, an em-dash where it cannot — which is most of them, and is the point. */
+td.remedy { white-space: nowrap; }
+td.remedy .badge { font-size: 0.75rem; }
+.remedy-none { color: var(--text-muted); }

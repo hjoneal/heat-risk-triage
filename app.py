@@ -251,8 +251,30 @@ def contribution_view(contributions):
                 else percentile_label(c["percentile"])
             ),
             "effect_pct": 100.0 * abs(c["contribution"]) / widest,
+            # Only where the factor is raising the odds: a flag reading "no"
+            # lowers them and has no repair to offer.
+            "remedy": remedy_view(c),
         })
     return rows
+
+
+def remedy_view(contribution):
+    """Which kind of action addresses this factor, or None if nothing does.
+
+    The same two driver sets the badge is derived from, read one row at a time.
+    Nine of the fifteen features are addressable by nothing inside 72 hours —
+    the weather, the asset's age, its cooling design — and saying so against
+    each of them is the honest half of the table: it shows how much of an
+    asset's risk the crew budget cannot touch at all.
+    """
+    if contribution["contribution"] <= 0:
+        return None
+    feature = contribution["feature"]
+    for key, drivers in (("crew", config.CREW_DRIVERS), ("remote", config.REMOTE_DRIVERS)):
+        if feature in drivers:
+            return {"label": config.REMEDY_LABELS[key],
+                    "step": config.INTERVENTION_STYLE_INDEX[key]}
+    return None
 
 
 def clamp_capacity(value):
@@ -483,6 +505,8 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str,
         "scenarios": SCENARIO_LINKS,
         "asset": {**asset, "contributions": contribution_view(asset["contributions"])},
         "intervention": intervention_view(asset),
+        "remedy_heading": config.REMEDY_COLUMN_HEADING,
+        "remedy_none": config.REMEDY_NONE_LABEL,
         "brief": brief,
         "brief_top_n": config.BRIEF_TOP_N,
         "cited": cited,

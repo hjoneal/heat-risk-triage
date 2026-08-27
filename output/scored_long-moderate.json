@@ -14832,8 +14832,8 @@
       "cooling_type": "ONAN",
       "priority": 46.91,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -72861,8 +72861,8 @@
       "cooling_type": "ONAF",
       "priority": 9.76,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -100996,8 +100996,8 @@
       "cooling_type": "ONAN",
       "priority": 5.66,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
@@ -129605,8 +129605,8 @@
       "cooling_type": "ONAF",
       "priority": 2.47,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "age_x_warm_nights",
@@ -129762,8 +129762,8 @@
       "cooling_type": "OFAF",
       "priority": 2.47,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "consecutive_warm_nights",
@@ -132109,8 +132109,8 @@
       "cooling_type": "ONAN",
       "priority": 2.23,
       "extraction_status": "ok",
-      "intervention_type": "remote",
-      "intervention_driver": "load_x_degree_hours",
+      "intervention_type": "crew",
+      "intervention_driver": "condition_x_degree_hours",
       "contributions": [
         {
           "feature": "cooling_type_ordinal",
