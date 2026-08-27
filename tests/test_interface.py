@@ -762,3 +762,15 @@ def test_the_interface_never_says_remove(decision_log):
     for html in pages:
         text = re.sub(r"<[^>]+>", " ", html).lower()
         assert "remove from list" not in text
+
+
+def test_the_script_keeps_the_reader_in_place_across_a_decision():
+    """Recording a decision redirects to the row's anchor, which keeps the place
+    without scripting but scrolls that row to the top of the viewport. The stored
+    position has to be re-applied after the browser acts on the fragment, and the
+    browser's own back-navigation restoration has to be handed back afterwards."""
+    script = (config.REPO_ROOT / "static" / "app.js").read_text()
+    assert "button.decbtn" in script, "decision buttons do not store the position"
+    assert 'window.addEventListener("load"' in script, "the fragment scroll is not overridden"
+    assert 'history.scrollRestoration = "auto"' in script, \
+        "manual scroll restoration is never handed back"

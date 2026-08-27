@@ -1998,3 +1998,22 @@ is paginating, and every workaround for the page's size costs the thing the page
 
 An unknown decision value is refused with a 400 rather than stored. A log is the record of what an
 operator decided, and a value no page can render is not a decision.
+
+## D-055 — Recording a decision keeps the reader's place
+
+The redirect after a decision carries the row's own anchor (D-054), which is what returns a reader
+without scripting to the row they just decided. It also scrolls that row to the top of the viewport,
+which is not where they were: two hundred rows down a queue, every click threw the page.
+
+The position is stored before leaving, as it already was for a sort (D-047), and put back on arrival.
+The new part is that it has to be put back **twice**. The browser acts on a URL fragment at a moment
+of its own choosing, which can be after an end-of-body script has run, so a single restore at parse
+time is silently overwritten. Re-applying on `load` wins.
+
+`history.scrollRestoration` is set to `manual` only while this script is taking the position over,
+and handed back to `auto` immediately afterwards. Left on, it would also disable the browser's own
+restoration on a back navigation — returning from an asset page to the queue — which is behaviour
+worth keeping and which nothing here replaces.
+
+The anchor stays. It is the whole of the no-JS behaviour, and the enhancement sits on top of it
+rather than replacing it.

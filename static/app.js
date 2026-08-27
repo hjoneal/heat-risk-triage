@@ -2,9 +2,10 @@
    without it. Server-rendered HTML remains the whole interface: this makes the
    crew-capacity slider report its value as it moves and submit itself when
    released, removes the Apply button it has just made redundant, and keeps the
-   reader's place in the queue across a sort. With scripting unavailable the
-   button is still there, the form still works, and a sort still lands at the
-   top of the page as it did before.
+   reader's place in the queue across a sort and across recording a decision.
+   With scripting unavailable the button is still there, both forms still work,
+   and a decision still lands on its own row through the anchor the redirect
+   carries, as it did before.
 
    No network call of its own, no dependency, no framework. */
 (function () {
@@ -26,21 +27,51 @@
     }
   }
 
-  function restore() {
-    var stored;
+  function stored() {
+    var value;
     try {
-      stored = sessionStorage.getItem(SCROLL_KEY);
+      value = sessionStorage.getItem(SCROLL_KEY);
       sessionStorage.removeItem(SCROLL_KEY);
     } catch (error) {
-      return;
+      return null;
     }
-    if (!stored) return;
-    var separator = stored.lastIndexOf(" ");
-    if (stored.slice(0, separator) !== window.location.pathname) return;
-    window.scrollTo(0, parseInt(stored.slice(separator + 1), 10) || 0);
+    if (!value) return null;
+    var separator = value.lastIndexOf(" ");
+    if (value.slice(0, separator) !== window.location.pathname) return null;
+    return parseInt(value.slice(separator + 1), 10) || 0;
   }
 
-  restore();
+  /* Applied twice, and that is not belt-and-braces. Recording a decision
+     redirects to the row's own anchor, which is what keeps the place for a
+     reader without scripting — and the browser acts on that fragment at its own
+     moment, which can be after this script has already run. Re-applying on load
+     puts the reader back where they were rather than at the top of the row they
+     just decided. */
+  var pending = stored();
+
+  function restore() {
+    if (pending === null) return;
+    window.scrollTo(0, pending);
+  }
+
+  if (pending !== null) {
+    /* Only when this script is taking the position over. Left on, it would also
+       disable the browser's own restoration on a back navigation — returning
+       from an asset page to the queue — which is behaviour worth keeping. */
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    restore();
+    window.addEventListener("load", function () {
+      restore();
+      pending = null;
+      if ("scrollRestoration" in history) history.scrollRestoration = "auto";
+    });
+  }
+
+  /* Accept, deny and clear are all full page loads, like a sort. */
+  var decisions = document.querySelectorAll("button.decbtn");
+  for (var d = 0; d < decisions.length; d++) {
+    decisions[d].addEventListener("click", remember);
+  }
 
   var sorts = document.querySelectorAll("a.sort");
   for (var i = 0; i < sorts.length; i++) {
