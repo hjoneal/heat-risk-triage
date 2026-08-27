@@ -682,7 +682,14 @@ h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
 }
 
 /* The contribution table's fourth column. A badge where the factor can be acted
-   on, an em-dash where it cannot — which is most of them, and is the point. */
-td.remedy { white-space: nowrap; }
-td.remedy .badge { font-size: 0.75rem; }
-.remedy-none { color: var(--text-muted); }
+   on, an em-dash where it cannot — which is most of them, and is the point.
+   The heading is two words and the cells are badges: both need the whole width
+   they ask for, or the heading wraps onto the effect column's bar and the badge
+   sits flush against the multiplier beside it. */
+.contrib th.remedy, .contrib td.remedy {
+  white-space: nowrap;
+  padding-left: 14px;
+  text-align: right;
+}
+.contrib td.remedy .badge { font-size: 11px; }
+.remedy-none { color: var(--text-muted); padding-right: 2px; }

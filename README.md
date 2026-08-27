@@ -112,17 +112,19 @@ still cover the top 40 by expected impact; rows below that are ranked and explai
 carrying no brief. See `DECISIONS.md` D-050.
 
 The consequence is that the crew budget constrains only part of the queue. The capacity line falls
-after the *n*th condition-ranked row rather than the *n*th row, which in the `short-severe` scenario
-is rank 52 rather than rank 15; the 37 assets above it that are ranked on loading consume no crew
-capacity. Selecting over all fifteen features instead was tried first and is degenerate — see
+after the *n*th crew-visit row rather than the *n*th row, which in the `short-severe` scenario is
+rank 52 rather than rank 15; the 37 assets above it whose leading action is a load transfer consume
+no crew capacity. Selecting over all fifteen features instead was tried first and is degenerate — see
 `DECISIONS.md` D-048 for the measurements, which are the reason the pool is restricted.
 
-**The badge names the driver, not the remedy.** It read "Crew visit" / "Load transfer" and was
-changed: one argmax establishes what is driving an asset's position, not that a truck is
-unnecessary, and 400 of 534 load-ranked assets in `short-severe` carried a recorded defect. What to
-do is the action brief's job, which can say *transfer load and repair the fan* where a single-valued
-badge cannot. Three alternative rules were built and measured before the labels were changed; all
-three fail, and how they fail is recorded in `DECISIONS.md` D-051.
+**The recommendation is the leading action, not the whole plan.** All 900 assets in `short-severe`
+carry both a crew-addressable and a loading-addressable positive factor, so a single-valued badge can
+only name which comes first. It briefly did stand alone, and an asset was labelled "Load transfer"
+directly above a brief reading *"the crew must replace the seized cooling fan"*. The contribution
+table now marks every factor with what addresses it, the asset page names the other action and how
+many factors need it, and the brief covers both. Three rules for deciding whether an asset needs a
+site visit outright were built and measured before this shape was settled on; all three fail, and how
+they fail is in `DECISIONS.md` D-051 to D-053.
 
 Explanations are the model's own arithmetic: each contribution is `coefficient × standardised value`,
 and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
@@ -614,9 +616,10 @@ Production MLOps Architecture*, October 2025.
   each action would save, and a threshold on the log-odds reduction — and all three fail, one of
   them by swinging from 0 to 875 crew assets out of 900 across equally defensible settings of an
   assumption about network topology the system does not model. The queue therefore reports what is
-  driving each asset's rank and leaves the remedy to the brief. D-051.
-- **The crew budget constrains only part of the queue.** Assets ranked on loading through sustained
-  heat are remediable from the control room by transferring load to an adjacent feeder, not by a site
+  driving each asset's rank, marks each factor with what could address it, and leaves the plan to
+  the brief. D-051 to D-053.
+- **The crew budget constrains only part of the queue.** Assets whose leading action is a load
+  transfer are remediable from the control room by transferring load to an adjacent feeder, not by a site
   visit. The reported precision and recall at capacity treat every ranked asset as consuming a crew
   visit, so they understate the coverage achievable at a given crew budget: at capacity 15 the
   `short-severe` queue reaches rank 52 before it has spent 15 crew visits. **The figures were not

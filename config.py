@@ -755,34 +755,26 @@ assert CREW_DRIVERS <= set(FEATURES)
 assert REMOTE_DRIVERS <= set(FEATURES)
 assert not CREW_DRIVERS & REMOTE_DRIVERS
 
-# The badge names the largest factor that put the asset in the queue and whether
-# anything could change it — not what to do about the asset.
+# The recommendation: the action that addresses the largest factor raising this
+# asset's odds that anything can address.
 #
-# It said "Crew visit" / "Load transfer" and that was a claim the rule cannot
-# support. One argmax over log-odds contributions establishes what is driving the
-# ranking; it does not establish that a truck is unnecessary. The two diverged
-# constantly: 400 of 534 "Load transfer" rows in `short-severe` carried a
-# recorded defect, and one of them displayed the badge directly above a brief
-# reading "the crew must replace the seized cooling fan". Two instructions, one
-# page. There is also no better rule available in this data — 735 of 900 assets
-# carry a recorded defect, so "crew visit if a defect exists" labels the whole
-# queue, and a counterfactual rule comparing what each action would save is
-# governed by an assumption about network topology the system does not model.
-# See DECISIONS.md D-051.
-#
-# What to do is the action brief's job. It is written from the retrieved
-# procedures and the asset's own inspection findings, and it can say "transfer
-# load and repair the fan", which is often the true answer and which no
-# single-valued badge can express.
+# It is the *leading* action, not the whole plan. In `short-severe` all 900
+# assets have both a crew-addressable and a loading-addressable positive factor,
+# so a single-valued column can only name which comes first. The asset page names
+# the other alongside it and the action brief covers both; the queue footnote
+# says so. This is what the badge could not do when it stood alone — an asset was
+# labelled "Load transfer" directly above a brief reading "the crew must replace
+# the seized cooling fan", with nothing on the page to reconcile them. The
+# contribution table's "Addressable by" column now reconciles them factor by
+# factor (D-052), which is what makes a single-valued recommendation legible
+# rather than misleading. See DECISIONS.md D-051 and D-053.
 INTERVENTION_LABELS = {
-    "crew": "Condition",
-    "remote": "Loading",
-    "monitor": "Nothing actionable",
+    "crew": "Crew visit",
+    "remote": "Load transfer",
+    "monitor": "No action available",
 }  # chosen
 
-# The column heading the badges sit under. A phrase rather than a noun, because
-# "Action" is what the badge stopped claiming to be.
-INTERVENTION_COLUMN_HEADING = "Ranked on"  # chosen
+INTERVENTION_COLUMN_HEADING = "Recommendation"  # chosen
 
 # The badge's style hook. A number rather than the type's own name, so that the
 # raw value has no path to the page at all — the same rule FEATURE_LABELS
@@ -805,12 +797,20 @@ assert set(INTERVENTION_STYLE_INDEX) == set(INTERVENTION_LABELS)
 # label with a driver would raise KeyError here rather than print a wrong line.
 INTERVENTION_NOTES = {
     "crew": "The largest factor raising this asset's odds is {driver}, which a "
-            "site visit could change. What to do about it is in the brief below.",
+            "site visit addresses.",
     "remote": "The largest factor raising this asset's odds is {driver}, which "
-              "the control room could change by transferring load to an adjacent "
-              "feeder. Any recorded defects are listed below and are not what "
-              "put this asset where it is in the ranking.",
+              "the control room addresses by transferring load to an adjacent "
+              "feeder.",
 }  # chosen
+
+# Appended where the asset also has factors of the other kind, which is most of
+# them. Without it the badge reads as the whole plan and contradicts a brief that
+# says do both. `{count}` is how many, `{other}` the other REMEDY_LABELS entry.
+INTERVENTION_ALSO_NOTE = (
+    " {count} further factor{plural} above would be addressed by a {other} — the "
+    "action brief covers both."
+)  # chosen
+
 assert set(INTERVENTION_NOTES) == set(INTERVENTION_LABELS) - {"monitor"}
 
 # What a single factor can be acted on by, shown against each row of the

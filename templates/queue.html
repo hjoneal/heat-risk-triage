@@ -57,7 +57,7 @@
   </figure>
 </section>
 
-<nav class="viewfilter" aria-label="Filter by what the asset is ranked on">
+<nav class="viewfilter" aria-label="Filter by recommended action">
   <span class="control-label">Show</span>
   {% for f in filters %}
     <a class="chip{% if f.key == view %} is-current{% endif %}"
@@ -81,7 +81,7 @@
      fallback and is hidden by the same script that makes it redundant. #}
   <button type="submit" data-fallback-submit>Apply</button>
   {# The topology caveat stays inline. Without it the page asserts that a
-     load-ranked asset needs no visit, which is the one thing here the system
+     load transfer removes the need for a visit, which is the one thing here the system
      cannot check: it models no network and cannot tell whether an adjacent
      feeder has the headroom to take the load. #}
   <p class="control-note">
@@ -89,10 +89,10 @@
     {% if covered.line %}
       <strong>{{ covered.crew_count }}</strong> crew visits reach
       <strong>rank {{ covered.line }}</strong>, passing
-      <strong>{{ covered.remote_count }}</strong> assets ranked on loading —
+      <strong>{{ covered.remote_count }}</strong> load transfers —
     {% else %}
-      The whole ranking holds only <strong>{{ covered.crew_count }}</strong> assets ranked on
-      condition, alongside <strong>{{ covered.remote_count }}</strong> ranked on loading —
+      The whole ranking holds only <strong>{{ covered.crew_count }}</strong> crew visits,
+      alongside <strong>{{ covered.remote_count }}</strong> load transfers —
     {% endif %}
     assumed relieved from the control room, which this system cannot verify.
     Those <strong>{{ covered.covered_count }}</strong> assets are
@@ -153,17 +153,19 @@
       <td class="num">{{ "{:,}".format(row.customers_served) }}</td>
       <td class="num">{{ "{:,.0f}".format(row.priority) }}</td>
       <td class="action">
-        {# What put the asset here, not what to do about it — that is the brief's
-           job. Colour distinguishes the three; the word carries the meaning. #}
+        {# The leading action, not the whole plan: most assets carry factors of
+           both kinds, and the asset page and brief carry the rest. Colour
+           distinguishes the three; the word carries the meaning. #}
         <span class="badge intervention-{{ row.intervention_step }}">{{ row.intervention_label }}</span>
       </td>
       <td class="decided">{% if row.decision %}<span title="{{ row.decision }}">✓</span>{% endif %}</td>
     </tr>
-    {# After the nth condition-ranked row, not the nth row: an asset ranked on
-       loading is assumed relieved from a desk and consumes no crew capacity. #}
+    {# After the nth crew-visit row, not the nth row: an asset whose leading
+       action is a load transfer is assumed relieved from a desk and consumes no
+       crew capacity. #}
     {% if dispatch_order and capacity_line_row and loop.index == capacity_line_row %}
-    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} assets ranked
-      on condition, the last of them at rank {{ covered.line }}</td></tr>
+    <tr class="capacity-rule"><td colspan="7">Crew capacity: {{ crew_capacity }} crew visits,
+      the last of them at rank {{ covered.line }}</td></tr>
     {% endif %}
   {% endfor %}
   </tbody>
@@ -171,12 +173,12 @@
 {% if dispatch_order and not capacity_line_row %}
   <p class="sortbar">
     {% if covered.line %}
-      The {{ crew_capacity }}th asset ranked on condition falls at rank {{ covered.line }}, which this view
+      The {{ crew_capacity }}th crew visit falls at rank {{ covered.line }}, which this view
       filters out, so the capacity line is not drawn — it marks where the crew stops working down
       the dispatch order, and that row is not shown here.
       <a href="/scenario/{{ scenario_id }}?capacity={{ crew_capacity }}">Show the whole fleet</a>
     {% else %}
-      Fewer than {{ crew_capacity }} assets in the whole ranking are ranked on condition, so the
+      Fewer than {{ crew_capacity }} assets in the whole ranking lead with a crew visit, so the
       capacity line is not drawn: the crew budget is not the binding constraint on this forecast.
     {% endif %}
   </p>
@@ -185,6 +187,8 @@
 
 <p class="footnote">
   Showing {{ "{:,}".format(rows | length) }} of {{ "{:,}".format(covered.fleet_size) }} assets.
+  The recommendation is the leading action — the one addressing the largest factor anything can
+  address. Most assets carry factors of both kinds; the asset page names them individually.
   Action briefs cover the top {{ brief_top_n }} by expected impact; rows below that are ranked and
   explained but carry no brief.
   Expected impact is risk multiplied by customers served. Scored

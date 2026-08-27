@@ -199,15 +199,37 @@ def intervention_view(asset):
     """
     intervention_type = asset["intervention_type"]
     driver = asset["intervention_driver"]
+    if not driver:
+        note = config.INTERVENTION_NO_DRIVER_NOTE
+    else:
+        note = config.INTERVENTION_NOTES[intervention_type].format(
+            driver=config.FEATURE_LABELS[driver].lower())
+        note += also_note(asset, intervention_type)
     return {
         "label": config.INTERVENTION_LABELS[intervention_type],
         "step": config.INTERVENTION_STYLE_INDEX[intervention_type],
-        "note": (
-            config.INTERVENTION_NOTES[intervention_type].format(
-                driver=config.FEATURE_LABELS[driver].lower())
-            if driver else config.INTERVENTION_NO_DRIVER_NOTE
-        ),
+        "note": note,
     }
+
+
+def also_note(asset, intervention_type):
+    """The other kind of action, where the asset has factors that need it.
+
+    Almost always, and that is the reason this exists: all 900 assets in
+    `short-severe` have both a crew-addressable and a loading-addressable
+    positive factor. A single-valued badge can only name which comes first, and
+    left alone it reads as the whole plan — which is how a "Load transfer" badge
+    came to sit above a brief instructing a crew to replace a seized fan.
+    """
+    other = "remote" if intervention_type == "crew" else "crew"
+    drivers = config.REMOTE_DRIVERS if other == "remote" else config.CREW_DRIVERS
+    count = sum(1 for c in asset["contributions"]
+                if c["contribution"] > 0 and c["feature"] in drivers)
+    if not count:
+        return ""
+    return config.INTERVENTION_ALSO_NOTE.format(
+        count=count, plural="" if count == 1 else "s",
+        other=config.REMEDY_LABELS[other].lower())
 
 
 def state_view(contribution):

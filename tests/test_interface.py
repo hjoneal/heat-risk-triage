@@ -504,7 +504,7 @@ def test_the_coverage_figure_counts_interventions_not_rows():
     assert math.isclose(covered["intercepted"], expected, rel_tol=1e-9)
 
     html = queue_html(f"?capacity={capacity}")
-    assert f">{covered['remote_count']}</strong> assets ranked on loading" in html
+    assert f">{covered['remote_count']}</strong> load transfers" in html
 
 
 @pytest.mark.parametrize("view", ["all"] + list(config.INTERVENTION_LABELS))
@@ -554,16 +554,28 @@ def test_an_unknown_filter_falls_back_rather_than_erroring():
         == len(scored()["assets"])
 
 
-def test_no_badge_claims_a_dispatch_action():
-    """The badge names what put the asset in the queue. It said "Crew visit" and
-    "Load transfer", which one argmax over contributions cannot establish: 400 of
-    534 remote-labelled assets in this scenario carried a recorded defect, and one
-    displayed "Load transfer" directly above a brief instructing a crew to replace
-    a seized fan. What to do is the brief's job. See DECISIONS.md D-051."""
-    for label in config.INTERVENTION_LABELS.values():
-        lowered = label.lower()
-        for claim in ("visit", "transfer", "dispatch", "crew", "monitor"):
-            assert claim not in lowered, f"{label!r} names an action, not a driver"
+def test_a_recommendation_never_stands_alone_where_the_other_action_also_applies():
+    """The badge names the leading action. All 900 `short-severe` assets have both
+    a crew-addressable and a loading-addressable positive factor, so left alone it
+    reads as the whole plan — which is how "Load transfer" came to sit above a
+    brief instructing a crew to replace a seized fan. See DECISIONS.md D-053."""
+    assets = scored()["assets"]
+    checked = 0
+    for asset in assets[:60]:
+        if not asset["intervention_driver"]:
+            continue
+        other = "remote" if asset["intervention_type"] == "crew" else "crew"
+        drivers = config.REMOTE_DRIVERS if other == "remote" else config.CREW_DRIVERS
+        count = sum(1 for c in asset["contributions"]
+                    if c["contribution"] > 0 and c["feature"] in drivers)
+        note = app_module.intervention_view(asset)["note"]
+        if count:
+            checked += 1
+            assert config.REMEDY_LABELS[other].lower() in note, asset["asset_id"]
+            assert str(count) in note, asset["asset_id"]
+        else:
+            assert config.REMEDY_LABELS[other].lower() not in note, asset["asset_id"]
+    assert checked, "no asset in the top 60 carries factors of both kinds"
 
 
 def test_no_driver_class_contains_a_feature_nothing_can_change():

@@ -1921,3 +1921,37 @@ constrains nothing else; "interventions" also covered the load transfers it does
 The baseline row needed a fourth cell and did not have one, which is the eight-headers-seven-cells
 failure of D-050 in a second table — this time caught before it shipped, because the row sits outside
 the loop that renders the others. `test_the_contribution_table_has_one_cell_per_column` now guards it.
+
+## D-053 — The badge is a recommendation again, and says which action leads
+
+D-051 renamed the badge from "Crew visit" / "Load transfer" to "Condition" / "Loading" because a
+single argmax over contributions could not support a dispatch claim. That reasoning was sound about
+the *claim* and wrong about the *fix*: a queue whose column says "Ranked on" answers a question about
+the model when the reader is asking a question about the day.
+
+What was missing then is present now. D-052 added an "Addressable by" marker to every row of the
+contribution table, so the page states factor by factor what a crew visit would touch and what a load
+transfer would touch. Against that, a badge naming one action is legible rather than misleading —
+the reader can see immediately which of the other factors it does not cover.
+
+The column is **Recommendation**; the labels are **Crew visit**, **Load transfer**, **No action
+available**. It names the *leading* action: the one addressing the largest factor raising the asset's
+odds that anything can address.
+
+**Every asset in `short-severe` carries factors of both kinds** — 900 of 900, and 397 of 900 in
+`long-severe`. A single-valued column can therefore only ever name what comes first, and left to
+stand alone it reads as the whole plan. That is precisely how "Load transfer" came to sit above a
+brief reading "the crew must replace the seized cooling fan". Three places now prevent it:
+
+* the asset page appends the other action and how many factors need it — *"3 further factors above
+  would be addressed by a crew visit — the action brief covers both"*;
+* the queue footnote says the recommendation is the leading action and that most assets carry both;
+* `test_a_recommendation_never_stands_alone_where_the_other_action_also_applies` asserts the note
+  names the other action exactly when factors of that kind exist, and does not when they do not.
+
+The capacity line, the filters and the coverage arithmetic are unchanged: they were always counting
+`intervention_type`, which is the same value under a better name.
+
+**Styling.** The new column's heading wrapped onto the effect column's bar and its badges sat flush
+against the multiplier beside them. `th.remedy` and `td.remedy` take `white-space: nowrap` and a left
+gutter; the badges drop to 11px to match the header scale.
