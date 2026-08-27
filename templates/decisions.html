@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Decisions — Heat risk triage{% endblock %}
+{% block content %}
+
+<header class="page-header">
+  <h2>Decisions</h2>
+  <p class="note">Every decision recorded against a forecast, newest first. The log is
+    append-only, so changing a decision adds a record rather than replacing one and the
+    order in which an operator arrived at a judgement survives. Written to
+    <code>output/{{ log_path }}</code>, which is the only file this application writes.</p>
+</header>
+
+{% if not groups %}
+  <p class="empty">Nothing decided yet. Accept or deny an asset from a queue or from its own
+    page, and it appears here.</p>
+{% endif %}
+
+{% for group in groups %}
+  <section class="decisions">
+    <h3><a href="/scenario/{{ group.scenario_id }}">{{ group.label }}</a></h3>
+    <p class="note">
+      {% for value, count in group.counts.items() %}
+        <strong>{{ count }}</strong> {{ labels[value].lower() }}{% if not loop.last %} · {% endif %}
+      {% endfor %}
+    </p>
+    <table class="queue">
+      <thead>
+        <tr>
+          <th scope="col" class="num">#</th>
+          <th scope="col">Asset</th>
+          <th scope="col">Decision</th>
+          <th scope="col">Reason</th>
+          <th scope="col">Recorded</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for d in group.decided %}
+        <tr class="decided-{{ d.step }}">
+          <td class="num rank">{{ d.rank }}</td>
+          <td class="asset">
+            <a href="/scenario/{{ group.scenario_id }}/asset/{{ d.asset_id }}">{{ d.name }}</a>
+            <span class="asset-id">{{ d.asset_id }}</span>
+          </td>
+          <td><span class="badge decision-{{ d.step }}">{{ d.mark }} {{ d.label }}</span></td>
+          {# A blank reason is the common case and is not a failure: the queue's
+             buttons do not offer a field to type one in. #}
+          <td class="reason-cell">{% if d.reason %}{{ d.reason }}{% else %}<span class="remedy-none">—</span>{% endif %}</td>
+          <td class="ts">{{ d.ts }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endfor %}
+{% endblock %}

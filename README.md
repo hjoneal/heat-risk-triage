@@ -137,7 +137,10 @@ and they sum to `logit(p) − intercept`, asserted to 1e-6. No SHAP.
   committed. `--offline` fails loudly on a cache miss rather than reaching for the network.
 - **Offline at serve time.** `app.py` loads the scored JSON and briefs at startup. No inference, no
   network call, no CDN asset, no web font, no map tile at request time. Its only write is appending
-  to `output/decisions.jsonl`. The one script it serves is local, 30 lines, and issues no request.
+  to `output/decisions.jsonl` — a decision is accepted or denied from the queue itself or from the
+  asset page, where a reason can be typed, and `/decisions` lists everything recorded. The log is
+  append-only, so changing or clearing a decision adds a record rather than replacing one, and
+  values written before "deny" replaced "remove" are read as what they meant. The one script it serves is local, 30 lines, and issues no request.
 - **No leakage.** Hazard features derive from ambient temperature alone. `theta`, `tau`, the hourly
   load rise, `condition` and `thermal_stress` never enter the feature matrix. Only `validate.py`
   opens the diagnostic files.
@@ -665,7 +668,7 @@ cache/                     cached LLM results, committed
 output/                    scored JSON, briefs, metrics, plots
 notebooks/                 analytical record, committed with outputs
 tests/                     retrieval, citations, ranking, interface, notebook and README freshness
-DECISIONS.md               45 entries, append-only
+DECISIONS.md               54 entries, append-only
 ```
 
 `DECISIONS.md` records every non-obvious choice, newest last. The five that changed the shape of the

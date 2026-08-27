@@ -855,4 +855,37 @@ PERCENTILE_BANDS = [
 # CAPACITY_SWEEP so the control offers exactly the range the metrics report.
 CREW_CAPACITY_MIN = 5  # chosen
 CREW_CAPACITY_MAX = 40  # chosen: the top of CAPACITY_SWEEP
+# The operator's decision on an asset. "deny" rather than "remove", because the
+# asset is not removed from anything — the ranking is unchanged and the record is
+# of a judgement made against it, which is the thing worth keeping.
+#
+# "cleared" is a decision too. The log is append-only, so undoing one is a third
+# record rather than an erasure: what the operator did, in order, including
+# changing their mind.
+DECISION_LABELS = {
+    "accept": "Accepted for dispatch",
+    "deny": "Denied",
+    "cleared": "Cleared",
+}  # chosen
+DECISION_ACTIVE = ("accept", "deny")  # chosen: the two that show as a decision
+
+# The value "deny" replaced. The log is append-only and records written before
+# the rename are still an operator's judgement, so they are read as what they
+# meant rather than rewritten or silently dropped — a record whose value no page
+# recognises would show as no decision at all, which is the one reading that is
+# certainly wrong.
+DECISION_ALIASES = {"remove": "deny"}  # chosen
+assert set(DECISION_ACTIVE) < set(DECISION_LABELS)
+
+# The queue's own controls, which have one column to fit in.
+DECISION_BUTTONS = {"accept": "Accept", "deny": "Deny", "cleared": "Clear"}  # chosen
+assert set(DECISION_BUTTONS) == set(DECISION_LABELS)
+
+# Marks the queue cell, alongside the word — never colour or glyph alone.
+DECISION_MARKS = {"accept": "\u2713", "deny": "\u2715"}  # chosen
+assert set(DECISION_MARKS) == set(DECISION_ACTIVE)
+
+DECISION_STYLE_INDEX = {"accept": 1, "deny": 2, "cleared": 3}
+assert set(DECISION_STYLE_INDEX) == set(DECISION_LABELS)
+
 DECISIONS_LOG = OUTPUT_DIR / "decisions.jsonl"

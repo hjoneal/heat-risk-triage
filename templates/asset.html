@@ -134,20 +134,28 @@
 <section class="decide">
   <h3>Record decision</h3>
   {% if decision %}
-    <p class="note">Recorded {{ decision.ts }}:
-      {{ 'Accepted' if decision.decision == 'accept' else 'Removed' }}{% if decision.reason %} — {{ decision.reason }}{% endif %}.</p>
+    <p class="note">
+      <span class="badge decision-{{ decision.step }}">{{ decision.mark }} {{ decision.label }}</span>
+      recorded {{ decision.ts }}{% if decision.reason %} — {{ decision.reason }}{% endif %}.
+      Recording again replaces what is shown here; the log keeps both.
+    </p>
   {% endif %}
   <form method="post" action="/scenario/{{ scenario_id }}/asset/{{ asset.asset_id }}/decision">
     <input type="hidden" name="capacity" value="{{ crew_capacity }}">
     <fieldset>
       <legend>Decision</legend>
-      <label><input type="radio" name="decision" value="accept" required> Accept for dispatch</label>
-      <label><input type="radio" name="decision" value="remove"> Remove from list</label>
+      {% for value, label in decision_labels.items() %}
+        <label><input type="radio" name="decision" value="{{ value }}"
+          {% if loop.first %}required {% endif %}
+          {% if decision and decision.value == value %}checked{% endif %}> {{ label }}</label>
+      {% endfor %}
     </fieldset>
     <label class="reason-field">Reason (optional)
       <input type="text" name="reason" maxlength="200">
     </label>
     <button type="submit">Record decision</button>
   </form>
+  <p class="note">Accept and deny are also available directly from the queue, without a reason.
+    <a href="/decisions">See every decision recorded</a>.</p>
 </section>
 {% endblock %}

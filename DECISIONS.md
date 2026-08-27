@@ -1955,3 +1955,46 @@ The capacity line, the filters and the coverage arithmetic are unchanged: they w
 **Styling.** The new column's heading wrapped onto the effect column's bar and its badges sat flush
 against the multiplier beside them. `th.remedy` and `td.remedy` take `white-space: nowrap` and a left
 gutter; the badges drop to 11px to match the header scale.
+
+## D-054 — Accept and deny are distinguishable, editable from the queue, and reviewable
+
+Three defects in one feature.
+
+**Both decisions rendered the same tick.** `<td class="decided">{% if row.decision %}✓{% endif %}</td>`
+recorded that a judgement had been made and not which one, which is the single thing the column
+existed to say. The value was in a `title` attribute, which is invisible on touch, unreliable to a
+screen reader and not a place to put the meaning of a cell. The mark now differs (`✓` / `✕`), the
+label sits beside it for a screen reader, and the row is tinted — three carriers, none of them alone,
+per the existing rule that nothing is communicated by colour alone.
+
+**"Deny", not "remove".** Nothing is removed: the ranking is unchanged, the asset stays in the queue,
+and what is recorded is a judgement made against it. "Remove from list" described an effect the
+button does not have.
+
+**Decisions are editable from the queue.** One form around the table, and two buttons per row — a
+button submits its own name and value, so the name carries which decision and the value carries which
+asset. No form per row, no script, and the redirect returns to the row's anchor in the sort and view
+it was decided from. A decision made this way carries no reason: 900 text fields is not a page, and
+the asset page remains where a reason is typed. A third button appears only on a row that has a
+decision, to clear it.
+
+**`/decisions` lists everything recorded**, grouped by forecast, newest first, with the reason where
+one was given and a dash where none was — the common case, and not a failure. Linked from the
+masthead beside the scenarios, because it is the one page that spans them.
+
+**Clearing is a record, not an erasure.** The log is append-only, so taking a decision back appends a
+third entry. What the operator did, in order, including changing their mind, is the part worth
+keeping; a decisions page that showed only the current state would be a summary of a file that
+already exists.
+
+**Records written before the rename are read as what they meant.** `DECISION_ALIASES` maps the stored
+`remove` to `deny` on read. Rewriting the log would defeat its being append-only, and leaving them
+unrecognised would show them as *no decision at all*, which is the one reading that is certainly
+wrong. Two such records exist in the working log, one with a reason attached.
+
+**Cost.** The queue is 1,172 KB and renders in 56 ms, against 675 KB before — 1,800 buttons across
+900 rows. Measured and accepted for the same reason the row cap was removed in D-050: the alternative
+is paginating, and every workaround for the page's size costs the thing the page is for.
+
+An unknown decision value is refused with a 400 rather than stored. A log is the record of what an
+operator decided, and a value no page can render is not a decision.

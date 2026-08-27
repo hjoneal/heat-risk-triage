@@ -13,7 +13,7 @@ import math
 from collections import Counter
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -83,8 +83,56 @@ def read_decisions():
         if not line.strip():
             continue
         record = json.loads(line)
+        value = record["decision"]
+        record["decision"] = config.DECISION_ALIASES.get(value, value)
         decisions[(record["scenario"], record["asset_id"])] = record
     return decisions
+
+
+def decision_view(record):
+    """A recorded decision as the page shows it, or None if there is none.
+
+    "cleared" is a record like the others and means the operator took their
+    decision back, so it reads as no decision here while staying in the log.
+    """
+    if not record or record["decision"] not in config.DECISION_ACTIVE:
+        return None
+    value = record["decision"]
+    return {
+        "value": value,
+        "label": config.DECISION_LABELS[value],
+        "mark": config.DECISION_MARKS[value],
+        "step": config.DECISION_STYLE_INDEX[value],
+        "reason": record.get("reason", ""),
+        "ts": record["ts"],
+    }
+
+
+def write_decision(scenario_id, asset_id, decision, reason=""):
+    """Append one decision. The only write the application makes.
+
+    Fails on an unknown value rather than storing it: the log is the record of
+    what an operator decided, and a value no page can render is not a decision.
+    """
+    if decision not in config.DECISION_LABELS:
+        raise HTTPException(status_code=400, detail=f"unknown decision {decision!r}")
+    asset = next((a for a in SCORED[scenario_id]["assets"] if a["asset_id"] == asset_id), None)
+    if asset is None:
+        raise HTTPException(status_code=404, detail=f"unknown asset {asset_id!r}")
+    record = {
+        "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "scenario": scenario_id,
+        "asset_id": asset_id,
+        "decision": decision,
+        "reason": reason,
+        # What the operator was looking at when they decided, which is the part
+        # that stops being recoverable once the model is refitted.
+        "rank_shown": asset["rank"],
+        "risk_shown": asset["risk"],
+    }
+    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    with config.DECISIONS_LOG.open("a") as handle:
+        handle.write(json.dumps(record) + "\n")
 
 
 def axis_ticks(low, high):
@@ -385,7 +433,7 @@ def queue_rows(scenario_id, sort_key, descending, intervention_filter):
             # fleet, most rows have none, and the reader should know that before
             # following the link rather than after.
             "has_brief": asset["rank"] <= config.BRIEF_TOP_N,
-            "decision": decision["decision"] if decision else None,
+            "decision": decision_view(decision),
         })
     return rows
 
@@ -491,6 +539,8 @@ def queue(request: Request, scenario_id: str, sort: str = config.QUEUE_DEFAULT_S
         "view": view,
         "filters": queue_filters(scored["assets"]),
         "intervention_heading": config.INTERVENTION_COLUMN_HEADING,
+        "decision_buttons": config.DECISION_BUTTONS,
+        "decided_total": sum(1 for row in rows if row["decision"]),
         "brief_top_n": config.BRIEF_TOP_N,
         "dispatch_order": dispatch_order,
         "sparkline": sparkline(scored["hourly_temps"]),
@@ -532,7 +582,8 @@ def asset_detail(request: Request, scenario_id: str, asset_id: str,
         "brief": brief,
         "brief_top_n": config.BRIEF_TOP_N,
         "cited": cited,
-        "decision": decision,
+        "decision": decision_view(decision),
+        "decision_labels": config.DECISION_LABELS,
         "intercept": scored["intercept"],
         # The intercept as a probability. A bare -5.83 log-odds told a reader
         # nothing; 0.29% is the same number in the units the rest of the page uses.
@@ -555,21 +606,75 @@ def procedure(request: Request, doc_id: str):
 def record_decision(scenario_id: str, asset_id: str,
                     decision: str = Form(...), reason: str = Form(""),
                     capacity: str = Form(str(config.CREW_CAPACITY))):
-    scored = SCORED[scenario_id]
-    asset = next(a for a in scored["assets"] if a["asset_id"] == asset_id)
-
-    record = {
-        "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "scenario": scenario_id,
-        "asset_id": asset_id,
-        "decision": decision,
-        "reason": reason,
-        "rank_shown": asset["rank"],
-        "risk_shown": asset["risk"],
-    }
-    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    with config.DECISIONS_LOG.open("a") as handle:
-        handle.write(json.dumps(record) + "\n")
-
+    """The asset page's form, which is the only place a reason can be typed."""
+    write_decision(scenario_id, asset_id, decision, reason)
     return RedirectResponse(
         f"/scenario/{scenario_id}?capacity={clamp_capacity(capacity)}", status_code=303)
+
+
+@app.post("/scenario/{scenario_id}/decision")
+def record_decision_from_queue(scenario_id: str,
+                               accept: str = Form(""), deny: str = Form(""),
+                               cleared: str = Form(""),
+                               sort: str = Form(config.QUEUE_DEFAULT_SORT),
+                               direction: str = Form("desc"),
+                               view: str = Form(config.QUEUE_FILTER_ALL),
+                               capacity: str = Form(str(config.CREW_CAPACITY))):
+    """Deciding from the queue itself, without opening the asset.
+
+    One form around the table and two buttons per row: a button submits its own
+    name and value, so the name says which decision and the value says which
+    asset, and no scripting is involved. A decision made here carries no reason —
+    typing one needs a field, and 900 of them would be a page nobody could read.
+    The asset page is where a reason is added.
+    """
+    submitted = [(value, asset_id) for value, asset_id
+                 in (("accept", accept), ("deny", deny), ("cleared", cleared)) if asset_id]
+    if len(submitted) != 1:
+        raise HTTPException(status_code=400, detail="expected exactly one decision")
+    decision, asset_id = submitted[0]
+    write_decision(scenario_id, asset_id, decision)
+
+    # Back to the row that was just decided, in the view it was decided from.
+    query = (f"?sort={sort}&direction={direction}&view={view}"
+             f"&capacity={clamp_capacity(capacity)}")
+    return RedirectResponse(
+        f"/scenario/{scenario_id}{query}#{asset_id}", status_code=303)
+
+
+@app.get("/decisions")
+def decisions_page(request: Request):
+    """Every decision on record, newest first, with the reason where one was given.
+
+    Read from the log rather than held in memory, for the same reason the queue
+    reads it per request: it is the one file that changes while the application
+    is running.
+    """
+    records = read_decisions()
+    groups = []
+    for link in SCENARIO_LINKS:
+        scenario_id, label = link["scenario_id"], link["label"]
+        decided = []
+        for asset in SCORED[scenario_id]["assets"]:
+            view = decision_view(records.get((scenario_id, asset["asset_id"])))
+            if view:
+                decided.append({**view, "asset_id": asset["asset_id"],
+                                "name": asset["name"], "rank": asset["rank"],
+                                "priority": asset["priority"]})
+        if not decided:
+            continue
+        decided.sort(key=lambda d: d["ts"], reverse=True)
+        groups.append({
+            "scenario_id": scenario_id,
+            "label": label,
+            "decided": decided,
+            "counts": {value: sum(1 for d in decided if d["value"] == value)
+                       for value in config.DECISION_ACTIVE},
+        })
+    return templates.TemplateResponse("decisions.html", {
+        "request": request,
+        "scenarios": SCENARIO_LINKS,
+        "groups": groups,
+        "labels": config.DECISION_LABELS,
+        "log_path": config.DECISIONS_LOG.name,
+    })

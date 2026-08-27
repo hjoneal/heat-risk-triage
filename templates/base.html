@@ -15,6 +15,9 @@
          class="scenario-link{% if s.scenario_id == scenario_id %} is-current{% endif %}"
          {% if s.scenario_id == scenario_id %}aria-current="page"{% endif %}>{{ s.label }}</a>
     {% endfor %}
+    {# Sits with the scenarios because it is the one page that spans them. #}
+    <a href="/decisions" class="scenario-link{% if request.url.path == '/decisions' %} is-current{% endif %}"
+       {% if request.url.path == '/decisions' %}aria-current="page"{% endif %}>Decisions</a>
   </nav>
 </header>
 <main>

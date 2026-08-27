@@ -638,3 +638,127 @@ def test_the_capacity_readout_names_crew_visits():
     assert "15 crew visits</output>" in html
     assert "interventions" not in html
     assert '|| "crew visits"' in (config.REPO_ROOT / "static" / "app.js").read_text()
+
+
+@pytest.fixture
+def decision_log(tmp_path, monkeypatch):
+    """A log of its own. The real one is the operator's record, not a fixture."""
+    monkeypatch.setattr(config, "DECISIONS_LOG", tmp_path / "decisions.jsonl")
+    return config.DECISIONS_LOG
+
+
+def decide_from_queue(asset_id, action="accept"):
+    return client.post(f"/scenario/{SCENARIO}/decision",
+                       data={action: asset_id, "sort": "priority", "direction": "desc",
+                             "view": "all", "capacity": str(config.CREW_CAPACITY)},
+                       follow_redirects=False)
+
+
+def queue_row(html, asset_id):
+    return re.search(rf'<tr id="{asset_id}".*?</tr>', html, re.DOTALL).group(0)
+
+
+def test_accept_and_deny_do_not_render_the_same_mark(decision_log):
+    """Both showed a tick, so the column recorded that a judgement had been made
+    and not which one — the single thing it existed to say."""
+    assets = scored()["assets"]
+    accepted, denied = assets[0]["asset_id"], assets[1]["asset_id"]
+    decide_from_queue(accepted, "accept")
+    decide_from_queue(denied, "deny")
+
+    html = queue_html()
+    accepted_cell = queue_row(html, accepted).split('class="decided"')[1]
+    denied_cell = queue_row(html, denied).split('class="decided"')[1]
+    assert config.DECISION_MARKS["accept"] in accepted_cell
+    assert config.DECISION_MARKS["deny"] not in accepted_cell
+    assert config.DECISION_MARKS["deny"] in denied_cell
+    assert config.DECISION_MARKS["accept"] not in denied_cell
+    # The mark is not the only carrier: the word is there for a screen reader.
+    assert config.DECISION_LABELS["accept"] in accepted_cell
+    assert config.DECISION_LABELS["deny"] in denied_cell
+
+
+def test_a_decision_from_the_queue_returns_to_the_row_it_was_made_on(decision_log):
+    asset_id = scored()["assets"][3]["asset_id"]
+    response = decide_from_queue(asset_id, "deny")
+    assert response.status_code == 303
+    location = response.headers["location"]
+    assert location.endswith(f"#{asset_id}")
+    for kept in ("sort=priority", "direction=desc", "view=all",
+                 f"capacity={config.CREW_CAPACITY}"):
+        assert kept in location, location
+
+
+def test_clearing_a_decision_leaves_the_log_and_not_the_page(decision_log):
+    """Append-only: taking a decision back is a third record, not an erasure."""
+    asset_id = scored()["assets"][2]["asset_id"]
+    decide_from_queue(asset_id, "accept")
+    decide_from_queue(asset_id, "cleared")
+
+    assert len(decision_log.read_text().strip().splitlines()) == 2
+    assert app_module.read_decisions()[(SCENARIO, asset_id)]["decision"] == "cleared"
+    cell = queue_row(queue_html(), asset_id).split('class="decided"')[1]
+    for mark in config.DECISION_MARKS.values():
+        assert mark not in cell
+
+
+def test_a_decision_records_what_the_operator_was_looking_at(decision_log):
+    asset = scored()["assets"][5]
+    decide_from_queue(asset["asset_id"], "accept")
+    record = json.loads(decision_log.read_text().strip())
+    assert record["rank_shown"] == asset["rank"]
+    assert record["risk_shown"] == asset["risk"]
+    assert record["scenario"] == SCENARIO
+
+
+def test_an_unknown_decision_is_refused_rather_than_stored(decision_log):
+    asset_id = scored()["assets"][0]["asset_id"]
+    response = client.post(f"/scenario/{SCENARIO}/asset/{asset_id}/decision",
+                           data={"decision": "maybe", "reason": ""})
+    assert response.status_code == 400
+    assert not decision_log.exists()
+
+
+def test_a_decision_recorded_before_the_rename_still_reads_as_one(decision_log):
+    """The log is append-only and "remove" records predate "deny". A value no page
+    recognises would show as no decision, which is the one reading certainly
+    wrong."""
+    asset_id = scored()["assets"][0]["asset_id"]
+    decision_log.write_text(json.dumps({
+        "ts": "2026-01-01T00:00:00Z", "scenario": SCENARIO, "asset_id": asset_id,
+        "decision": "remove", "reason": "predates the rename",
+        "rank_shown": 1, "risk_shown": 0.1}) + "\n")
+    assert app_module.read_decisions()[(SCENARIO, asset_id)]["decision"] == "deny"
+    assert config.DECISION_MARKS["deny"] in queue_row(queue_html(), asset_id)
+
+
+def test_the_decisions_page_lists_both_kinds_with_their_reasons(decision_log):
+    assets = scored()["assets"]
+    accepted, denied = assets[0]["asset_id"], assets[1]["asset_id"]
+    decide_from_queue(accepted, "accept")
+    client.post(f"/scenario/{SCENARIO}/asset/{denied}/decision",
+                data={"decision": "deny", "reason": "adjacent feeder has no headroom"})
+
+    html = client.get("/decisions").text
+    assert accepted in html and denied in html
+    assert config.DECISION_LABELS["accept"] in html
+    assert config.DECISION_LABELS["deny"] in html
+    assert "adjacent feeder has no headroom" in html
+    # A cleared asset is not a decision and does not belong on a decisions page.
+    decide_from_queue(accepted, "cleared")
+    assert accepted not in client.get("/decisions").text
+
+
+def test_the_decisions_page_says_so_when_there_is_nothing_to_show(decision_log):
+    assert '<p class="empty">' in client.get("/decisions").text
+
+
+def test_the_interface_never_says_remove(decision_log):
+    """"Deny" is a judgement against the asset; "remove" implied the ranking
+    changed, which it does not."""
+    asset_id = scored()["assets"][0]["asset_id"]
+    pages = [queue_html(), client.get("/decisions").text,
+             client.get(f"/scenario/{SCENARIO}/asset/{asset_id}").text]
+    for html in pages:
+        text = re.sub(r"<[^>]+>", " ", html).lower()
+        assert "remove from list" not in text
